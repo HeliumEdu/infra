@@ -1,0 +1,24 @@
+---
+- name: Copy beat conf
+  template:
+    src: "celerybeat.conf"
+    dest: "/etc/supervisor/conf.d/celerybeat.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  vars:
+    root_dir: "{{ platform_root }}"
+  with_dict: "{{ env_vars }}"
+  become: yes
+  notify: restart supervisor
+  tags:
+     - conf
+
+- name: Ensure Celery log dir is present
+  become: yes
+  file:
+    path: "/var/log/celery"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755

@@ -1,0 +1,23 @@
+---
+- name: DevBox Setup
+  hosts: devbox
+  roles:
+    # Server setup
+    - { role: common }
+
+    # Infrastructure
+    - { role: mysql }
+    - { role: redis }
+    - { role: supervisor }
+    - { role: celeryworker }
+    - { role: celerybeat }
+
+    # StatsD
+    - { role: graphite }
+    - { role: grafana }
+    - { role: collectd-agent }
+    - { role: statsd-agent }
+
+    # Projects
+    - { role: helium-platform, download_code: False }
+  environment: "{{ env_vars }}"

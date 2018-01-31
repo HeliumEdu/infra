@@ -1,0 +1,70 @@
+---
+- name: Install Statsd Dependencies for Debian
+  become: yes
+  apt:
+    name: git
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Create node user
+  become: yes
+  user:
+    name: node
+    state: present
+    shell: /bin/false
+    system: yes
+
+- name: Create log directory
+  become: yes
+  file:
+    path: /var/log/statsd
+    owner: node
+    group: node
+    state: directory
+
+- name: Create log file
+  become: yes
+  file:
+    path: /var/log/statsd/statsd.log
+    owner: node
+    group: node
+    mode: 0666
+    state: touch
+
+- name: Install statsd from GitHub
+  become: yes
+  git:
+    repo: https://github.com/etsy/statsd.git
+    dest: /opt/statsd
+    update: no
+    version: "v0.8.0"
+
+- name: Configure statsd
+  become: yes
+  template:
+    src: config.js
+    dest: /opt/statsd/config.js
+    owner: node
+    group: node
+    mode: 0444
+  notify: restart statsd-agent
+
+- name: Set file permissions
+  become: yes
+  command: /bin/chown -R node:node /opt/statsd
+
+- name: Create statsd systemd script
+  become: yes
+  template:
+    src: statsd.service
+    dest: /etc/systemd/system/statsd.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable statsd
+  become: yes
+  systemd:
+    name: statsd
+    state: started
+    enabled: yes

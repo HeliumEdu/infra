@@ -1,0 +1,145 @@
+---
+- name: Install dependencies
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - python-mysqldb
+    - libmysqlclient-dev
+
+- name: Install yuglify
+  become: yes
+  npm:
+    global: yes
+    name: yuglify
+
+- name: Create database
+  become: yes
+  mysql_db:
+    name: "{{ platform_db_name }}"
+    state: present
+    login_host: "{{ platform_db_host }}"
+    login_user: "{{ platform_db_user }}"
+    login_password: "{{ platform_db_password }}"
+    encoding: utf8
+    collation: utf8_general_ci
+
+- name: SSL certificate
+  become: yes
+  copy:
+    src: "../../../private/ssl/apache.{{ domain_environment }}.crt"
+    dest: "/etc/apache2/ssl/apache.crt"
+  notify: restart apache
+  when: letsencrypt_ssl is undefined or not letsencrypt_ssl
+  tags:
+     - ssl
+
+- name: SSL key
+  become: yes
+  copy:
+    src: "../../../private/ssl/apache.{{ domain_environment }}.key"
+    dest: "/etc/apache2/ssl/apache.key"
+  notify: restart apache
+  when: letsencrypt_ssl is undefined or not letsencrypt_ssl
+  tags:
+     - ssl
+
+- name: SSL ca-bundle
+  become: yes
+  copy:
+    src: "../../../private/ssl/apache.{{ domain_environment }}.ca-bundle"
+    dest: "/etc/apache2/ssl/apache.ca-bundle"
+  notify: restart apache
+  when: letsencrypt_ssl is undefined or not letsencrypt_ssl
+  tags:
+     - ssl
+
+- name: Setup Python/Django Apache conf
+  template:
+    src: "../../apache/templates/python.django.conf"
+    dest: "/etc/apache2/sites-available/helium.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: yes
+  vars:
+    email: "{{ project_contact_email }}"
+    url: "{{ platform_host }}"
+    alias_urls: "{{ platform_host_alias }}"
+    srv_dir: "{{ platform_root }}"
+    serve_local: "{{ project_serve_local | default(False) }}"
+    env: "{{ platform_env_vars }}"
+  notify: reload apache
+  tags:
+     - conf
+
+- name: Enable site conf
+  become: yes
+  command: a2ensite helium
+  notify: reload apache
+
+- name: Apache environment variables
+  become: yes
+  lineinfile:
+    dest: /etc/apache2/envvars
+    line: "export {{ item.key }}=\"{{ item.value }}\""
+    regexp: "export {{ item.key }}="
+  with_dict: "{{ env_vars }}"
+  notify: reload apache
+  tags:
+     - envvars
+
+- name: Generate SSL
+  include_role:
+    name: letsencrypt
+  when: letsencrypt_ssl is defined and letsencrypt_ssl
+  tags:
+    - ssl
+
+- name: Create directory
+  file:
+    path: "{{ project_root }}/platform"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Set code directory
+  set_fact:
+    code_directory: "{{ project_root }}/platform_stage"
+  tags:
+    - code
+    - migrate
+
+- name: Set code directory
+  set_fact:
+    code_directory: "{{ project_root }}/platform"
+  tags:
+    - code
+    - migrate
+  when: domain_environment == "devbox"
+
+- import_tasks: download.yml
+  when: download_code is undefined or download_code
+  tags:
+    - code
+    - migrate
+
+- import_tasks: install.yml
+  tags:
+    - code
+    - migrate
+
+- import_tasks: cleanup.yml
+  when: download_code is undefined or download_code
+  tags:
+    - code
+
+- name: Ensure Apache is reloaded, as we just swapped out code
+  become: yes
+  service:
+    name: apache2
+    state: reloaded
+  tags:
+    - code

@@ -1,0 +1,36 @@
+---
+domain_environment: "devbox"
+
+graphite_host: "graphite.heliumedu.dev"
+graphite_secret_key: ")3&j*zsc3i=t%6o^mhoee2++*&%7^e@lvp=maq@c3*+k_7_z+!"
+grafana_host: "grafana.heliumedu.dev"
+grafana_admin_password: "fixmystats"
+
+# NOTE: THIS IS INSECURE AND SHOULD NEVER BE DONE OUTSIDE OF DEVELOPMENT
+project_serve_local: True
+
+platform_host: "heliumedu.dev"
+platform_host_alias: "www.heliumedu.dev"
+platform_host_protocol: "http://"
+platform_db_host: "localhost"
+platform_db_user: "helium"
+platform_db_password: "fixmyhomework"
+
+platform_env_vars:
+  PROJECT_SERVE_LOCAL: "{{ project_serve_local }}"
+  PROJECT_DISABLE_EMAILS: "False"
+  PLATFORM_AWS_S3_ACCESS_KEY_ID: "<AWS_ACCESS_KEY_ID>"
+  PLATFORM_AWS_S3_SECRET_ACCESS_KEY: "<AWS_SECRET_ACCESS_KEY>"
+  PLATFORM_SECRET_KEY: "l4r8hl-$4jj1@w7=g#^kk*pf8wsrlsg-3_2y!ouk_a4@&qi+op"
+  PLATFORM_CSRF_MIDDLEWARE_SECRET: "ft=66&)sjuntalf22@y*i7+5az5(l=v$f&hclry$0_8oql9x+8"
+  PLATFORM_EMAIL_HOST_USER: "<SMTP_USERNAME>"
+  PLATFORM_EMAIL_HOST_PASSWORD: "<SMTP_PASSWORD>"
+  PLATFORM_REDIS_HOST: "redis://localhost:6379/1"
+  PLATFORM_DB_USER: "{{ platform_db_user }}"
+  PLATFORM_DB_PASSWORD: "{{ platform_db_password }}"
+  PLATFORM_CSRF_COOKIE_SECURE: "True"
+  PLATFORM_SESSION_COOKIE_SECURE: "True"
+  PLATFORM_DEBUG: "True"
+  PLATFORM_TEMPLATE_DEBUG: "True"
+
+env_vars: "{{ default_env_vars | combine(platform_env_vars) }}"

@@ -1,0 +1,21 @@
+---
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - python-letsencrypt-apache
+  when: letsencrypt_ssl
+
+- name: Install SSL
+  become: yes
+  shell: letsencrypt --apache --non-interactive --agree-tos --email {{ project_contact_email }} --domains {{ platform_host }}
+  when: letsencrypt_ssl
+
+- name: Restart Apache
+  become: yes
+  service:
+    name: apache2
+    state: restarted

@@ -1,0 +1,4 @@
+---
+- name: restart supervisor
+  become: yes
+  shell: systemctl restart supervisor.service

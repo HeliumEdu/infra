@@ -1,0 +1,41 @@
+---
+- name: Install Supervisor
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - supervisor
+
+- name: Ensure supervisor conf.d directory is present
+  become: yes
+  file:
+    path: "/etc/supervisor/conf.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy configuration
+  template:
+    src: "supervisord.conf"
+    dest: "/etc/supervisor/supervisord.conf"
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  notify: restart supervisor
+  tags:
+     - conf
+
+- name: Ensure supervisor is running
+  become: yes
+  service:
+    name: supervisor
+    state: running
+
+- name: Force enable supervisor
+  become: yes
+  command: systemctl enable supervisor

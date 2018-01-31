@@ -1,0 +1,10 @@
+/projects
+.vagrant
+.venv
+*.retry
+*.log
+.idea/
+*.iml
+*.pyc
+*.swp
+.DS_Store

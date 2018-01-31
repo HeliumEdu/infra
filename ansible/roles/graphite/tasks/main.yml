@@ -1,0 +1,146 @@
+---
+- name: Install Graphite packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - graphite-web
+    - graphite-carbon
+    - python-mysqldb
+    - libapache2-mod-wsgi
+
+- name: Pip dependencies
+  become: yes
+  pip:
+    name: PyMySQL
+    version: 0.7.10
+
+- name: Create Graphite database
+  become: yes
+  mysql_db:
+    name: graphite_{{ domain_environment }}
+    state: present
+    login_host: "{{ platform_db_host }}"
+    login_user: "{{ platform_db_user }}"
+    login_password: "{{ platform_db_password }}"
+    encoding: utf8
+    collation: utf8_general_ci
+
+- name: Configure secret key
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "SECRET_KEY = '{{ graphite_secret_key }}'"
+    regexp: "SECRET_KEY"
+  notify: reload apache
+
+- name: Configure time zone
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "TIME_ZONE = 'America/Los_Angeles'"
+    regexp: "TIME_ZONE"
+  notify: reload apache
+
+- name: Configure DB name
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "'NAME': 'graphite_{{ domain_environment }}',"
+    regexp: "'NAME'"
+  notify: reload apache
+
+- name: Configure DB host
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "'HOST': '{{ platform_db_host }}',"
+    regexp: "'HOST'"
+  notify: reload apache
+
+- name: Configure DB engine
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "'ENGINE': 'django.db.backends.mysql',"
+    regexp: "'ENGINE'"
+  notify: reload apache
+
+- name: Configure DB user
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "'USER': '{{ platform_db_user }}',"
+    regexp: "'USER'"
+  notify: reload apache
+
+- name: Configure DB password
+  become: yes
+  lineinfile:
+    dest: /etc/graphite/local_settings.py
+    line: "'PASSWORD': '{{ platform_db_password }}',"
+    regexp: "'PASSWORD'"
+  notify: reload apache
+
+- name: Migrate auth
+  become: yes
+  command: graphite-manage migrate auth --noinput
+
+- name: Migrate
+  become: yes
+  command: graphite-manage migrate --noinput
+
+- name: Enable carbon on startup
+  become: yes
+  lineinfile:
+    dest: /etc/default/graphite-carbon
+    line: "CARBON_CACHE_ENABLED=true"
+    regexp: "CARBON_CACHE_ENABLED"
+  notify: restart carbon-cache
+
+- name: Configure aggregation
+  become: yes
+  template:
+    src: storage-aggregation.conf
+    dest: /etc/carbon/storage-aggregation.conf
+    mode: 0644
+  notify: restart carbon-cache
+  tags:
+    - conf
+
+- name: Configure schemas
+  become: yes
+  template:
+    src: storage-schemas.conf
+    dest: /etc/carbon/storage-schemas.conf
+    mode: 0644
+  notify: restart carbon-cache
+  tags:
+    - conf
+
+- name: Setup Apache conf
+  template:
+    src: "graphite.apache.conf"
+    dest: "/etc/apache2/sites-available/graphite.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: yes
+  vars:
+    url: "{{ graphite_host }}"
+  notify: reload apache
+  tags:
+     - conf
+
+- name: Enable Graphite site
+  become: yes
+  command: a2ensite graphite
+  notify: reload apache
+
+- name: Ensure started
+  become: yes
+  service:
+    name: carbon-cache
+    state: started

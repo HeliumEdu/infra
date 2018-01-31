@@ -1,0 +1,27 @@
+---
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - collectd
+    - collectd-utils
+
+- name: Configuration
+  become: yes
+  template:
+    src: collectd.conf
+    dest: /etc/collectd/collectd.conf
+    mode: 0644
+  notify: restart collectd-agent
+  tags:
+    - conf
+
+- name: Enable collectd
+  become: yes
+  systemd:
+    name: collectd
+    state: restarted
+    enabled: yes
