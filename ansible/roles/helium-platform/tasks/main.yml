@@ -136,10 +136,18 @@
   tags:
     - code
 
-- name: Ensure Apache is reloaded, as we just swapped out code
+- name: Ensure Apache is reloaded
   become: yes
   service:
     name: apache2
+    state: reloaded
+  tags:
+    - code
+
+- name: Ensure Supervisor is reloaded
+  become: yes
+  service:
+    name: supervisor
     state: reloaded
   tags:
     - code
