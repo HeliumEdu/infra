@@ -1,4 +1,12 @@
 ---
 - name: restart supervisor
   become: yes
-  shell: systemctl restart supervisor.service
+  shell: service supervisor restart
+
+- name: restart supervisor jobs
+  become: yes
+  shell: supervisorctl restart all
+
+- name: update supervisor
+  become: yes
+  shell: supervisorctl update

@@ -59,7 +59,7 @@
 - name: Setup Python/Django Apache conf
   template:
     src: "../../apache/templates/python.django.conf"
-    dest: "/etc/apache2/sites-available/helium.conf"
+    dest: "/etc/apache2/sites-available/helium-platform.conf"
     owner: "root"
     group: "root"
     mode: "0644"
@@ -77,7 +77,7 @@
 
 - name: Enable site conf
   become: yes
-  command: a2ensite helium
+  command: a2ensite helium-platform
   notify: reload apache
 
 - name: Apache environment variables
@@ -144,10 +144,10 @@
   tags:
     - code
 
-- name: Ensure Supervisor is reloaded
+- name: Ensure Supervisor is restarted
   become: yes
   service:
     name: supervisor
-    state: reloaded
+    state: restarted
   tags:
     - code

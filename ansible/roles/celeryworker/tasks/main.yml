@@ -10,7 +10,7 @@
     root_dir: "{{ platform_root }}"
   with_dict: "{{ env_vars }}"
   become: yes
-  notify: restart supervisor
+  notify: update supervisor
   tags:
      - conf
 

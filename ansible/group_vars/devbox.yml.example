@@ -11,6 +11,7 @@ project_serve_local: True
 
 platform_host: "heliumedu.dev"
 platform_host_alias: "www.heliumedu.dev"
+platform_ssl: True
 platform_host_protocol: "http://"
 platform_db_host: "localhost"
 platform_db_user: "helium"

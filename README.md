@@ -28,9 +28,7 @@ make install
 
 Done!
 
-All projects should now be accessible via https://heliumedu.dev, and API documentation can now also be viewed at
-https://heliumedu.dev/docs. When changes are made to deployment scripts (project's contain environmental changes, for instances
-new migrations), you should use the command below to ensure the `devbox` is working with the latest environment.
+All projects should now be accessible via https://heliumedu.dev. When changes are made to deployment scripts (project's contain environmental changes, for instances new migrations), you should use the command below to ensure the `devbox` is working with the latest environment.
 
 ```
 bin/helium-cli deploy master devbox
@@ -66,4 +64,4 @@ platform to rely on S3 to serve up static content and media files reliably and s
 
 ## Documentation
 
-Additional documentation for development, deployment, setting up environments, and more can be found on the [Deploy Wiki](https://github.com/HeliumEdu/deploy/wiki).
+Auto-generated API documentation is accessible via any environment at /docs. Additional documentation for development, deployment, setting up environments, and more can be found on the [Deploy Wiki](https://github.com/HeliumEdu/deploy/wiki).
