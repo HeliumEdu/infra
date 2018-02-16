@@ -5,7 +5,7 @@ from configparser import ConfigParser
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
-__version__ = '1.0.0'
+__version__ = '1.0.3'
 
 VERSION = __version__
 
