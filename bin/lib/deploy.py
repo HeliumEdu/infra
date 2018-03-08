@@ -1,6 +1,6 @@
 import subprocess
 
-import utils
+from . import utils
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
@@ -35,7 +35,8 @@ class DeployAction:
             subprocess.call(["ssh", "-t", "{}@{}".format(host[0], host[1]),
                              "sudo apt-get update && sudo apt-get install -y python && sudo apt-get -y autoremove"])
 
-        ansible_command = 'ansible-playbook --inventory-file=ansible/hosts -v ansible/' + args.env + '.yml --extra-vars "platform_code_version=' + version + '"'
+        ansible_command = 'ansible-playbook --inventory-file=ansible/hosts -v ansible/' + args.env + \
+                          '.yml --extra-vars "platform_code_version=' + version + '"'
 
         if args.migrate or args.code or args.envvars or args.conf or args.ssl:
             tags = []

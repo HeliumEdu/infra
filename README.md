@@ -14,7 +14,6 @@ Before you can initialize the project and all dependencies, ensure you have the 
 * Git (>= 1.7)
 * VirtualBox (>= 5.1)
 * Vagrant (>= 1.9)
-* Ansible (>= 2.2)
 
 ## Getting Started
 

@@ -4,7 +4,7 @@ import shutil
 
 import git
 
-import utils
+from . import utils
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
@@ -32,7 +32,7 @@ class UpdateHeadersAction:
         for line in settings_file:
             if line.startswith("__version__ = "):
                 current_version = line.strip().split("__version__ = '")[1].rstrip("'")
-        current_year = unicode(datetime.date.today().year)
+        current_year = str(datetime.date.today().year)
 
         if not current_version:
             print("An error exists in platform/conf/common.py, as no PROJECT_VERSION was found.")
@@ -47,7 +47,7 @@ class UpdateHeadersAction:
             repo = git.Repo(project_dir)
 
             versions_list = repo.tags
-            versions_list.sort(key=lambda v: map(int, v.tag.tag.lstrip("v").split('.')))
+            versions_list.sort(key=lambda v: list(map(int, v.tag.tag.lstrip("v").split("."))))
 
             if len(versions_list) == 0:
                 print("No tags have been created yet.")
@@ -57,13 +57,13 @@ class UpdateHeadersAction:
             latest_tag = versions_list[-1]
             changes = latest_tag.commit.diff(None)
 
-            print("Checking the " + unicode(len(
-                    changes)) + ' file(s) in "' + project + '" that have been modified since ' + latest_tag.tag.tag + " was tagged ...")
+            print("Checking the " + str(len(changes)) + ' file(s) in "' +
+                  project + '" that have been modified since ' + latest_tag.tag.tag + " was tagged ...")
             print("-------------------------------")
 
             count = 0
             for change in changes:
-                file_path = os.path.join(project_dir, change.b_rawpath)
+                file_path = os.path.join(project_dir, change.b_rawpath.decode("utf-8"))
 
                 if os.path.exists(file_path) and not os.path.isdir(file_path):
                     change = open(file_path, "r")
@@ -115,5 +115,5 @@ class UpdateHeadersAction:
                     os.remove(file_path + ".tmp")
 
             print("-------------------------------")
-            print("Updated " + unicode(count) + " version number(s).")
+            print("Updated " + str(count) + " version number(s).")
             print("")

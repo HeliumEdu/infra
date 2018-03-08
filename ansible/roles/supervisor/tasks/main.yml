@@ -34,7 +34,7 @@
   become: yes
   service:
     name: supervisor
-    state: running
+    state: started
 
 - name: Force enable supervisor
   become: yes

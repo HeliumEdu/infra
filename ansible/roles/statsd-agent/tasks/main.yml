@@ -51,7 +51,10 @@
 
 - name: Set file permissions
   become: yes
-  command: /bin/chown -R node:node /opt/statsd
+  file:
+    path: /opt/statsd
+    owner: node
+    group: node
 
 - name: Create statsd systemd script
   become: yes
