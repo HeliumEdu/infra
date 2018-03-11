@@ -10,5 +10,5 @@ install: env
 	python -m pip install -r requirements.txt --user
 	bin/helium-cli update
 	vagrant up
-	if ! cat ~/.ssh/config | grep -xqFe "Host heliumedu.dev" ; then vagrant ssh-config --host heliumedu.dev >> ~/.ssh/config ; fi
+	if ! cat ~/.ssh/config | grep -xqFe "Host heliumedu.test" ; then vagrant ssh-config --host heliumedu.test >> ~/.ssh/config ; fi
 	bin/helium-cli deploy master devbox

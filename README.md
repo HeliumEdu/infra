@@ -17,7 +17,9 @@ Before you can initialize the project and all dependencies, ensure you have the 
 
 ## Getting Started
 
-Here is a minimal set of commands that will get a local development environment up and running:
+### Vagrant Development
+Here is a minimal set of commands that will get a Vagrant, which most closely emulates a prod-like environment,
+development environment up and running:
 
 ```
 git clone git@github.com:HeliumEdu/deploy.git ~/Developer/helium
@@ -27,7 +29,10 @@ make install
 
 Done!
 
-All projects should now be accessible via https://heliumedu.dev. When changes are made to deployment scripts (project's contain environmental changes, for instances new migrations), you should use the command below to ensure the `devbox` is working with the latest environment.
+All projects should now be accessible via https://heliumedu.test. The `platform` project, which powers the backend and
+API endpoints as well as the /admin area, lives at https://api.heliumedu.test. When changes are made to deployment
+scripts (project's contain environmental changes, for instances new migrations), you should use the command below to
+ensure the `devbox` is working with the latest environment.
 
 ```
 bin/helium-cli deploy master devbox
@@ -45,15 +50,32 @@ To power down the VM, execute:
 vagrant halt
 ```
 
+To see how the Vagrant environment is provisioned and configured, including how environment variables are set within
+the box, have a look in the `ansible` folder, especially `ansible/group_vars/devbox.yml`. Note that when values in
+`group_vars` are changed, the Vagrant box would need to be reprovisioned with the following:
+
+`bin/helium-cli deploy master devbox --envvars`
+
+### Local Development
+Each project also comes with its own development server for rapid development and testing. Using these development
+servers can be a simple way to get started with minimal effort. All you need is to have the `ENVIRONMENT` environment
+variable set to "dev", then execute:
+
+```
+bin/server
+```
+
+This single command will launch any necessary services for each project to run in the current environment. See the
+"Local Development" section of READMEs for more details on what that means to each project.
+
 ## Offline Development
 
-To develop using Vagrant fully offline (after the initial provision), the following should be set to `False`:
+To develop fully offline (after the initial provision), the following should be set to `False`:
 
 * PROJECT_DISABLE_EMAILS
 
-For the changes to take within the box, execute:
-
-`bin/helium-cli deploy master devbox --envvars`
+If using Vagrant, this would be in the `ansible/group_vars/devbox.yml` file (and `--envvars` would need to be
+reprovisioned). If developing locally, this would need to be set in the `.env` file.
 
 ## Security Note
 

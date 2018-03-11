@@ -1,2 +1,2 @@
 [devbox]
-heliumedu.dev ansible_user=vagrant ip_address=10.1.0.10
+heliumedu.test ansible_user=vagrant ip_address=10.1.0.10

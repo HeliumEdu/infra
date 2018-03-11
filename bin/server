@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#make install -C ${DIR}/../projects/platform
+#make install -C ${DIR}/../projects/frontend
+
+python ${DIR}/../projects/platform/manage.py runserver & npm run start --prefix ${DIR}/../projects/frontend
+#trap 'kill %1;' SIGINT SIGTERM EXIT
+
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT

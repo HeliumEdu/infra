@@ -1,18 +1,23 @@
 ---
 domain_environment: "devbox"
 
-graphite_host: "graphite.heliumedu.dev"
+graphite_host: "graphite.heliumedu.test"
 graphite_secret_key: ")3&j*zsc3i=t%6o^mhoee2++*&%7^e@lvp=maq@c3*+k_7_z+!"
-grafana_host: "grafana.heliumedu.dev"
+grafana_host: "grafana.heliumedu.test"
 grafana_admin_password: "fixmystats"
 
 # NOTE: THIS IS INSECURE AND SHOULD NEVER BE DONE OUTSIDE OF DEVELOPMENT
 project_serve_local: True
 
-platform_host: "heliumedu.dev"
-platform_host_alias: "www.heliumedu.dev"
+frontend_host: "heliumedu.test"
+frontend_host_alias: "www.heliumedu.test"
+frontend_ssl: True
+frontend_host_protocol: "https://"
+
+platform_host: "api.heliumedu.test"
+platform_host_alias: "www.api.heliumedu.test"
 platform_ssl: True
-platform_host_protocol: "http://"
+platform_host_protocol: "https://"
 platform_db_host: "localhost"
 platform_db_user: "helium"
 platform_db_password: "fixmyhomework"
@@ -27,6 +32,7 @@ platform_env_vars:
   PLATFORM_TWILIO_SMS_FROM: "<TWILIO_SMS_FROM>"
   PLATFORM_SECRET_KEY: "l4r8hl-$4jj1@w7=g#^kk*pf8wsrlsg-3_2y!ouk_a4@&qi+op"
   PLATFORM_CSRF_MIDDLEWARE_SECRET: "ft=66&)sjuntalf22@y*i7+5az5(l=v$f&hclry$0_8oql9x+8"
+  PLATFORM_CORS_ORIGIN_WHITELIST: "{{ frontend_host }} {{ frontend_host_alias }}"
   PLATFORM_EMAIL_HOST_USER: "<SMTP_USERNAME>"
   PLATFORM_EMAIL_HOST_PASSWORD: "<SMTP_PASSWORD>"
   PLATFORM_REDIS_HOST: "redis://localhost:6379/1"

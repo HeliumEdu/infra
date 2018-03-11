@@ -14,9 +14,9 @@ Vagrant.configure('2') do |config|
 
     node.vm.network 'private_network', ip: '10.1.0.10'
 
-    node.vm.hostname = 'heliumedu.dev'
+    node.vm.hostname = 'heliumedu.test'
 
-    node.hostsupdater.aliases = %w(graphite.heliumedu.dev grafana.heliumedu.dev)
+    node.hostsupdater.aliases = %w(www.heliumedu.test api.heliumedu.test graphite.heliumedu.test grafana.heliumedu.test)
 
     node.vm.synced_folder './projects', '/srv/helium'
 
@@ -25,6 +25,11 @@ Vagrant.configure('2') do |config|
       vb.gui = false
       vb.memory = '4096'
       vb.cpus = 2
+    end
+
+    node.hostsupdater.aliases.each do |i|
+      node.vm.provision "shell", privileged: true, run: "always",
+                        inline: "grep -q -F '127.0.0.1 #{i}' /etc/hosts || echo '127.0.0.1 #{i}' >> /etc/hosts"
     end
   end
 end

@@ -1,6 +1,5 @@
 *
 !/.gitignore
 !/*.md
-!/ssl/apache.devbox.crt
-!/ssl/apache.devbox.key
-!/ssl/apache.devbox.ca-bundle
+!/ssl
+!/ssl/.gitignore

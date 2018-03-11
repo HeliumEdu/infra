@@ -19,5 +19,5 @@
 
 - name: Install SSL
   become: yes
-  shell: certbot --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start" --non-interactive --agree-tos --email {{ project_contact_email }} --domains {{ platform_host }},www.{{ platform_host }}
+  shell: certbot --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start" --non-interactive --agree-tos --email {{ project_contact_email }} --domains {{ host }},www.{{ host }}
   when: letsencrypt_ssl

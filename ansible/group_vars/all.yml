@@ -1,9 +1,13 @@
 ---
 project_root: "/srv/helium"
 
+project_name: "Helium Student Planner"
+project_tagline: "Lightening Your Course Load"
+
 project_admin_email: "admin@heliumedu.com"
 project_contact_email: "contact@heliumedu.com"
 
+frontend_root: "{{ project_root }}/frontend"
 platform_root: "{{ project_root }}/platform"
 
 platform_db_name: "platform_{{ domain_environment }}"
@@ -12,11 +16,12 @@ default_env_vars:
   ENVIRONMENT: "{{ domain_environment }}"
   LANG: "en_US.UTF-8"
   LC_ALL: "en_US.UTF-8"
-  PROJECT_NAME: "Helium Student Planner"
-  PROJECT_TAGLINE: "Lightening Your Course Load"
+  PROJECT_NAME: "{{ project_name }}"
+  PROJECT_TAGLINE: "{{ project_tagline }}"
   PROJECT_ADMIN_EMAIL: "{{ project_admin_email }}"
   PROJECT_CONTACT_EMAIL: "{{ project_contact_email }}"
-  PLATFORM_HOST: "{{ platform_host_protocol }}{{ platform_host }}"
+  PROJECT_APP_HOST: "{{ frontend_host_protocol }}{{ frontend_host }}"
+  PROJECT_API_HOST: "{{ platform_host_protocol }}{{ platform_host }}"
   PLATFORM_HOME_DIR: "{{ platform_root }}"
   PLATFORM_ALLOWED_HOSTS: "{{ platform_host }} {{ platform_host_alias }} {{ ip_address }}"
   PLATFORM_DB_NAME: "{{ platform_db_name }}"

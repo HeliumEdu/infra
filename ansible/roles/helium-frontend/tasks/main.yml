@@ -1,35 +1,8 @@
 ---
-- name: Install dependencies
-  become: yes
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-  with_items:
-    - python-mysqldb
-    - libmysqlclient-dev
-
-- name: Install yuglify
-  become: yes
-  npm:
-    global: yes
-    name: yuglify
-
-- name: Create database
-  become: yes
-  mysql_db:
-    name: "{{ platform_db_name }}"
-    state: present
-    login_host: "{{ platform_db_host }}"
-    login_user: "{{ platform_db_user }}"
-    login_password: "{{ platform_db_password }}"
-    encoding: utf8
-    collation: utf8_general_ci
-
 - name: SSL certificate
   become: yes
   copy:
-    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ platform_host }}.crt"
+    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ frontend_host }}.crt"
     dest: "/etc/apache2/ssl/apache.crt"
   notify: restart apache
   when: letsencrypt_ssl is undefined or not letsencrypt_ssl
@@ -39,7 +12,7 @@
 - name: SSL key
   become: yes
   copy:
-    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ platform_host }}.key"
+    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ frontend_host }}.key"
     dest: "/etc/apache2/ssl/apache.key"
   notify: restart apache
   when: letsencrypt_ssl is undefined or not letsencrypt_ssl
@@ -49,35 +22,37 @@
 - name: SSL ca-bundle
   become: yes
   copy:
-    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ platform_host }}.ca-bundle"
+    src: "../../../private/ssl/apache.{{ domain_environment }}.{{ frontend_host }}.ca-bundle"
     dest: "/etc/apache2/ssl/apache.ca-bundle"
   notify: restart apache
   when: letsencrypt_ssl is undefined or not letsencrypt_ssl
   tags:
      - ssl
 
-- name: Setup Python/Django Apache conf
+- name: Setup static Apache conf
   template:
-    src: "../../apache/templates/python.django.conf"
-    dest: "/etc/apache2/sites-available/helium-platform.conf"
+    src: "../../apache/templates/static.conf"
+    dest: "/etc/apache2/sites-available/helium-frontend.conf"
     owner: "root"
     group: "root"
     mode: "0644"
   become: yes
   vars:
     email: "{{ project_contact_email }}"
-    url: "{{ platform_host }}"
-    alias_urls: "{{ platform_host_alias }}"
-    srv_dir: "{{ platform_root }}"
+    url: "{{ frontend_host }}"
+    platform_url: "{{ platform_host }}"
+    alias_urls: "{{ frontend_host_alias }}"
+    srv_dir: "{{ frontend_root }}"
     serve_local: "{{ project_serve_local | default(False) }}"
-    env: "{{ platform_env_vars }}"
+    # TODO: when the frontend is migrated to React, simply remove this line to serve a single-page application
+    serve_from_index: False
   notify: reload apache
   tags:
      - conf
 
 - name: Enable site conf
   become: yes
-  command: a2ensite helium-platform
+  command: a2ensite helium-frontend
   notify: reload apache
 
 - name: Apache environment variables
@@ -95,28 +70,28 @@
   include_role:
     name: letsencrypt
   vars:
-    host: "{{ platform_host }}"
+    host: "{{ frontend_host }}"
   when: letsencrypt_ssl is defined and letsencrypt_ssl
   tags:
     - ssl
 
 - name: Create directory
   file:
-    path: "{{ project_root }}/platform"
+    path: "{{ project_root }}/frontend"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
 - name: Set code directory
   set_fact:
-    code_directory: "{{ project_root }}/platform_stage"
+    code_directory: "{{ project_root }}/frontend_stage"
   tags:
     - code
     - migrate
 
 - name: Set code directory
   set_fact:
-    code_directory: "{{ project_root }}/platform"
+    code_directory: "{{ project_root }}/frontend"
   tags:
     - code
     - migrate
@@ -143,13 +118,5 @@
   service:
     name: apache2
     state: reloaded
-  tags:
-    - code
-
-- name: Ensure Supervisor is restarted
-  become: yes
-  service:
-    name: supervisor
-    state: restarted
   tags:
     - code

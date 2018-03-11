@@ -20,4 +20,5 @@
 
     # Projects
     - { role: helium-platform, download_code: False }
+    - { role: helium-frontend, download_code: False }
   environment: "{{ env_vars }}"
