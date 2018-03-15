@@ -5,7 +5,7 @@ from configparser import ConfigParser
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 VERSION = __version__
 
@@ -22,7 +22,7 @@ def get_title():
 
 
 def get_root_dir():
-    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", ".."))
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", ".."))
 
 
 def parse_hosts_file(env):
@@ -46,7 +46,7 @@ def parse_hosts_file(env):
     return hosts
 
 
-def update(line, verification, start_needle, end_needle=""):
+def should_updated(line, verification, start_needle, end_needle=""):
     needs_update = False
 
     if line.strip().startswith(start_needle) and line.strip().endswith(end_needle):
@@ -59,7 +59,7 @@ def update(line, verification, start_needle, end_needle=""):
 def get_project_name():
     with open(os.path.join(get_root_dir(), "ansible", "group_vars", "all.yml"), 'r') as stream:
         data = yaml.load(stream)
-        return data["default_env_vars"]["PROJECT_NAME"]
+        return data["project_developer"]
 
 
 def get_projects():

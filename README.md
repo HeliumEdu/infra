@@ -56,13 +56,17 @@ the box, have a look in the `ansible` folder, especially `ansible/group_vars/dev
 
 `bin/helium-cli deploy master devbox --envvars`
 
+Python projects are run from within their virtualenvs. To run the `python manage.py createsuperuser` command then,
+for example, in `/srv/helium/platform`, you need to first activate the virtualenv for the platform. You can do this by
+execute like `source $PLATFORM_VENV/bin/activate`.
+
 ### Local Development
 Each project also comes with its own development server for rapid development and testing. Using these development
 servers can be a simple way to get started with minimal effort. All you need is to have the `ENVIRONMENT` environment
 variable set to "dev", then execute:
 
 ```
-bin/server
+bin/helium-cli start-servers
 ```
 
 This single command will launch any necessary services for each project to run in the current environment. See the

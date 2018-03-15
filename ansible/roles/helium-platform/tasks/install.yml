@@ -6,8 +6,8 @@
 
 - name: Test
   make:
-      chdir: "{{ code_directory }}"
-      target: test
+    chdir: "{{ code_directory }}"
+    target: test
 
 - name: Build
   make:
@@ -16,5 +16,5 @@
 
 - name: Migrate
   make:
-      chdir: "{{ code_directory }}"
-      target: migrate
+    chdir: "{{ code_directory }}"
+    target: migrate

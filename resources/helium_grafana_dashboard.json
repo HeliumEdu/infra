@@ -222,111 +222,6 @@
           "dashes": false,
           "datasource": "Graphite",
           "fill": 2,
-          "id": 3,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": true,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "refId": "A",
-              "target": "alias(summarize(stats.counters.platform.view.home.count, '1h', 'sum', false), 'Home')",
-              "textEditor": false
-            },
-            {
-              "refId": "B",
-              "target": "alias(summarize(stats.counters.platform.view.calendar.count, '1h', 'sum', false), 'Calendar')",
-              "textEditor": false
-            },
-            {
-              "refId": "C",
-              "target": "alias(summarize(stats.counters.platform.view.classes.count, '1h', 'sum', false), 'Classes')",
-              "textEditor": false
-            },
-            {
-              "refId": "D",
-              "target": "alias(summarize(stats.counters.platform.view.materials.count, '1h', 'sum', false), 'Materials')",
-              "textEditor": false
-            },
-            {
-              "refId": "E",
-              "target": "alias(summarize(stats.counters.platform.view.grades.count, '1h', 'sum', false), 'Grades')",
-              "textEditor": false
-            },
-            {
-              "refId": "F",
-              "target": "alias(summarize(stats.counters.platform.view.settings.count, '1h', 'sum', false), 'Settings')"
-            },
-            {
-              "refId": "G",
-              "target": "alias(summarize(stats.counters.platform.view.support.count, '1h', 'sum', false), 'Support')"
-            },
-            {
-              "refId": "H",
-              "target": "alias(summarize(sumSeries(stats.counters.platform.view.privatefeed.*.count), '1h', 'sum', false), 'Private Feed Read')"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Page Views",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "Graphite",
-          "fill": 2,
           "id": 2,
           "legend": {
             "alignAsTable": false,
@@ -353,10 +248,6 @@
           "stack": false,
           "steppedLine": false,
           "targets": [
-            {
-              "refId": "A",
-              "target": "alias(summarize(sumSeries(stats.counters.platform.task.grading.recalculate.*.count), '1h', 'sum', false), 'Grade Recalculated')"
-            },
             {
               "refId": "B",
               "target": "alias(summarize(stats.counters.platform.task.user.password-reset.count, '1h', 'sum', false), 'Password Reset')"
@@ -457,5 +348,5 @@
   },
   "timezone": "",
   "title": "Helium Dashboard",
-  "version": 11
+  "version": 13
 }
