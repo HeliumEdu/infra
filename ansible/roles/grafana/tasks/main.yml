@@ -1,13 +1,4 @@
 ---
-- name: Install Graphite packages
-  become: yes
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-  with_items:
-    - libapache2-mod-wsgi
-
 - name: Pip dependencies
   become: yes
   pip:

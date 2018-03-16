@@ -11,8 +11,8 @@ env:
 
 virtualenv:
 	if [ ! -d ".venv" ]; then \
-		pip install virtualenv --user; \
-        python -m virtualenv .venv; \
+		python3 -m pip install virtualenv --user; \
+        python3 -m virtualenv .venv; \
 	fi
 
 install: env virtualenv

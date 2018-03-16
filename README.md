@@ -9,7 +9,7 @@ Before you can initialize the project and all dependencies, ensure you have the 
 
 * HTTP access to Git server
 * SSH key with access to Git server, stored locally at ~/.ssh/id_rsa
-* Python (>= 2.7)
+* Python (>= 3.5)
 * Pip (>= 9.0)
 * Git (>= 1.7)
 * VirtualBox (>= 5.1)

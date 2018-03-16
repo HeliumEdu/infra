@@ -8,8 +8,6 @@
   with_items:
     - graphite-web
     - graphite-carbon
-    - python-mysqldb
-    - libapache2-mod-wsgi
 
 - name: Pip dependencies
   become: yes
