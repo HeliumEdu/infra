@@ -12,7 +12,7 @@
     - { role: celeryworker }
     - { role: celerybeat }
 
-    # StatsD
+    # Metrics
     - { role: graphite }
     - { role: grafana }
     - { role: collectd-agent }

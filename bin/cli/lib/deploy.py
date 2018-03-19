@@ -27,6 +27,8 @@ class DeployAction:
         parser.set_defaults(action=self)
 
     def run(self, args):
+        subprocess.call('ansible-galaxy install Datadog.datadog', shell=True)
+
         version = args.version.lstrip("v")
 
         hosts = utils.parse_hosts_file(args.env)
