@@ -59,13 +59,12 @@
 - name: Setup Python/Django Apache conf
   template:
     src: "../../apache/templates/python.django.conf"
-    dest: "/etc/apache2/sites-available/helium-platform.conf"
+    dest: "/etc/apache2/sites-available/{{ project_id }}-platform.conf"
     owner: "root"
     group: "root"
     mode: "0644"
   become: yes
   vars:
-    email: "{{ project_contact_email }}"
     url: "{{ platform_host }}"
     alias_urls: "{{ platform_host_alias }}"
     srv_dir: "{{ platform_root }}"
@@ -77,7 +76,7 @@
 
 - name: Enable site conf
   become: yes
-  command: a2ensite helium-platform
+  command: "a2ensite {{ project_id }}-platform"
   notify: reload apache
 
 - name: Apache environment variables

@@ -6,6 +6,9 @@
     update_cache: yes
     state: present
   with_items:
+    - python-pip
+    - python-dev
+    - python-mysqldb
     - python3-pip
     - python3-dev
     - python3-mysqldb
@@ -13,7 +16,16 @@
 
 - name: Get latest version
   become: yes
-  shell: "pip install --upgrade pip"
+  pip:
+    name: pip
+    extra_args: --upgrade
+
+- name: Get latest version (pip3)
+  become: yes
+  pip:
+    name: pip
+    extra_args: --upgrade
+    executable: pip3
 
 - name: Create venv directory
   become: yes

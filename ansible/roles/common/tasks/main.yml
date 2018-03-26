@@ -37,7 +37,7 @@
 - name: Setup log folder
   become: yes
   file:
-    path: /var/log/helium
+    path: /var/log/{{ project_id }}
     state: directory
     mode: "2777"
     owner: "{{ ansible_user }}"

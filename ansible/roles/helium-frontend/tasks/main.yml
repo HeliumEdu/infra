@@ -32,15 +32,13 @@
 - name: Setup static Apache conf
   template:
     src: "../../apache/templates/static.conf"
-    dest: "/etc/apache2/sites-available/helium-frontend.conf"
+    dest: "/etc/apache2/sites-available/{{ project_id }}-frontend.conf"
     owner: "root"
     group: "root"
     mode: "0644"
   become: yes
   vars:
-    email: "{{ project_contact_email }}"
     url: "{{ frontend_host }}"
-    platform_url: "{{ platform_host }}"
     alias_urls: "{{ frontend_host_alias }}"
     srv_dir: "{{ frontend_root }}"
     serve_local: "{{ project_serve_local | default(False) }}"
@@ -52,7 +50,7 @@
 
 - name: Enable site conf
   become: yes
-  command: a2ensite helium-frontend
+  command: "a2ensite {{ project_id }}-frontend"
   notify: reload apache
 
 - name: Apache environment variables

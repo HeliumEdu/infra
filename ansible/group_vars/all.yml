@@ -1,5 +1,7 @@
 ---
-project_root: "/srv/helium"
+project_id: "helium"
+
+project_root: "/srv/{{ project_id }}"
 
 project_developer: "Helium Edu"
 project_name: "Helium Student Planner"
@@ -11,7 +13,7 @@ project_contact_email: "contact@heliumedu.com"
 frontend_root: "{{ project_root }}/frontend"
 platform_root: "{{ project_root }}/platform"
 
-platform_venv: "/usr/local/venvs/helium_platform"
+platform_venv: "/usr/local/venvs/{{ project_id }}_platform"
 
 platform_db_name: "platform_{{ domain_environment }}"
 
@@ -20,6 +22,7 @@ default_env_vars:
   LANG: "en_US.UTF-8"
   LC_ALL: "en_US.UTF-8"
   PROJECT_DEVELOPER: "{{ project_developer }}"
+  PROJECT_ID: "{{ project_id }}"
   PROJECT_NAME: "{{ project_name }}"
   PROJECT_TAGLINE: "{{ project_tagline }}"
   PROJECT_ADMIN_EMAIL: "{{ project_admin_email }}"
