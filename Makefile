@@ -22,9 +22,9 @@ install: env virtualenv
 		\
 		if ! cat ~/.bash_profile | grep -q "$(HELIUM_CLI)" ; then echo "export PATH=\"$(HELIUM_CLI):\$$PATH\"" >> ~/.bash_profile ; fi; \
 		\
-		bin/helium-cli update; \
+		bin/helium-cli pull-code; \
 		vagrant up; \
 		mkdir -p ~/.ssh; \
 		if ! cat ~/.ssh/config | grep -xqFe "Host heliumedu.test" ; then vagrant ssh-config --host heliumedu.test >> ~/.ssh/config ; fi; \
-		bin/helium-cli deploy master devbox; \
+		bin/helium-cli deploy-build master devbox; \
 	)

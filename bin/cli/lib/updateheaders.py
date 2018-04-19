@@ -8,13 +8,13 @@ from . import utils
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
-__version__ = '1.0.4'
+__version__ = '1.1.0'
 
 
-class HeadersAction:
+class UpdateHeadersAction:
     def __init__(self):
-        self.name = "headers"
-        self.help = "Update projects' header information"
+        self.name = "update-headers"
+        self.help = "Update header copyright and version information"
 
         self.__project_name = utils.get_project_name()
         self.__current_year = str(datetime.date.today().year)
@@ -25,21 +25,21 @@ class HeadersAction:
         parser.set_defaults(action=self)
 
     def run(self, args):
+        config = utils.get_config()
         root_dir = utils.get_root_dir()
-
         projects_dir = os.path.join(root_dir, "projects")
 
-        settings_file = open(os.path.join(projects_dir, "platform", "conf", "configs", "common.py"))
-        for line in settings_file:
-            if line.startswith("__version__ = "):
+        for line in open(os.path.join(projects_dir, config["versionInfo"]["project"], config["versionInfo"]["path"])):
+            if config["versionInfo"]["path"].endswith(".py") and line.startswith("__version__ = "):
                 self.__current_version = line.strip().split("__version__ = '")[1].rstrip("'")
 
         if not self.__current_version:
-            print("An error exists in platform/conf/common.py, as no PROJECT_VERSION was found.")
+            print("WARN: helium-cli does not know how to process this type of file for version information: {}".format(
+                config["versionInfo"]["path"]))
 
             return
 
-        for project in utils.get_projects():
+        for project in config["projects"]:
             project_dir = os.path.join(projects_dir, project)
 
             repo = git.cmd.Git(project_dir)
@@ -67,31 +67,32 @@ class HeadersAction:
 
                 if os.path.exists(file_path) and not os.path.isdir(file_path) and \
                                 os.path.splitext(file_path)[1] in [".py", ".js", ".jsx", ".css", ".scss"]:
-                    count = self.__process_file(count, file_path)
+                    count = self._process_file(count, file_path)
 
             print("-------------------------------")
             print("Updated " + str(count) + " version and copyright header(s).")
             print("")
 
-        self.__process_file(0, os.path.join(projects_dir, "frontend", "package.json"))
+        self._process_file(0, os.path.join(projects_dir, "frontend", "package.json"))
 
-    def __process_file(self, count, file_path):
-        change = open(file_path, "r")
+    def _process_file(self, count, file_path):
+        filename = os.path.basename(file_path)
+        initial_file = open(file_path, "r")
         new_file = open(file_path + ".tmp", "w")
 
         updated = False
-        for line in change:
+        for line in initial_file:
             if file_path.endswith(".py"):
-                line, count, updated = self.__process_python_line(count, updated, file_path, line)
+                line, count, updated = self._process_python_line(count, updated, file_path, line)
             elif file_path.endswith(".js") or file_path.endswith(".jsx") or \
                     file_path.endswith(".css") or file_path.endswith(".scss"):
-                line, count, updated = self.__process_js_or_css_line(count, updated, file_path, line)
-            elif os.path.basename(file_path) == "package.json":
-                line, count, updated = self.__process_package_json(count, updated, file_path, line)
+                line, count, updated = self._process_js_or_css_line(count, updated, file_path, line)
+            elif filename == "package.json":
+                line, count, updated = self._process_package_json(count, updated, file_path, line)
 
             new_file.write(line)
 
-        change.close()
+        initial_file.close()
         new_file.close()
 
         if updated:
@@ -100,7 +101,7 @@ class HeadersAction:
 
         return count
 
-    def __process_python_line(self, count, updated, file_path, line):
+    def _process_python_line(self, count, updated, file_path, line):
         if utils.should_updated(line, "__version__ = '{}'".format(self.__current_version), "__version__ ="):
             print("Updating " + file_path)
 
@@ -118,7 +119,7 @@ class HeadersAction:
 
         return line, count, updated
 
-    def __process_js_or_css_line(self, count, updated, file_path, line):
+    def _process_js_or_css_line(self, count, updated, file_path, line):
         if utils.should_updated(line, "* @version " + self.__current_version, "* @version"):
             print("Updating " + file_path)
 
@@ -135,7 +136,7 @@ class HeadersAction:
 
         return line, count, updated
 
-    def __process_package_json(self, count, updated, file_path, line):
+    def _process_package_json(self, count, updated, file_path, line):
         if utils.should_updated(line, "\"version\": \"{}\",".format(self.__current_version), "\"version\": \""):
             print("Updating version in " + file_path)
 

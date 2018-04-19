@@ -4,13 +4,13 @@ from . import utils
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
-__version__ = '1.0.4'
+__version__ = '1.1.0'
 
 
-class DeployAction:
+class DeployBuildAction:
     def __init__(self):
-        self.name = "deploy"
-        self.help = "Perform deployment commands"
+        self.name = "deploy-build"
+        self.help = "Deploy the specified build"
 
     def setup(self, subparsers):
         parser = subparsers.add_parser(self.name, help=self.help)
@@ -38,7 +38,7 @@ class DeployAction:
                              "sudo apt-get update && sudo apt-get install -y python && sudo apt-get -y autoremove"])
 
         ansible_command = 'ansible-playbook --inventory-file=ansible/hosts -v ansible/' + args.env + \
-                          '.yml --extra-vars "platform_code_version=' + version + '"'
+                          '.yml --extra-vars "build_version=' + version + '"'
 
         if args.migrate or args.code or args.envvars or args.conf or args.ssl:
             tags = []

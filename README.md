@@ -35,7 +35,7 @@ scripts (project's contain environmental changes, for instances new migrations),
 ensure the `devbox` is working with the latest environment.
 
 ```
-bin/helium-cli deploy master devbox
+bin/helium-cli deploy-build master devbox
 ```
 
 The shell into the VM, execute:
@@ -54,7 +54,7 @@ To see how the Vagrant environment is provisioned and configured, including how 
 the box, have a look in the `ansible` folder, especially `ansible/group_vars/devbox.yml`. Note that when values in
 `group_vars` are changed, the Vagrant box would need to be reprovisioned with the following:
 
-`bin/helium-cli deploy master devbox --envvars`
+`bin/helium-cli deploy-build master devbox --envvars`
 
 Python projects are run from within their virtualenvs. To run the `python manage.py createsuperuser` command then,
 for example, in `/srv/helium/platform`, you need to first activate the virtualenv for the platform. You can do this by

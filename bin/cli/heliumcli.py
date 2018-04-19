@@ -3,12 +3,12 @@
 import argparse
 import sys
 
-from lib import utils
-from lib.deploy import DeployAction
-from lib.update import UpdateAction
-from lib.tag import TagAction
-from lib.headers import HeadersAction
-from lib.startservers import StartServersAction
+from .lib import utils
+from .lib.buildrelease import BuildReleaseAction
+from .lib.deploybuild import DeployBuildAction
+from .lib.startservers import StartServersAction
+from .lib.pullcode import PullCodeAction
+from .lib.updateheaders import UpdateHeadersAction
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
@@ -17,17 +17,20 @@ __version__ = utils.VERSION
 
 def main(argv):
     actions = {
-        DeployAction(),
-        UpdateAction(),
-        TagAction(),
-        HeadersAction(),
+        PullCodeAction(),
         StartServersAction(),
+        UpdateHeadersAction(),
+        BuildReleaseAction(),
+        DeployBuildAction(),
     }
 
     parser = argparse.ArgumentParser(prog="helium-cli")
+    parser.add_argument("--silent", action="store_true", help="Run more quietly, not displaying decorations")
     subparsers = parser.add_subparsers(title="subcommands")
 
-    print(utils.get_title())
+    silent = '--silent' in argv
+    if not silent:
+        print(utils.get_title())
 
     for action in actions:
         action.setup(subparsers)
@@ -38,6 +41,12 @@ def main(argv):
         return
 
     args = parser.parse_args()
+
+    if not hasattr(args, 'action'):
+        parser.print_help()
+
+        return
+
     args.action.run(args)
 
     print("")

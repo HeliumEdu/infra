@@ -1,13 +1,15 @@
 import os
+from configparser import ConfigParser
 
 import yaml
-from configparser import ConfigParser
 
 __author__ = 'Alex Laird'
 __copyright__ = 'Copyright 2018, Helium Edu'
-__version__ = '1.0.4'
+__version__ = '1.1.0'
 
 VERSION = __version__
+
+_config_cache = None
 
 
 def get_title():
@@ -21,8 +23,12 @@ def get_title():
 """.format(VERSION)
 
 
+def get_cli_dir():
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
+
+
 def get_root_dir():
-    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", ".."))
+    return os.path.abspath(os.path.join(get_cli_dir(), "..", ".."))
 
 
 def parse_hosts_file(env):
@@ -57,13 +63,35 @@ def should_updated(line, verification, start_needle, end_needle=""):
 
 
 def get_project_name():
-    with open(os.path.join(get_root_dir(), "ansible", "group_vars", "all.yml"), 'r') as stream:
-        data = yaml.load(stream)
+    with open(os.path.join(get_root_dir(), "ansible", "group_vars", "all.yml"), 'r') as lines:
+        data = yaml.load(lines)
         return data["project_developer"]
 
 
-def get_projects():
-    return [
-        "platform",
-        "frontend",
-    ]
+def _create_default_config(config_path):
+    data = {
+        "gitRepo": "git@github.com:HeliumEdu",
+        "projects": ["platform", "frontend"],
+        "versionInfo": {
+            "project": "platform",
+            "path": os.path.join("conf", "configs", "common.py"),
+        },
+    }
+
+    with open(config_path, "w") as config_file:
+        yaml.dump(data, config_file)
+
+
+def get_config():
+    global _config_cache
+
+    config_path = os.path.join(get_cli_dir(), "config.yml")
+
+    if not _config_cache:
+        if not os.path.exists(config_path):
+            _create_default_config(config_path)
+
+        with open(config_path, "r") as lines:
+            _config_cache = yaml.load(lines)
+
+    return _config_cache
