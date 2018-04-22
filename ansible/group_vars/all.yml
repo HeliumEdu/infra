@@ -27,6 +27,7 @@ default_env_vars:
   PROJECT_TAGLINE: "{{ project_tagline }}"
   PROJECT_ADMIN_EMAIL: "{{ project_admin_email }}"
   PROJECT_CONTACT_EMAIL: "{{ project_contact_email }}"
+  PROJECT_SUPPORT_URL: "https://heliumedu.uservoice.com"
   PROJECT_APP_HOST: "{{ frontend_host_protocol }}{{ frontend_host }}"
   PROJECT_API_HOST: "{{ platform_host_protocol }}{{ platform_host }}"
   PLATFORM_VENV: "{{ platform_venv }}"

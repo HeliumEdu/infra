@@ -3,3 +3,4 @@ dependencies:
     - { role: apache }
     - { role: pip }
     - { role: make }
+    - { role: node }
