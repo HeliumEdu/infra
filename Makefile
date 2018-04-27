@@ -11,6 +11,7 @@ env:
 
 install: env
 	@python -m pip install -r requirements.txt
+	@ansible-galaxy install Datadog.datadog
 
 	mkdir -p bin/lib
 	@if [ ! -d "bin/lib/heliumcli" ]; then git clone git@github.com:HeliumEdu/heliumcli.git bin/lib/heliumcli ; fi
