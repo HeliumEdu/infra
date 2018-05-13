@@ -17,6 +17,8 @@ platform_venv: "/usr/local/venvs/{{ project_id }}_platform"
 
 platform_db_name: "platform_{{ domain_environment }}"
 
+platform_num_workers: 2
+
 default_env_vars:
   ENVIRONMENT: "{{ domain_environment }}"
   LANG: "en_US.UTF-8"

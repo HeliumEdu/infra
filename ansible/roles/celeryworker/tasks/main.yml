@@ -1,15 +1,16 @@
 ---
 - name: Copy worker conf
+  become: yes
   template:
     src: "celeryworker.conf"
-    dest: "/etc/supervisor/conf.d/celeryworker.conf"
+    dest: "/etc/supervisor/conf.d/celeryworker_{{ item }}.conf"
     owner: "root"
     group: "root"
     mode: "0644"
   vars:
     root_dir: "{{ platform_root }}"
-  with_dict: "{{ env_vars }}"
-  become: yes
+    worker_num: "{{ item }}"
+  loop: "{{ query('sequence', 'start=1 end='+(platform_num_workers)|string) }}"
   notify: update supervisor
   tags:
      - conf
