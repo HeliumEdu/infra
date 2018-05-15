@@ -22,9 +22,6 @@ platform_db_host: "localhost"
 platform_db_user: "helium"
 platform_db_password: "fixmyhomework"
 
-# NOTE: in a production environment, this variable (which defaults to 2 across environments) will usually be increased
-platform_num_workers: 3
-
 platform_env_vars:
   PROJECT_SERVE_LOCAL: "{{ project_serve_local }}"
   PROJECT_DISABLE_EMAILS: "False"
