@@ -1,21 +1,23 @@
 ---
 domain_environment: "devbox"
 
-graphite_host: "graphite.heliumedu.test"
+helium_host: "heliumedu.test"
+
+graphite_host: "graphite.{{ helium_host }}"
 graphite_secret_key: ")3&j*zsc3i=t%6o^mhoee2++*&%7^e@lvp=maq@c3*+k_7_z+!"
-grafana_host: "grafana.heliumedu.test"
+grafana_host: "grafana.{{ helium_host }}"
 grafana_admin_password: "fixmystats"
 
 # NOTE: THIS IS INSECURE AND SHOULD NEVER BE DONE OUTSIDE OF DEVELOPMENT
 project_serve_local: True
 
-frontend_host: "heliumedu.test"
-frontend_host_alias: "www.heliumedu.test"
+frontend_host: "{{ helium_host }}"
+frontend_host_alias: "www.{{ helium_host }}"
 frontend_ssl: True
 frontend_host_protocol: "https://"
 
-platform_host: "api.heliumedu.test"
-platform_host_alias: "www.api.heliumedu.test"
+platform_host: "api.{{ helium_host }}"
+platform_host_alias: "www.api.{{ helium_host }}"
 platform_ssl: True
 platform_host_protocol: "https://"
 platform_db_host: "localhost"

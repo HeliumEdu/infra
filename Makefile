@@ -7,8 +7,7 @@ HELIUMCLI_PROJECTS ?= '["platform", "frontend", "ci-tests"]'
 all: env virtualenv install
 
 env:
-	cp -n ansible/group_vars/devbox.yml.example ansible/group_vars/devbox.yml | true
-	cp -n ansible/hosts.example ansible/hosts | true
+	cp -n ansible/group_vars/devbox.yml.example ansible/group_vars/aio.yml | true
 
 install: env
 	@python -m pip install -r requirements.txt

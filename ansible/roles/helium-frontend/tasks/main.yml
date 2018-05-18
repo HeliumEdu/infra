@@ -87,7 +87,7 @@
     - code
     - migrate
 
-- name: Set code directory
+- name: Set code directory (devbox only)
   set_fact:
     code_directory: "{{ project_root }}/frontend"
   tags:

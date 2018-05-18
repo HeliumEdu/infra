@@ -47,7 +47,7 @@
     - code
     - migrate
 
-- name: Set code directory
+- name: Set code directory (devbox only)
   set_fact:
     code_directory: "{{ project_root }}/platform"
   tags:
@@ -87,5 +87,6 @@
   service:
     name: supervisor
     state: restarted
+  when: web_node is defined and not web_node
   tags:
     - code
