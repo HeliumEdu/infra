@@ -1,0 +1,9 @@
+ansibleCopyrightNameVar: project_developer
+ansibleRelativeDir: ansible
+gitProject: git@github.com:HeliumEdu
+hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && sudo
+  apt-get -y autoremove
+projects: [platform, frontend, ci-tests]
+projectsRelativeDir: projects
+serverBinFilename: bin/runserver
+versionInfo: {path: conf/configs/common.py, project: platform}
