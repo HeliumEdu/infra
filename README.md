@@ -1,7 +1,10 @@
+[![Build Status](https://travis-ci.org/HeliumEdu/deploy.svg?branch=master)](https://travis-ci.org/HeliumEdu/deploy)
+
+
 # Deploy Environment
 
 This repository contains everything that is necessary to get a development environment setup on a local machine in
-minimal time and to deploy code to other environments.
+minimal time and to deploy code to other environments using [Ansible](https://www.ansible.com/).
 
 ## Prerequisites
 
@@ -18,12 +21,14 @@ Here is a minimal set of commands that will get a Vagrant, which most closely em
 development environment up and running:
 
 ```
-git clone git@github.com:HeliumEdu/deploy.git ~/Developer/helium
+git clone https://github.com/HeliumEdu/deploy.git ~/Developer/helium
 cd ~/Developer/helium
-make install
+make
 ```
 
-Done! For convenience, [helium-cli](https://github.com/HeliumEdu/heliumcli#readme), which is compatible with this
+Done! Now your environment has been initialized, to quickly bring up your Vagrant box in the future, simply run `make start`.
+
+For convenience, [helium-cli](https://github.com/HeliumEdu/heliumcli#readme), which is compatible with this
 project and provides a useful set of tools for maintaining, building, and deploying the code, has also been installed.
 
 All projects should now be accessible via https://heliumedu.test. The `platform` project, which powers the backend and
@@ -35,7 +40,7 @@ ensure the `devbox` is working with the latest environment.
 helium-cli deploy-build master devbox
 ```
 
-The shell into the VM, execute:
+The get to the VMs shell, execute:
 
 ```
 vagrant ssh

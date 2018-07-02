@@ -10,7 +10,7 @@
   vars:
     root_dir: "{{ platform_root }}"
     worker_num: "{{ item }}"
-  loop: "{{ query('sequence', 'start=1 end='+(platform_num_workers)|string) }}"
+  loop: "{{ query('sequence', 'start=1 end='+(platform_num_workers)|string, wantlist=True) }}"
   notify: update supervisor
   tags:
      - conf

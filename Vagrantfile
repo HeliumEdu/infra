@@ -1,11 +1,3 @@
-unless Vagrant.has_plugin?('vagrant-hostsupdater')
-  system('vagrant plugin install vagrant-hostsupdater')
-end
-
-unless Vagrant.has_plugin?('vagrant-host-shell')
-  system('vagrant plugin install vagrant-host-shell')
-end
-
 Vagrant.configure('2') do |config|
   config.ssh.forward_agent = true
 

@@ -24,6 +24,10 @@ platform_db_host: "localhost"
 platform_db_user: "helium"
 platform_db_password: "fixmyhomework"
 
+ci_env_vars:
+  ENV_API_HOST: "{{ platform_host_protocol }}{{ platform_host }}"
+  CI_TWILIO_RECIPIENT_PHONE_NUMBER: "<TWILIO_RECIPIENT_PHONE_NUMBER>"
+
 platform_env_vars:
   PROJECT_SERVE_LOCAL: "{{ project_serve_local }}"
   PROJECT_DISABLE_EMAILS: "False"
@@ -46,4 +50,4 @@ platform_env_vars:
   PLATFORM_DEBUG: "True"
   PLATFORM_TEMPLATE_DEBUG: "True"
 
-env_vars: "{{ default_env_vars | combine(platform_env_vars) }}"
+env_vars: "{{ default_env_vars | combine(ci_env_vars) | combine(platform_env_vars) }}"
