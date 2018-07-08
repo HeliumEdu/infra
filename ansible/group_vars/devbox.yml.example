@@ -3,10 +3,8 @@ domain_environment: "devbox"
 
 helium_host: "heliumedu.test"
 
-graphite_host: "graphite.{{ helium_host }}"
-graphite_secret_key: ")3&j*zsc3i=t%6o^mhoee2++*&%7^e@lvp=maq@c3*+k_7_z+!"
-grafana_host: "grafana.{{ helium_host }}"
-grafana_admin_password: "fixmystats"
+project_datadog_api_key: "<DATADOG_API_KEY>"
+project_datadog_app_key: "<DATADOG_APP_KEY>"
 
 # NOTE: THIS IS INSECURE AND SHOULD NEVER BE DONE OUTSIDE OF DEVELOPMENT
 project_serve_local: True
@@ -25,7 +23,6 @@ platform_db_user: "helium"
 platform_db_password: "fixmyhomework"
 
 ci_env_vars:
-  ENV_API_HOST: "{{ platform_host_protocol }}{{ platform_host }}"
   CI_TWILIO_RECIPIENT_PHONE_NUMBER: "<TWILIO_RECIPIENT_PHONE_NUMBER>"
 
 platform_env_vars:

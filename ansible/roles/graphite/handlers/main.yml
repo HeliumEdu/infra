@@ -1,7 +1,0 @@
----
-- name: restart carbon-cache
-  become: yes
-  service:
-    name: carbon-cache
-    state: restarted
-    enabled: yes

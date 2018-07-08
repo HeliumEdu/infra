@@ -1,7 +1,0 @@
----
-- name: restart collectd-agent
-  become: yes
-  service:
-    name: collectd
-    state: restarted
-    enabled: yes

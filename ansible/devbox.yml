@@ -11,14 +11,16 @@
     - { role: supervisor }
     - { role: celeryworker }
     - { role: celerybeat }
+    - { role: Datadog.datadog, become: yes }
 
-    # Metrics
-    - { role: graphite }
-    - { role: grafana }
-    - { role: collectd-agent }
-    - { role: statsd-agent }
+    # CI
+    - { role: selenium }
 
     # Projects
     - { role: helium-platform, download_code: False }
     - { role: helium-frontend, download_code: False }
+  vars:
+    datadog_api_key: "{{ project_datadog_api_key }}"
+    datadog_config:
+      tags: "devbox"
   environment: "{{ env_vars }}"

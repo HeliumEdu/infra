@@ -1,0 +1,28 @@
+---
+- name: Install Firefox
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - firefox
+
+- name: Download WebDriver
+  become: yes
+  get_url:
+    url: "https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz"
+    dest: "/usr/local/bin"
+
+- name: Extract artifact to staging directory
+  become: yes
+  unarchive:
+    src: "/usr/local/bin/geckodriver-v0.21.0-linux64.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: yes
+
+- name: Remove tar
+  become: yes
+  file:
+    path: "/usr/local/bin/geckodriver-v0.21.0-linux64.tar.gz"
+    state: absent
