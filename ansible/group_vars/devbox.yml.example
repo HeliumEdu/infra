@@ -6,6 +6,8 @@ helium_host: "heliumedu.test"
 project_datadog_api_key: "<DATADOG_API_KEY>"
 project_datadog_app_key: "<DATADOG_APP_KEY>"
 
+rollbar_server_access_token: "<ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN>"
+
 # NOTE: THIS IS INSECURE AND SHOULD NEVER BE DONE OUTSIDE OF DEVELOPMENT
 project_serve_local: True
 
@@ -28,7 +30,7 @@ ci_env_vars:
 platform_env_vars:
   PROJECT_SERVE_LOCAL: "{{ project_serve_local }}"
   PROJECT_DISABLE_EMAILS: "False"
-  PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN: "<ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN>"
+  PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN: "{{ rollbar_server_access_token }}"
   PLATFORM_AWS_S3_ACCESS_KEY_ID: "<AWS_ACCESS_KEY_ID>"
   PLATFORM_AWS_S3_SECRET_ACCESS_KEY: "<AWS_SECRET_ACCESS_KEY>"
   PLATFORM_TWILIO_ACCOUNT_SID: "<TWILIO_ACCOUNT_SID>"
