@@ -1,7 +1,7 @@
 ---
 - name: Copy beat conf
   template:
-    src: "celerybeat.conf"
+    src: "celerybeat.conf.j2"
     dest: "/etc/supervisor/conf.d/celerybeat.conf"
     owner: "root"
     group: "root"

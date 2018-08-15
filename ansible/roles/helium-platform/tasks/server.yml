@@ -30,7 +30,7 @@
 
 - name: Setup Python/Django Apache conf
   template:
-    src: "../../apache/templates/python.django.conf"
+    src: "../../apache/templates/python.django.conf.j2"
     dest: "/etc/apache2/sites-available/{{ project_id }}-platform.conf"
     owner: "root"
     group: "root"

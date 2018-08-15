@@ -31,7 +31,7 @@
 
 - name: Setup static Apache conf
   template:
-    src: "../../apache/templates/static.conf"
+    src: "../../apache/templates/static.conf.j2"
     dest: "/etc/apache2/sites-available/{{ project_id }}-frontend.conf"
     owner: "root"
     group: "root"

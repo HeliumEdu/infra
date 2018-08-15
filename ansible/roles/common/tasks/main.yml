@@ -17,6 +17,20 @@
     name: editor
     path: /usr/bin/vim.basic
 
+- name: Set hostname
+  become: yes
+  hostname:
+    name: "{{ ansible_eth0.ipv4.address }}"
+
+- name: /etc/hosts file
+  become: yes
+  template:
+    src: "hosts.j2"
+    dest: "/etc/hosts"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
 - name: Environment variables
   become: yes
   lineinfile:

@@ -20,7 +20,7 @@
 
 - name: Copy configuration
   template:
-    src: "supervisord.conf"
+    src: "supervisord.conf.j2"
     dest: "/etc/supervisor/supervisord.conf"
     owner: root
     group: root

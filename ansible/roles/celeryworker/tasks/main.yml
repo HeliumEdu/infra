@@ -2,7 +2,7 @@
 - name: Copy worker conf
   become: yes
   template:
-    src: "celeryworker.conf"
+    src: "celeryworker.conf.j2"
     dest: "/etc/supervisor/conf.d/celeryworker_{{ item }}.conf"
     owner: "root"
     group: "root"
