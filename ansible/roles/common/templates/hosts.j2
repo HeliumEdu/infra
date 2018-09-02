@@ -7,11 +7,11 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
 {% for host in play_hosts %}
-{% if 'ansible_eth0' in hostvars[host] %}
+{% if 'ansible_default_ipv4' in hostvars[host] %}
 {% if host == ansible_host %}
-{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }} {{ host }} 127.0.0.1 localhost
+{{ hostvars[host]['ansible_default_ipv4']['address'] }} {{ host }} 127.0.0.1 localhost {{ deploy_group }}_{{ inventory_hostname_short }}
 {% else %}
-{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }} {{ host }}
+{{ hostvars[host]['ansible_default_ipv4']['address'] }} {{ host }}
 {% endif %}
 {% endif %}
 {% endfor %}

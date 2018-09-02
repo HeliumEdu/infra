@@ -20,6 +20,7 @@
     - { role: helium-platform, download_code: False }
     - { role: helium-frontend, download_code: False }
   vars:
+    deploy_group: "devbox"
     datadog_api_key: "{{ project_datadog_api_key }}"
     datadog_config:
       tags: "devbox"

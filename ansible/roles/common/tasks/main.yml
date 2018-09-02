@@ -20,7 +20,7 @@
 - name: Set hostname
   become: yes
   hostname:
-    name: "{{ ansible_eth0.ipv4.address }}"
+    name: "{{ deploy_group }}_{{ inventory_hostname_short }}"
 
 - name: /etc/hosts file
   become: yes
