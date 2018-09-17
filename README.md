@@ -33,7 +33,7 @@ Done! Now your environment has been initialized, to quickly bring up your Vagran
 For convenience, [helium-cli](https://github.com/HeliumEdu/heliumcli#readme), which is compatible with this
 project and provides a useful set of tools for maintaining, building, and deploying the code, has also been installed.
 
-All projects should now be accessible via https://heliumedu.test. The `platform` project, which powers the backend and
+All projects should now be accessible via https://heliumedu.test. The [platform](https://github.com/HeliumEdu/platform) project, which powers the backend and
 API endpoints as well as the /admin area, lives at https://api.heliumedu.test. When changes are made to deployment
 scripts (project's contain environmental changes, for instances new migrations), you should use the command below to
 ensure the `devbox` is working with the latest environment.
@@ -58,7 +58,9 @@ To see how the Vagrant environment is provisioned and configured, including how 
 the box, have a look in the `ansible` folder, especially `ansible/group_vars/devbox.yml`. Note that when values in
 `group_vars` are changed, the Vagrant box would need to be reprovisioned with the following:
 
-`helium-cli deploy-build master devbox --envvars`
+```
+helium-cli deploy-build master devbox --envvars
+```
 
 Python projects are run from within their virtualenvs. To run the `python manage.py createsuperuser` command then,
 for example, in `/srv/helium/platform`, you need to first activate the virtualenv for the platform. You can do this by
@@ -80,7 +82,7 @@ This single command will launch any necessary services for each project to run i
 
 To develop fully offline (after the initial provision), the following should be set to `False`:
 
-* PROJECT_DISABLE_EMAILS
+* `PROJECT_DISABLE_EMAILS`
 
 If using Vagrant, this would be in the `ansible/group_vars/devbox.yml` file (and `--envvars` would need to be
 reprovisioned). If developing locally, this would need to be set in the `.env` file.
