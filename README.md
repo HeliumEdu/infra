@@ -2,7 +2,6 @@
 [![Updates](https://pyup.io/repos/github/HeliumEdu/deploy/shield.svg)](https://pyup.io/repos/github/HeliumEdu/deploy/)
 [![Python 3](https://pyup.io/repos/github/HeliumEdu/deploy/python-3-shield.svg)](https://pyup.io/repos/github/HeliumEdu/deploy/)
 
-
 # Deploy Environment
 
 This repository contains everything that is necessary to get a development environment setup on a local machine in
@@ -10,11 +9,11 @@ minimal time and to deploy code to other environments using [Ansible](https://ww
 
 ## Prerequisites
 
-* A permissioned SSH key at ~/.ssh/id_rsa
-* Python (>= 3.5)
-* Pip (>= 9.0)
-* VirtualBox (>= 5.1)
-* Vagrant (>= 2.0)
+- A permissioned SSH key at ~/.ssh/id_rsa
+- Python (>= 3.5)
+- Pip (>= 9.0)
+- VirtualBox (>= 5.1)
+- Vagrant (>= 2.0)
 
 ## Getting Started
 
@@ -22,7 +21,7 @@ minimal time and to deploy code to other environments using [Ansible](https://ww
 Here is a minimal set of commands that will get a Vagrant, which most closely emulates a prod-like environment,
 development environment up and running:
 
-```
+```sh
 git clone https://github.com/HeliumEdu/deploy.git ~/Developer/helium
 cd ~/Developer/helium
 make
@@ -33,24 +32,24 @@ Done! Now your environment has been initialized, to quickly bring up your Vagran
 For convenience, [helium-cli](https://github.com/HeliumEdu/heliumcli#readme), which is compatible with this
 project and provides a useful set of tools for maintaining, building, and deploying the code, has also been installed.
 
-All projects should now be accessible via https://heliumedu.test. The [platform](https://github.com/HeliumEdu/platform) project, which powers the backend and
-API endpoints as well as the /admin area, lives at https://api.heliumedu.test. When changes are made to deployment
+All projects should now be accessible via <https://heliumedu.test>. The [platform](https://github.com/HeliumEdu/platform) project, which powers the backend and
+API endpoints as well as the /admin area, lives at <https://api.heliumedu.test>. When changes are made to deployment
 scripts (project's contain environmental changes, for instances new migrations), you should use the command below to
 ensure the `devbox` is working with the latest environment.
 
-```
+```sh
 helium-cli deploy-build master devbox
 ```
 
 The get to the VMs shell, execute:
 
-```
+```sh
 vagrant ssh
 ```
 
 To power down the VM, execute:
 
-```
+```sh
 vagrant halt
 ```
 
@@ -58,7 +57,7 @@ To see how the Vagrant environment is provisioned and configured, including how 
 the box, have a look in the `ansible` folder, especially `ansible/group_vars/devbox.yml`. Note that when values in
 `group_vars` are changed, the Vagrant box would need to be reprovisioned with the following:
 
-```
+```sh
 helium-cli deploy-build master devbox --envvars
 ```
 
@@ -71,7 +70,7 @@ Each project also comes with its own development server for rapid development an
 servers can be a simple way to get started with minimal effort. All you need is to have the `ENVIRONMENT` environment
 variable set to "dev", then execute:
 
-```
+```sh
 helium-cli start-servers
 ```
 
@@ -82,7 +81,7 @@ This single command will launch any necessary services for each project to run i
 
 To develop fully offline (after the initial provision), the following should be set to `False`:
 
-* `PROJECT_DISABLE_EMAILS`
+- `PROJECT_DISABLE_EMAILS`
 
 If using Vagrant, this would be in the `ansible/group_vars/devbox.yml` file (and `--envvars` would need to be
 reprovisioned). If developing locally, this would need to be set in the `.env` file.
