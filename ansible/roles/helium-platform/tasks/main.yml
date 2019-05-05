@@ -26,13 +26,6 @@
     encoding: utf8
     collation: utf8_general_ci
 
-- import_tasks: server.yml
-  when: web_node is undefined or web_node
-  tags:
-    - ssl
-    - conf
-    - envvars
-
 - name: Create directory
   file:
     path: "{{ project_root }}/platform"
@@ -70,6 +63,13 @@
   when: download_code is undefined or download_code
   tags:
     - code
+
+- import_tasks: server.yml
+  when: web_node is undefined or web_node
+  tags:
+    - ssl
+    - conf
+    - envvars
 
 - name: Ensure Apache is reloaded
   become: yes

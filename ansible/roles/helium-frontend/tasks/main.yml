@@ -64,15 +64,6 @@
   tags:
      - envvars
 
-- name: Generate SSL
-  include_role:
-    name: letsencrypt
-  vars:
-    host: "{{ frontend_host }}"
-  when: letsencrypt_ssl is defined and letsencrypt_ssl
-  tags:
-    - ssl
-
 - name: Create directory
   file:
     path: "{{ project_root }}/frontend"
@@ -110,6 +101,15 @@
   when: download_code is undefined or download_code
   tags:
     - code
+
+- name: Generate SSL
+  include_role:
+    name: letsencrypt
+  vars:
+    host: "{{ frontend_host }}"
+  when: letsencrypt_ssl is defined and letsencrypt_ssl
+  tags:
+    - ssl
 
 - name: Ensure Apache is reloaded
   become: yes
