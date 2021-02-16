@@ -1,8 +1,9 @@
-[![Build Status](https://travis-ci.org/HeliumEdu/deploy.svg?branch=master)](https://travis-ci.org/HeliumEdu/deploy)
-[![Updates](https://pyup.io/repos/github/HeliumEdu/deploy/shield.svg)](https://pyup.io/repos/github/HeliumEdu/deploy/)
-[![Python 3](https://pyup.io/repos/github/HeliumEdu/deploy/python-3-shield.svg)](https://pyup.io/repos/github/HeliumEdu/deploy/)
+[![CI/CD](https://github.com/heliumedu/deploy/workflows/CI/CD/badge.svg)](https://github.com/heliumedu/deploy/actions?query=workflow%3ACI%2FCD)
+![GitHub License](https://img.shields.io/github/license/heliumedu/deploy)
 
 # Deploy Environment
+
+<p align="center"><img src="https://www.heliumedu.com/assets/img/logo_full_blue.png" /></p>
 
 This repository contains everything that is necessary to get a development environment setup on a local machine in
 minimal time and to deploy code to other environments using [Ansible](https://www.ansible.com/).
