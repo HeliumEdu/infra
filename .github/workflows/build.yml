@@ -22,8 +22,8 @@ jobs:
       - name: Install Virtualbox
         run: |
           sudo apt-get install -y virtualbox
-          wget https://releases.hashicorp.com/vagrant/2.0.2/vagrant_2.0.2_x86_64.deb
-          sudo dpkg -i vagrant_2.0.2_x86_64.deb
+          wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
+          sudo dpkg -i vagrant_2.2.10_x86_64.deb
       - name: Install dependencies
         run:
           make install
