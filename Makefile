@@ -2,6 +2,7 @@
 
 SHELL := /usr/bin/env bash
 HELIUMCLI_PROJECTS ?= '["platform", "frontend", "ci-tests"]'
+SKIP_UPDATE ?= 'false'
 
 all: env install start
 
@@ -12,7 +13,7 @@ install: env
 	@python -m pip install -r requirements.txt
 	@ansible-galaxy install --force datadog.datadog
 
-	@HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
+	@if [ $(SKIP_UPDATE) != "true" ] ; then HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects ; fi
 
 	@vagrant plugin install vagrant-hostsupdater
 	@vagrant plugin install vagrant-host-shell

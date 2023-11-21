@@ -1,0 +1,35 @@
+name: "Release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+
+jobs:
+  deploy:
+    name: Release
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: Install Virtualbox
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y virtualbox
+          wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
+          sudo dpkg -i vagrant_2.2.10_x86_64.deb
+      - name: Install dependencies
+        run:
+          make install
+      - name: Run tests
+        run:
+          make test
+      - name: Release
+        run:
+          helium-cli build-release ${{ github.event.inputs.version }}
