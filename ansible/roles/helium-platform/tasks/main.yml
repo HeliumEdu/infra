@@ -8,6 +8,8 @@
   with_items:
     - python-mysqldb
     - libmysqlclient-dev
+    - libjpeg-dev
+    - zlib1g-dev
 
 - name: Install yuglify
   become: yes

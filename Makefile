@@ -1,4 +1,4 @@
-.PHONY: all env install start test
+.PHONY: all env install start test provision_ansible_vars
 
 SHELL := /usr/bin/env bash
 HELIUMCLI_PROJECTS ?= '["platform", "frontend", "ci-tests"]'
@@ -10,7 +10,7 @@ env:
 
 install: env
 	@python -m pip install -r requirements.txt
-	@ansible-galaxy install --force Datadog.datadog,2.2.0
+	@ansible-galaxy install --force datadog.datadog
 
 	@HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
 
@@ -33,3 +33,6 @@ test:
 
 	@ansible-playbook ansible/devbox.yml --syntax-check
 	@vagrant validate
+
+provision_ansible_vars:
+	@python scripts/provision-ansible-vars.py

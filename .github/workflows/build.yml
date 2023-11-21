@@ -1,4 +1,4 @@
-name: "CI/CD"
+name: "CI Tests"
 
 on:
   push:
@@ -15,12 +15,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.x
+      - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.x
+          python-version: 3.11
       - name: Install Virtualbox
         run: |
+          sudo apt-get update
           sudo apt-get install -y virtualbox
           wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
           sudo dpkg -i vagrant_2.2.10_x86_64.deb

@@ -11,7 +11,7 @@
     - { role: supervisor }
     - { role: celeryworker }
     - { role: celerybeat }
-    - { role: Datadog.datadog, become: yes }
+    - { role: datadog.datadog, become: yes }
 
     # CI
     - { role: selenium }
