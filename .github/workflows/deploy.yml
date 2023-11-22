@@ -1,5 +1,7 @@
 name: "CD"
 
+run-name: "Deploy ${{ github.ref_name }} to stage"
+
 on:
   workflow_dispatch:
     inputs:
@@ -46,6 +48,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Node 14
+        uses: actions/setup-node@v4
+        with:
+          node-version: 14
       - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
