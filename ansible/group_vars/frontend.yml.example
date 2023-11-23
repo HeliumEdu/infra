@@ -8,6 +8,8 @@ helium_host: "{%HELIUM_HOST%}"
 project_datadog_api_key: "{%PROJECT_DATADOG_API_KEY%}"
 project_datadog_app_key: "{%PROJECT_DATADOG_APP_KEY%}"
 
+rollbar_server_access_token: "{%PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN%}"
+
 frontend_host: "{{ helium_host }}"
 frontend_host_alias: "www.{{ helium_host }}"
 frontend_ssl: True

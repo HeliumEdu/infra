@@ -13,7 +13,7 @@ install: env
 	@python -m pip install -r requirements.txt
 	@ansible-galaxy install --force datadog.datadog
 
-	@if [ $(SKIP_UPDATE) != "true" ] ; then HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects ; fi
+	@HELIUMCLI_FORCE_FETCH=True HELIUMCLI_SKIP_UPDATE_PULL=True HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
 
 	@vagrant plugin install vagrant-hostsupdater
 	@vagrant plugin install vagrant-host-shell
@@ -22,7 +22,7 @@ start:
 	@vagrant up
 	@mkdir -p ~/.ssh
 	@if ! cat ~/.ssh/config | grep -xqFe "Host heliumedu.test" ; then vagrant ssh-config --host heliumedu.test >> ~/.ssh/config ; fi
-	@helium-cli deploy-build master devbox
+	@helium-cli deploy-build main devbox
 
 test:
 	@if [ ! -f ansible/devbox.yml ] ; then echo "ansible/devbox.yml not found" & exit 1 ; fi

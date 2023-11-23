@@ -108,8 +108,6 @@
   vars:
     host: "{{ frontend_host }}"
   when: letsencrypt_ssl is defined and letsencrypt_ssl
-  tags:
-    - ssl
 
 - name: Ensure Apache is reloaded
   become: yes

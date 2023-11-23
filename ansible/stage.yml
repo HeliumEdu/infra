@@ -25,10 +25,11 @@
     - { role: common }
 
     # Infrastructure
+    - { role: apache }
     - { role: datadog.datadog, become: yes }
 
     # Projects
-    - { role: helium-platform }
+    - { role: helium-platform, web_node: True }
   vars:
     deploy_group: "{{ domain_environment }}"
     datadog_api_key: "{{ project_datadog_api_key }}"
@@ -51,7 +52,10 @@
     - { role: datadog.datadog, become: yes }
 
     # Projects
-    - { role: helium-platform }
+    - { role: helium-platform, web_node: False }
+
+    # Notify Rollbar (last step)
+    - { role: rollbar-deploy }
   vars:
     deploy_group: "{{ domain_environment }}"
     datadog_api_key: "{{ project_datadog_api_key }}"

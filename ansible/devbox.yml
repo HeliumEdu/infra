@@ -6,6 +6,7 @@
     - { role: common }
 
     # Infrastructure
+    - { role: apache }
     - { role: mysql }
     - { role: redis }
     - { role: supervisor }
@@ -17,8 +18,8 @@
     - { role: selenium }
 
     # Projects
-    - { role: helium-platform, download_code: False }
     - { role: helium-frontend, download_code: False }
+    - { role: helium-platform, download_code: False }
   vars:
     deploy_group: "devbox"
     datadog_api_key: "{{ project_datadog_api_key }}"

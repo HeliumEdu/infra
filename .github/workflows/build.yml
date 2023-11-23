@@ -2,9 +2,9 @@ name: "CI Tests"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 
 jobs:
@@ -29,6 +29,12 @@ jobs:
           sudo apt-get install -y virtualbox
           wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
           sudo dpkg -i vagrant_2.2.10_x86_64.deb
+      - name: Install GitHub SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY_GITHUB }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
+          if_key_exists: replace
       - name: Install dependencies
         run:
           make install

@@ -69,4 +69,4 @@
     host: "{{ platform_host }}"
   when: letsencrypt_ssl is defined and letsencrypt_ssl
   tags:
-    - ssl
+     - ssl

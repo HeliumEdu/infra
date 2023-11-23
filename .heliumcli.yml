@@ -7,3 +7,5 @@ projects: [platform, frontend, ci-tests]
 projectsRelativeDir: projects
 serverBinFilename: bin/runserver
 versionInfo: {path: conf/configs/common.py, project: platform}
+remoteName: origin
+branchName: main

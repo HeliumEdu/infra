@@ -29,6 +29,7 @@ def main():
                 "HELIUM_HOST",
                 "PROJECT_DATADOG_API_KEY",
                 "PROJECT_DATADOG_APP_KEY",
+                "PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN",
                 "PLATFORM_DB_HOST",
                 "PLATFORM_DB_USER",
                 "PLATFORM_DB_PASSWORD",]:
