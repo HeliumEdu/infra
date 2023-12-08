@@ -2,7 +2,7 @@ Vagrant.configure('2') do |config|
   config.ssh.forward_agent = true
 
   config.vm.define 'devbox' do |node|
-    node.vm.box = 'bento/ubuntu-16.04'
+    node.vm.box = 'bento/ubuntu-22.04'
 
     node.vm.network 'private_network', ip: '10.1.0.10'
 

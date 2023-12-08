@@ -1,6 +1,6 @@
-name: "Release"
+name: "Cut Release"
 
-run-name: "Release ${{ github.event.inputs.version }}"
+run-name: "Cutting release ${{ github.event.inputs.version }}"
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  deploy:
+  release:
     name: Release
 
     runs-on: ubuntu-20.04

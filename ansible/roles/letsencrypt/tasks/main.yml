@@ -1,12 +1,4 @@
 ---
-- name: Install repository
-  become: yes
-  apt_repository:
-    repo: 'ppa:certbot/certbot'
-    state: present
-    update_cache: yes
-    mode: 0644
-
 - name: Install packages
   become: yes
   apt:
@@ -14,7 +6,8 @@
     state: present
     update_cache: yes
   with_items:
-    - python-certbot-apache
+    - certbot
+    - python3-certbot-apache
   when: letsencrypt_ssl
 
 - name: Install SSL

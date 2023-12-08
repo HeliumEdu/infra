@@ -1,12 +1,4 @@
 ---
-- name: Install repository
-  become: yes
-  apt_repository:
-    repo: 'ppa:ondrej/apache2'
-    state: present
-    update_cache: yes
-    mode: 0644
-
 - name: Install packages
   become: yes
   apt:

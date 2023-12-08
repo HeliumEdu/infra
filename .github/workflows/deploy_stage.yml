@@ -1,4 +1,4 @@
-name: "CD"
+name: "Deploy"
 
 run-name: "Deploy ${{ github.ref_name }} to stage"
 

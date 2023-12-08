@@ -1,12 +1,4 @@
 ---
-- name: Install repository
-  become: yes
-  apt_repository:
-    repo: 'ppa:ondrej/mysql-5.7'
-    state: present
-    update_cache: yes
-    mode: 0644
-
 - name: Install packages
   become: yes
   apt:
@@ -14,10 +6,12 @@
     state: present
     update_cache: yes
   with_items:
-    - mysql-server-5.7
-    - mysql-client-5.7
-    - python-mysqldb
+    - mysql-server
+    - mysql-client
+    - python3-mysqldb
     - libmysqlclient-dev
+    - default-libmysqlclient-dev
+    - pkg-config
 
 - name: Configure bind address
   become: yes
