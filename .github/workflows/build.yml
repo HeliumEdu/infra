@@ -38,8 +38,6 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
           if_key_exists: replace
       - name: Install dependencies
-        run:
-          make install
-      - name: Run tests
-        run:
-          make test
+        run: make install
+      - name: Test
+        run: make test

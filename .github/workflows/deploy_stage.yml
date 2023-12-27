@@ -69,14 +69,11 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
           if_key_exists: replace
       - name: Install dependencies
-        run:
-          make install
-      - name: Run tests
-        run:
-          make test
+        run: make install
+      - name: Test
+        run: make test
       - name: Provision Ansible Vars
-        run:
-          make provision_ansible_vars
+        run: make provision_ansible_vars
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -84,5 +81,4 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
           if_key_exists: replace
       - name: Deploy
-        run:
-          helium-cli deploy-build ${{ github.ref_name }} stage${{ github.event.inputs.code-arg == 'true' && ' --code' || '' }}${{ github.event.inputs.envvars-arg == 'true' && ' --envvars' || '' }}
+        run: helium-cli deploy-build ${{ github.ref_name }} stage${{ github.event.inputs.code-arg == 'true' && ' --code' || '' }}${{ github.event.inputs.envvars-arg == 'true' && ' --envvars' || '' }}
