@@ -1,5 +1,5 @@
 [![Build](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml/badge.svg)](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml)
-![Python Versions](https://img.shields.io/badge/python-%203.8%20|%203.9%20|%203.10%20|%203.11%20-blue)
+![Python Versions](https://img.shields.io/badge/python-%203.10%20|%203.11%20-blue)
 ![GitHub License](https://img.shields.io/github/license/heliumedu/deploy)
 
 # Deploy Environment
@@ -12,8 +12,7 @@ minimal time and to deploy code to other environments using [Ansible](https://ww
 ## Prerequisites
 
 - A permissioned SSH key at ~/.ssh/id_rsa
-- Python (>= 3.8)
-- Pip (>= 9.0)
+- Python (>= 3.10)
 - VirtualBox (>= 5.1)
 - Vagrant (>= 2.2.10)
 - Hosts Ubuntu 22.04

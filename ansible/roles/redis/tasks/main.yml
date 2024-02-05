@@ -11,21 +11,21 @@
   - wget
 
 - name: Download source
-  shell: wget -O - http://download.redis.io/releases/redis-3.2.6.tar.gz | tar -xz -C /tmp
+  shell: wget -O - http://download.redis.io/releases/redis-5.0.6.tar.gz | tar -xz -C /tmp
   args:
-    creates: /tmp/redis-3.2.6
+    creates: /tmp/redis-5.0.6
 
 - name: Install
   shell: make
   args:
-    chdir: /tmp/redis-3.2.6
-    creates: /tmp/redis-3.2.6/src/redis-server
+    chdir: /tmp/redis-5.0.6
+    creates: /tmp/redis-5.0.6/src/redis-server
 
 - name: Compile binaries
   become: yes
   shell: cp -f {{item}} /usr/local/bin
   args:
-    chdir: /tmp/redis-3.2.6/src
+    chdir: /tmp/redis-5.0.6/src
   with_items:
   - redis-cli
   - redis-server
