@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+__copyright__ = "Copyright (c) 2018 Helium Edu"
+__license__ = "MIT"
+
 import os
 
 BASE_DIR = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..'))

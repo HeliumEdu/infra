@@ -1,4 +1,5 @@
 ansibleCopyrightNameVar: project_developer
+updateCopyrightYear: false
 ansibleRelativeDir: ansible
 gitProject: git@github.com:HeliumEdu
 hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && sudo

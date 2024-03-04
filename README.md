@@ -1,10 +1,10 @@
-[![Build](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml/badge.svg)](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml)
+<p align="center"><img src="https://www.heliumedu.com/assets/img/logo_full_blue.png" /></p>
+
 ![Python Versions](https://img.shields.io/badge/python-%203.10%20|%203.11%20-blue)
+[![Build](https://img.shields.io/github/actions/workflow/status/HeliumEdu/deploy/build.yml)](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml)
 ![GitHub License](https://img.shields.io/github/license/heliumedu/deploy)
 
 # Deploy Environment
-
-<p align="center"><img src="https://www.heliumedu.com/assets/img/logo_full_blue.png" /></p>
 
 This repository contains everything that is necessary to get a development environment setup on a local machine in
 minimal time and to deploy code to other environments using [Ansible](https://www.ansible.com/).
