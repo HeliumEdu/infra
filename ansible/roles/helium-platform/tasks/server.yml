@@ -58,7 +58,7 @@
     line: "export {{ item.key }}=\"{{ item.value }}\""
     regexp: "export {{ item.key }}="
   with_dict: "{{ env_vars }}"
-  notify: reload apache
+  notify: restart apache
   tags:
      - envvars
 
