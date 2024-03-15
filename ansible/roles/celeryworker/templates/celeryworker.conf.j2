@@ -12,4 +12,3 @@ startsecs=10
 stopwaitsecs=600
 killasgroup=true
 priority=999
-environment=PLATFORM_WORKER_MODE="True",{% for item in env_vars %}{{ item }}="{{ env_vars[item] }}"{% if not loop.last %},{% endif %}{% endfor %}

@@ -26,6 +26,16 @@
     group: "root"
     mode: "0644"
 
+- name: Environment variables
+  become: yes
+  lineinfile:
+    dest: /etc/environment
+    line: "{{ item.key }}=\"{{ item.value }}\""
+    regexp: "{{ item.key }}="
+  with_dict: "{{ env_vars }}"
+  tags:
+     - envvars
+
 - name: Setup SSH config dir
   become: yes
   become_user: "{{ ansible_env.HOME|basename }}"

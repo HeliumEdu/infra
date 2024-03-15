@@ -26,9 +26,11 @@
     group: root
     mode: 0644
   become: yes
-  notify: restart supervisor
+  with_dict: "{{ env_vars }}"
+  notify: update supervisor
   tags:
      - conf
+     - envvars
 
 - name: Ensure supervisor is running
   become: yes

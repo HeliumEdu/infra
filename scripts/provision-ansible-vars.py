@@ -20,6 +20,7 @@ def main():
                 "PLATFORM_WEB_IP_ADDRESS",
                 "PLATFORM_WORKER_PUBLIC_DNS",
                 "PLATFORM_WORKER_IP_ADDRESS"]:
+        print(f"Replacing {var}")
         s = s.replace("{%" + var + "%}", os.environ.get(var))
     with open(hosts_out_path, "w") as f:
         f.write(s)
@@ -35,7 +36,8 @@ def main():
                 "PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN",
                 "PLATFORM_DB_HOST",
                 "PLATFORM_DB_USER",
-                "PLATFORM_DB_PASSWORD",]:
+                "PLATFORM_DB_PASSWORD"]:
+        print(f"Replacing {var}")
         s = s.replace("{%" + var + "%}", os.environ.get(var))
     with open(frontend_out_path, "w") as f:
         f.write(s)
@@ -52,16 +54,11 @@ def main():
                 "PLATFORM_DB_HOST",
                 "PLATFORM_DB_USER",
                 "PLATFORM_DB_PASSWORD",
-                "PLATFORM_AWS_S3_ACCESS_KEY_ID",
-                "PLATFORM_AWS_S3_SECRET_ACCESS_KEY",
-                "PLATFORM_TWILIO_ACCOUNT_SID",
-                "PLATFORM_TWILIO_AUTH_TOKEN",
                 "PLATFORM_TWILIO_SMS_FROM",
-                "PLATFORM_SECRET_KEY",
-                "PLATFORM_CSRF_MIDDLEWARE_SECRET",
-                "PLATFORM_EMAIL_HOST_USER",
-                "PLATFORM_EMAIL_HOST_PASSWORD",
-                "PLATFORM_REDIS_HOST"]:
+                "PLATFORM_REDIS_HOST",
+                "PLATFORM_AWS_SECRET_MANAGER_SECRET_NAME",
+                "PLATFORM_AWS_SECRET_MANAGER_REGION"]:
+        print(f"Replacing {var}")
         s = s.replace("{%" + var + "%}", os.environ.get(var))
     with open(platform_out_path, "w") as f:
         f.write(s)

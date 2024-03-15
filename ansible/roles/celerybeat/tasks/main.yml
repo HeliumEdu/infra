@@ -8,7 +8,6 @@
     mode: "0644"
   vars:
     root_dir: "{{ platform_root }}"
-  with_dict: "{{ env_vars }}"
   become: yes
   notify: update supervisor
   tags:
