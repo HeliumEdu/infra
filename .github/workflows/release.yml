@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           ssh-key: ${{ secrets.SSH_KEY_GITHUB }}
       - name: Set up Node 14
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 14
       - name: Set up Python 3.11
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - name: Install Virtualbox
