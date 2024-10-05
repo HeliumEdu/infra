@@ -1,9 +1,9 @@
 /projects
-.vagrant
-*.retry
 *.log
 .idea/
 *.iml
 *.pyc
 *.swp
 .DS_Store
+*.terraform
+*.lock.hcl

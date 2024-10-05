@@ -1,8 +1,0 @@
-[frontend]
-{%FRONTEND_PUBLIC_DNS%} ansible_user={%EC2_USER%} ip_address={%FRONTEND_IP_ADDRESS%}
-
-[platform_web]
-{%PLATFORM_WEB_PUBLIC_DNS%} ansible_user={%EC2_USER%} ip_address={%PLATFORM_WEB_IP_ADDRESS%}
-
-[platform_worker]
-{%PLATFORM_WORKER_PUBLIC_DNS%} ansible_user={%EC2_USER%} ip_address={%PLATFORM_WORKER_IP_ADDRESS%}

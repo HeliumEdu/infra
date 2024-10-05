@@ -1,5 +1,0 @@
----
-dependencies:
-    - { role: pip }
-    - { role: make }
-    - { role: node }

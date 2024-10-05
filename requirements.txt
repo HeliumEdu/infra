@@ -1,2 +1,1 @@
-ansible>=2.10,<7
-heliumcli>=1.6.13
+heliumcli>=1.6.26

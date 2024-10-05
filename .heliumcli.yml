@@ -1,12 +1,18 @@
 ansibleCopyrightNameVar: project_developer
-updateCopyrightYear: false
 ansibleRelativeDir: ansible
+branchName: main
+copyrightName: Helium Edu
 gitProject: git@github.com:HeliumEdu
 hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && sudo
   apt-get -y autoremove
-projects: [platform, frontend, ci-tests]
+projects:
+- platform
+- frontend
+- ci-tests
 projectsRelativeDir: projects
-serverBinFilename: bin/runserver
-versionInfo: {path: conf/configs/common.py, project: platform}
 remoteName: origin
-branchName: main
+serverBinFilename: bin/runserver
+updateCopyrightYear: false
+versionInfo:
+  path: conf/configs/common.py
+  project: platform

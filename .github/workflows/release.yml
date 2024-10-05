@@ -1,6 +1,6 @@
-name: "Cut Release"
+name: "Release"
 
-run-name: "Cutting release ${{ github.event.inputs.version }}"
+run-name: "Release ${{ github.event.inputs.version }}"
 
 on:
   workflow_dispatch:
@@ -12,26 +12,23 @@ jobs:
   release:
     name: Release
 
-    runs-on: ubuntu-20.04
+    env:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.SSH_KEY_GITHUB }}
-      - name: Set up Node 14
+      - name: Set up Node 18
         uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 18
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
-      - name: Install Virtualbox
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y virtualbox
-          wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
-          sudo dpkg -i vagrant_2.2.10_x86_64.deb
       - name: Setup git
         run: |
           git config --global user.name "GitHub Release Bot"
@@ -44,7 +41,9 @@ jobs:
           if_key_exists: replace
       - name: Install dependencies
         run: make install
-      - name: Test
-        run: make test
+      - name: Build
+        run: TAG_VERSION=${{ github.event.inputs.version }} make build
       - name: Release
         run: helium-cli build-release ${{ github.event.inputs.version }}
+      - name: Publish
+        run: TAG_VERSION=${{ github.event.inputs.version }} make publish
