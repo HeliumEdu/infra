@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container versions to deploy"
-  default     = "1.7.0"
+  default     = "1.7.1"
 }
 
 variable "environment" {

@@ -19,7 +19,7 @@ output "s3_access_key_id" {
 
 output "s3_access_key_secret" {
   sensitive = true
-  value     = aws_iam_access_key.s3_access_key.ses_smtp_password_v4
+  value     = aws_iam_access_key.s3_access_key.secret
 }
 
 data "aws_iam_policy_document" "helium_s3" {

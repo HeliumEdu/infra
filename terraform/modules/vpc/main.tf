@@ -143,7 +143,7 @@ resource "aws_security_group" "elasticache" {
 }
 
 output "elasticache_sg" {
-  value = aws_security_group.mysql.id
+  value = aws_security_group.elasticache.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_elasticache_ipv4" {
