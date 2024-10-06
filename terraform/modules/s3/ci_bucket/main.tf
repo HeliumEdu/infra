@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "heliumedu" {
-  bucket = "heliumedu-${var.environment}"
+  bucket = "heliumedu.${var.environment}"
 }
 
 resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
@@ -11,7 +11,7 @@ resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
   restrict_public_buckets = true
 }
 
-data "aws_iam_policy_document" "allow_ses_ci_dump" {
+data "aws_iam_policy_document" "allow_ses_access" {
   statement {
     principals {
       type = "Service"
@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "allow_ses_ci_dump" {
     }
 
     resources = [
-      "arn:aws:s3:::heliumedu-${var.environment}/ci.email/*",
+      "arn:aws:s3:::heliumedu.${var.environment}/ci.email/**",
     ]
 
     actions = [
@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "allow_ses_ci_dump" {
   }
 }
 
-resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+resource "aws_s3_bucket_policy" "allow_ses_access" {
   bucket = aws_s3_bucket.heliumedu.id
-  policy = data.aws_iam_policy_document.allow_ses_ci_dump.json
+  policy = data.aws_iam_policy_document.allow_ses_access.json
 }

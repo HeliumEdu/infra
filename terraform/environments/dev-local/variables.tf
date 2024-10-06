@@ -15,6 +15,14 @@ variable "aws_region" {
 
 ### Variables defined below this point must have their defaults defined in the Terraform Workspace
 
+variable "AWS_ACCESS_KEY_ID" {
+  description = "The AWS access key ID"
+}
+
+variable "AWS_SECRET_ACCESS_KEY" {
+  description = "The AWS secret access key"
+}
+
 variable "aws_account_id" {
   description = "The AWS account ID"
 }

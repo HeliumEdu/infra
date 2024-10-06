@@ -8,6 +8,10 @@ resource "aws_acm_certificate" "heliumedu_com" {
   }
 }
 
+output "heliumedu_com_cert_arn" {
+  value = aws_acm_certificate.heliumedu_com.arn
+}
+
 resource "aws_route53_record" "heliumedu_com" {
   for_each = {
     for dvo in aws_acm_certificate.heliumedu_com.domain_validation_options : dvo.domain_name => {
