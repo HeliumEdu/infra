@@ -30,4 +30,4 @@ Done! Now that your environment has been initialized, to quickly bring up Docker
 
 When a tag is pushed to this repository, a release is cut, and container images published to
 [AWS ECR](https://aws.amazon.com/ecr/). To deploy this new release, bump the [Image URI version variable in Terraform](https://github.com/HeliumEdu/deploy/blob/main/terraform/environments/prod/variables.tf#L1).
-Pushing this change trigger the fleet to roll to this release when the Terraform is applied.
+Pushing this change triggers the Terraform to apply, which in turn will roll the fleet to this new version.

@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  aws_account_id = data.aws_caller_identity.current.account_id
+}
+
 module "route53" {
   source = "../../modules/route53"
 
@@ -17,7 +23,7 @@ module "certificatemanager" {
 module "s3" {
   source = "../../modules/s3/ci_bucket"
 
-  aws_account_id = var.aws_account_id
+  aws_account_id = local.aws_account_id
   environment    = var.environment
 }
 

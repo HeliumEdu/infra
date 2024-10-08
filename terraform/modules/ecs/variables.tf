@@ -2,6 +2,18 @@ variable "helium_version" {
   description = "The container versions to deploy"
 }
 
+variable "frontend_repository_uri" {
+  description = "Frontend container repo URI"
+}
+
+variable "platform_api_repository_uri" {
+  description = "Platform API container repo URI"
+}
+
+variable "platform_worker_repository_uri" {
+  description = "Platform Worker container repo URI"
+}
+
 variable "environment" {
   description = "The environment"
   type        = string

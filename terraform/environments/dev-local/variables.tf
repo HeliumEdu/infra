@@ -23,10 +23,6 @@ variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
 }
 
-variable "aws_account_id" {
-  description = "The AWS account ID"
-}
-
 variable "helium_twiml_handler_url" {
   description = "The URL for the TwiML Bin"
 }

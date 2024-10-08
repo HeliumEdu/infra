@@ -43,7 +43,7 @@ jobs:
         run: make install
       - name: Build
         run: TAG_VERSION=${{ github.event.inputs.version }} make build
-      - name: Release
+      - name: Build release
         run: helium-cli build-release ${{ github.event.inputs.version }}
-      - name: Publish
+      - name: Publish containers
         run: TAG_VERSION=${{ github.event.inputs.version }} make publish

@@ -4,7 +4,7 @@ resource "aws_elasticache_subnet_group" "helium" {
 }
 
 resource "aws_elasticache_cluster" "helium" {
-  cluster_id        = "helium"
+  cluster_id        = "helium-${var.environment}"
   engine            = "redis"
   node_type         = "cache.t3.micro"
   num_cache_nodes   = 1
@@ -13,4 +13,6 @@ resource "aws_elasticache_cluster" "helium" {
   subnet_group_name = aws_elasticache_subnet_group.helium.name
 }
 
-# TODO: AWS doesn't give us a way to get an endpoint from the cluster, so will need to let Terraform provision, set env var, then run again
+output "elasticache_host" {
+  value = aws_elasticache_cluster.helium.cache_nodes[0].address
+}

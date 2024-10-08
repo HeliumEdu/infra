@@ -1,18 +1,36 @@
+resource "random_string" "username" {
+  length  = 16
+  special = false
+}
+
+output "db_username" {
+  value = random_string.username.result
+}
+
+resource "random_password" "password" {
+  length  = 26
+  special = false
+}
+
+output "db_password" {
+  value = random_password.password.result
+}
+
 resource "aws_db_subnet_group" "helium" {
   name       = "helium"
   subnet_ids = [for id in var.subnet_ids : id]
 }
 
-# TODO: AWS doesn't allow multiple DBs on a single Terraform resource, so this won't work until we split databases out
-
 resource "aws_db_instance" "helium" {
+  identifier                 = "helium-${var.environment}"
   allocated_storage          = 20
-  db_name                    = "helium-platform-${var.environment}"
+  db_name                    = "platform_${var.environment}"
   engine                     = "mysql"
   engine_version             = "8.0"
   instance_class             = "db.t3.micro"
-  username                   = var.username
-  password                   = var.password
+  username                   = random_string.username.result
+  password                   = random_password.password.result
+  storage_encrypted          = true
   skip_final_snapshot        = true
   auto_minor_version_upgrade = true
   deletion_protection        = true
@@ -22,5 +40,5 @@ resource "aws_db_instance" "helium" {
 }
 
 output "db_host" {
-  value = aws_db_instance.helium.endpoint
+  value = aws_db_instance.helium.address
 }

@@ -13,6 +13,11 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "task_execution_role_arn" {
+  description = "The Task execution role ARN"
+  type        = string
+}
+
 # Below are the variable definitions for values to be stored in the Secrets Manager
 
 variable "smtp_email_user" {
@@ -56,10 +61,6 @@ variable "db_user" {
 }
 
 variable "db_password" {
-  type = string
-}
-
-variable "platform_secret" {
   type = string
 }
 

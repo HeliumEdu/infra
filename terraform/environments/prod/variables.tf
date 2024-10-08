@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container versions to deploy"
-  default     = "1.7.1"
+  default     = "1.7.2"
 }
 
 variable "environment" {
@@ -28,10 +28,6 @@ variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
 }
 
-variable "aws_account_id" {
-  description = "The AWS account ID"
-}
-
 variable "helium_twiml_handler_url" {
   description = "The URL for the TwiML Bin"
 }
@@ -48,18 +44,6 @@ variable "DD_APP_KEY" {
   description = "The DataDog app key"
 }
 
-variable "PLATFORM_DB_USER" {
-  description = "The MySQL DB username"
-}
-
-variable "PLATFORM_DB_PASSWORD" {
-  description = "The MySQL DB password"
-}
-
-variable "PLATFORM_SECRET_PROD" {
-  description = "The Django secret"
-}
-
 variable "ROLLBAR_API_KEY" {
   description = "The Rollbar API key"
 }
@@ -70,12 +54,4 @@ variable "TWILIO_ACCOUNT_SID" {
 
 variable "TWILIO_AUTH_TOKEN" {
   description = "The Twilio auth token"
-}
-
-# TODO: ideally we find a way to get these through outputs from the modules so we don't have to run apply twice, but for now defining them here
-variable "PLATFORM_REDIS_HOST" {
-  description = "Redis host"
-}
-variable "PLATFORM_DB_HOST" {
-  description = "MySQL host"
 }

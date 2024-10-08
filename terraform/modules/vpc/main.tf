@@ -20,8 +20,15 @@ resource "aws_subnet" "subnet_us_east_1b" {
   map_public_ip_on_launch = true
 }
 
+resource "aws_subnet" "subnet_us_east_1c" {
+  vpc_id                  = aws_vpc.helium_vpc.id
+  cidr_block              = "172.30.2.0/24"
+  availability_zone       = "us-east-1c"
+  map_public_ip_on_launch = true
+}
+
 output "subnet_ids" {
-  value = [aws_subnet.subnet_us_east_1a.id, aws_subnet.subnet_us_east_1b.id]
+  value = [aws_subnet.subnet_us_east_1a.id, aws_subnet.subnet_us_east_1b.id, aws_subnet.subnet_us_east_1c.id]
 }
 
 resource "aws_internet_gateway" "helium_gateway" {
@@ -33,8 +40,23 @@ resource "aws_route_table" "helium_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_internet_gateway.helium_gateway.id
+    gateway_id = aws_internet_gateway.helium_gateway.id
   }
+}
+
+resource "aws_route_table_association" "us_east_1a" {
+  subnet_id      = aws_subnet.subnet_us_east_1a.id
+  route_table_id = aws_route_table.helium_route_table.id
+}
+
+resource "aws_route_table_association" "us_east_1b" {
+  subnet_id      = aws_subnet.subnet_us_east_1b.id
+  route_table_id = aws_route_table.helium_route_table.id
+}
+
+resource "aws_route_table_association" "us_east_1c" {
+  subnet_id      = aws_subnet.subnet_us_east_1c.id
+  route_table_id = aws_route_table.helium_route_table.id
 }
 
 resource "aws_security_group" "http_s" {
