@@ -49,6 +49,10 @@ resource "aws_lb_target_group" "frontend" {
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.helium_vpc_id
+
+  health_check {
+    path = "/health"
+  }
 }
 
 output "frontend_target_group" {
