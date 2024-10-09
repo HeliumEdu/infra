@@ -86,6 +86,12 @@ resource "aws_ecs_task_definition" "frontend_service" {
           appProtocol   = "http"
         }
       ]
+      environment = [
+        {
+          name  = "PROJECT_API_HOST"
+          value = "https://api.${var.environment_prefix}heliumedu.com"
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {

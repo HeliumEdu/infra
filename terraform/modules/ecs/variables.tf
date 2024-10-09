@@ -19,6 +19,11 @@ variable "environment" {
   type        = string
 }
 
+variable "environment_prefix" {
+  description = "Prefix used for env in hostnames (empty string when `prod`)"
+  type        = string
+}
+
 variable "aws_region" {
   description = "The AWS region"
   type        = string
