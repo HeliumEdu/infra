@@ -217,8 +217,8 @@ resource "aws_ecs_task_definition" "platform_service" {
     }
   ])
 
-  cpu    = "2048"
-  memory = "4096"
+  cpu    = "1024"
+  memory = "2048"
 
   task_role_arn      = aws_iam_role.ecs_role.arn
   execution_role_arn = aws_iam_role.ecs_role.arn
@@ -244,11 +244,13 @@ resource "aws_ecs_cluster_capacity_providers" "helium" {
 }
 
 resource "aws_ecs_service" "helium_frontend" {
-  name                              = "helium_frontend"
-  cluster                           = aws_ecs_cluster.helium.id
-  task_definition                   = aws_ecs_task_definition.frontend_service.arn
-  desired_count                     = 1
-  health_check_grace_period_seconds = 10
+  name                               = "helium_frontend"
+  cluster                            = aws_ecs_cluster.helium.id
+  task_definition                    = aws_ecs_task_definition.frontend_service.arn
+  desired_count                      = 1
+  health_check_grace_period_seconds  = 10
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   capacity_provider_strategy {
     base              = 1
@@ -270,11 +272,13 @@ resource "aws_ecs_service" "helium_frontend" {
 }
 
 resource "aws_ecs_service" "helium_platform" {
-  name                              = "helium_platform"
-  cluster                           = aws_ecs_cluster.helium.id
-  task_definition                   = aws_ecs_task_definition.platform_service.arn
-  desired_count                     = 2
-  health_check_grace_period_seconds = 10
+  name                               = "helium_platform"
+  cluster                            = aws_ecs_cluster.helium.id
+  task_definition                    = aws_ecs_task_definition.platform_service.arn
+  desired_count                      = 1
+  health_check_grace_period_seconds  = 10
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   capacity_provider_strategy {
     base              = 1
