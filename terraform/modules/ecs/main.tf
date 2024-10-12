@@ -71,6 +71,11 @@ resource "aws_cloudwatch_log_group" "helium_platform" {
   retention_in_days = 30
 }
 
+resource "aws_cloudwatch_log_group" "helium_platform_beat" {
+  name              = "/ecs/helium_platform_beat_${var.environment}"
+  retention_in_days = 30
+}
+
 resource "aws_ecs_task_definition" "frontend_service" {
   family = "helium_frontend"
   container_definitions = jsonencode([
@@ -186,14 +191,6 @@ resource "aws_ecs_task_definition" "platform_service" {
         {
           name  = "USE_AWS_SECRETS_MANAGER"
           value = "True"
-        },
-        {
-          name  = "PLATFORM_WORKER_BEAT_MODE"
-          value = "True"
-        },
-        {
-          name  = "PLATFORM_BEAT_AND_WORKER_ENABLED"
-          value = "True"
         }
       ]
       logConfiguration = {
@@ -227,6 +224,73 @@ resource "aws_ecs_task_definition" "platform_service" {
 
   cpu    = "1024"
   memory = "2048"
+
+  task_role_arn      = aws_iam_role.ecs_role.arn
+  execution_role_arn = aws_iam_role.ecs_role.arn
+  network_mode       = "awsvpc"
+  requires_compatibilities = [
+    "FARGATE"
+  ]
+
+  runtime_platform {
+    cpu_architecture        = "X86_64"
+    operating_system_family = "LINUX"
+  }
+}
+
+resource "aws_ecs_task_definition" "platform_beat_service" {
+  family = "helium_platform_beat_${var.environment}"
+  container_definitions = jsonencode([
+    {
+      name      = "helium_platform_beat"
+      image     = "${var.platform_worker_repository_uri}:${var.helium_version}"
+      cpu       = 0
+      essential = true
+      environment = [
+        {
+          name  = "ENVIRONMENT"
+          value = var.environment
+        },
+        {
+          name  = "USE_AWS_SECRETS_MANAGER"
+          value = "True"
+        },
+        {
+          name  = "PLATFORM_WORKER_BEAT_MODE"
+          value = "True"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/helium_platform_beat_${var.environment}"
+          mode                  = "non-blocking"
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs"
+          awslogs-create-group  = "true"
+        }
+      }
+    },
+    {
+      name      = "datadog-agent"
+      image     = "public.ecr.aws/datadog/agent:latest"
+      cpu       = 0
+      essential = false
+      environment = [
+        {
+          name  = "ECS_FARGATE"
+          value = "true"
+        },
+        {
+          name  = "DD_API_KEY"
+          value = var.datadog_api_key
+        }
+      ]
+    }
+  ])
+
+  cpu    = "256"
+  memory = "512"
 
   task_role_arn      = aws_iam_role.ecs_role.arn
   execution_role_arn = aws_iam_role.ecs_role.arn
@@ -283,7 +347,7 @@ resource "aws_ecs_service" "helium_platform" {
   name                               = "helium_platform"
   cluster                            = aws_ecs_cluster.helium.id
   task_definition                    = aws_ecs_task_definition.platform_service.arn
-  desired_count                      = 1
+  desired_count                      = 2
   health_check_grace_period_seconds  = 10
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
@@ -304,5 +368,26 @@ resource "aws_ecs_service" "helium_platform" {
     target_group_arn = var.platform_target_group
     container_name   = "helium_platform_api"
     container_port   = 8000
+  }
+}
+
+resource "aws_ecs_service" "helium_platform_beat" {
+  name                               = "helium_platform_beat"
+  cluster                            = aws_ecs_cluster.helium.id
+  task_definition                    = aws_ecs_task_definition.platform_beat_service.arn
+  desired_count                      = 1
+  deployment_minimum_healthy_percent = 0
+  deployment_maximum_percent         = 100
+
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = "FARGATE"
+  }
+
+  network_configuration {
+    subnets          = [for id in var.subnet_ids : id]
+    security_groups = [var.http_platform]
+    assign_public_ip = true
   }
 }
