@@ -186,6 +186,14 @@ resource "aws_ecs_task_definition" "platform_service" {
         {
           name  = "USE_AWS_SECRETS_MANAGER"
           value = "True"
+        },
+        {
+          name  = "PLATFORM_WORKER_BEAT_MODE"
+          value = "True"
+        },
+        {
+          name  = "PLATFORM_BEAT_AND_WORKER_ENABLED"
+          value = "True"
         }
       ]
       logConfiguration = {
