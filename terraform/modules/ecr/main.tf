@@ -7,6 +7,15 @@ output "frontend_repository_uri" {
   value = aws_ecr_repository.repository_helium_frontend.repository_url
 }
 
+resource "aws_ecr_repository" "repository_helium_platform_resource" {
+  name                 = "helium/platform-resource"
+  image_tag_mutability = "MUTABLE"
+}
+
+output "platform_resource_repository_uri" {
+  value = aws_ecr_repository.repository_helium_platform_resource.repository_url
+}
+
 resource "aws_ecr_repository" "repository_helium_platform_api" {
   name                 = "helium/platform-api"
   image_tag_mutability = "MUTABLE"
