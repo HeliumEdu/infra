@@ -51,9 +51,9 @@ module "rds" {
 module "elasticache" {
   source = "../../modules/elasticache"
 
-  environment    = var.environment
-  subnet_ids     = module.vpc.subnet_ids
-  elasticache_sg = module.vpc.elasticache_sg
+  environment     = var.environment
+  subnet_ids      = module.vpc.subnet_ids
+  elasticache_sg  = module.vpc.elasticache_sg
   num_cache_nodes = var.num_cache_nodes
 }
 

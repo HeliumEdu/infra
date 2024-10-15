@@ -10,13 +10,9 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
 }
 
 resource "aws_iam_role" "ecs_role" {
-  name = "${var.environment}_ecs_task_role"
+  name = "helium-${var.environment}-ecs-task-role"
 
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy.json
-}
-
-output "task_execution_role_arn" {
-  value = aws_iam_role.ecs_role.arn
 }
 
 data "aws_iam_policy_document" "ecs_task_execution_policy" {
@@ -28,6 +24,7 @@ data "aws_iam_policy_document" "ecs_task_execution_policy" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "logs:CreateLogStream",
+      "logs:CreateLogGroup",
       "logs:PutLogEvents"
     ]
     resources = ["*"]
@@ -35,7 +32,7 @@ data "aws_iam_policy_document" "ecs_task_execution_policy" {
 }
 
 resource "aws_iam_role_policy" "ecs_task_execution_policy" {
-  name = "ECSExecutionPolicy"
+  name = "helium-${var.environment}-ecs-execution-policy"
   role = aws_iam_role.ecs_role.id
 
   policy = data.aws_iam_policy_document.ecs_task_execution_policy.json
@@ -49,20 +46,20 @@ data "aws_iam_policy_document" "get_secret_policy_document" {
       "secretsmanager:DescribeSecret"
     ]
     resources = [
-      "arn:aws:secretsmanager:us-east-1:${var.aws_account_id}:secret:*/helium**"
+      "arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:${var.environment}/helium**"
     ]
   }
 }
 
 resource "aws_iam_role_policy" "get_secret_policy" {
-  name = "GetSecret"
+  name = "helium-${var.environment}-get-secret-policy"
   role = aws_iam_role.ecs_role.id
 
   policy = data.aws_iam_policy_document.get_secret_policy_document.json
 }
 
 resource "aws_cloudwatch_log_group" "helium_frontend" {
-  name              = "/ecs/helium_frontend"
+  name              = "/ecs/helium_frontend_${var.environment}"
   retention_in_days = 30
 }
 
@@ -71,13 +68,8 @@ resource "aws_cloudwatch_log_group" "helium_platform" {
   retention_in_days = 30
 }
 
-resource "aws_cloudwatch_log_group" "helium_platform_beat" {
-  name              = "/ecs/helium_platform_beat_${var.environment}"
-  retention_in_days = 30
-}
-
 resource "aws_ecs_task_definition" "frontend_service" {
-  family = "helium_frontend"
+  family = "helium_frontend_${var.environment}"
   container_definitions = jsonencode([
     {
       name      = "helium_frontend"
@@ -100,7 +92,7 @@ resource "aws_ecs_task_definition" "frontend_service" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_frontend"
+          awslogs-group         = "/ecs/helium_frontend_${var.environment}"
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
@@ -123,6 +115,53 @@ resource "aws_ecs_task_definition" "frontend_service" {
           value = var.datadog_api_key
         }
       ]
+    }
+  ])
+
+  cpu    = "256"
+  memory = "512"
+
+  task_role_arn      = aws_iam_role.ecs_role.arn
+  execution_role_arn = aws_iam_role.ecs_role.arn
+  network_mode       = "awsvpc"
+  requires_compatibilities = [
+    "FARGATE"
+  ]
+
+  runtime_platform {
+    cpu_architecture        = "X86_64"
+    operating_system_family = "LINUX"
+  }
+}
+
+resource "aws_ecs_task_definition" "platform_resource_task" {
+  family = "helium_platform_resource_${var.environment}"
+  container_definitions = jsonencode([
+    {
+      name      = "helium_platform_resource"
+      image     = "${var.platform_resource_repository_uri}:${var.helium_version}"
+      cpu       = 0
+      essential = true
+      environment = [
+        {
+          name  = "ENVIRONMENT"
+          value = var.environment
+        },
+        {
+          name  = "USE_AWS_SECRETS_MANAGER"
+          value = "True"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          mode                  = "non-blocking"
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs"
+          awslogs-create-group  = "true"
+        }
+      }
     }
   ])
 
@@ -256,14 +295,14 @@ resource "aws_ecs_task_definition" "platform_beat_service" {
           value = "True"
         },
         {
-          name  = "PLATFORM_WORKER_BEAT_MODE"
+          name  = "PLATFORM_BEAT_MODE"
           value = "True"
         }
       ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_beat_${var.environment}"
+          awslogs-group         = "/ecs/helium_platform_${var.environment}"
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
@@ -306,7 +345,7 @@ resource "aws_ecs_task_definition" "platform_beat_service" {
 }
 
 resource "aws_ecs_cluster" "helium" {
-  name = "helium"
+  name = "helium_${var.environment}"
 }
 
 resource "aws_ecs_cluster_capacity_providers" "helium" {
@@ -319,7 +358,7 @@ resource "aws_ecs_service" "helium_frontend" {
   name                               = "helium_frontend"
   cluster                            = aws_ecs_cluster.helium.id
   task_definition                    = aws_ecs_task_definition.frontend_service.arn
-  desired_count                      = 1
+  desired_count                      = var.frontend_host_count
   health_check_grace_period_seconds  = 10
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
@@ -343,11 +382,23 @@ resource "aws_ecs_service" "helium_frontend" {
   }
 }
 
+data "aws_ecs_task_execution" "helium_platform_resource" {
+  cluster         = aws_ecs_cluster.helium.id
+  task_definition = aws_ecs_task_definition.platform_resource_task.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = [for id in var.subnet_ids : id]
+    assign_public_ip = true
+  }
+}
+
 resource "aws_ecs_service" "helium_platform" {
   name                               = "helium_platform"
   cluster                            = aws_ecs_cluster.helium.id
   task_definition                    = aws_ecs_task_definition.platform_service.arn
-  desired_count                      = 2
+  desired_count                      = var.platform_host_count
   health_check_grace_period_seconds  = 10
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
@@ -369,6 +420,11 @@ resource "aws_ecs_service" "helium_platform" {
     container_name   = "helium_platform_api"
     container_port   = 8000
   }
+
+  force_new_deployment = true
+  triggers = {
+    redeployment = plantimestamp()
+  }
 }
 
 resource "aws_ecs_service" "helium_platform_beat" {
@@ -387,7 +443,11 @@ resource "aws_ecs_service" "helium_platform_beat" {
 
   network_configuration {
     subnets          = [for id in var.subnet_ids : id]
-    security_groups = [var.http_platform]
     assign_public_ip = true
+  }
+
+  force_new_deployment = true
+  triggers = {
+    redeployment = plantimestamp()
   }
 }

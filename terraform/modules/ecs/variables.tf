@@ -2,8 +2,22 @@ variable "helium_version" {
   description = "The container versions to deploy"
 }
 
+variable "frontend_host_count" {
+  description = "The number of frontend hosts desired in the cluster"
+  type        = number
+}
+
+variable "platform_host_count" {
+  description = "The number of platform hosts desired in the cluster"
+  type        = number
+}
+
 variable "frontend_repository_uri" {
   description = "Frontend container repo URI"
+}
+
+variable "platform_resource_repository_uri" {
+  description = "Platform Resource container repo URI"
 }
 
 variable "platform_api_repository_uri" {

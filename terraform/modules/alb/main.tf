@@ -1,5 +1,5 @@
-resource "aws_lb" "helium_prod" {
-  name               = "helium-prod"
+resource "aws_lb" "helium" {
+  name               = "helium-${var.environment}"
   internal           = false
   load_balancer_type = "application"
   security_groups = [var.security_group]
@@ -14,8 +14,8 @@ resource "aws_route53_record" "heliumedu_com_lb_cname" {
   type    = "A"
 
   alias {
-    name                   = aws_lb.helium_prod.dns_name
-    zone_id                = aws_lb.helium_prod.zone_id
+    name                   = aws_lb.helium.dns_name
+    zone_id                = aws_lb.helium.zone_id
     evaluate_target_health = true
   }
 }
@@ -25,11 +25,11 @@ resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
   name    = "api.${var.environment_prefix}heliumedu.com"
   type    = "CNAME"
   ttl     = "600"
-  records = [aws_lb.helium_prod.dns_name]
+  records = [aws_lb.helium.dns_name]
 }
 
 resource "aws_lb_listener" "http_redirect" {
-  load_balancer_arn = aws_lb.helium_prod.arn
+  load_balancer_arn = aws_lb.helium.arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -55,10 +55,6 @@ resource "aws_lb_target_group" "frontend" {
   }
 }
 
-output "frontend_target_group" {
-  value = aws_lb_target_group.frontend.arn
-}
-
 resource "aws_lb_target_group" "platform" {
   name        = "helium-platform-http"
   port        = 8000
@@ -71,12 +67,8 @@ resource "aws_lb_target_group" "platform" {
   }
 }
 
-output "platform_target_group" {
-  value = aws_lb_target_group.platform.arn
-}
-
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.helium_prod.arn
+  load_balancer_arn = aws_lb.helium.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"

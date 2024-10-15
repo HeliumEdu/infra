@@ -6,20 +6,11 @@ module "ci_bucket" {
 }
 
 resource "aws_iam_user" "s3_user" {
-  name = "${var.environment}_helium_s3_user"
+  name = "helium-${var.environment}-s3-user"
 }
 
 resource "aws_iam_access_key" "s3_access_key" {
   user = aws_iam_user.s3_user.name
-}
-
-output "s3_access_key_id" {
-  value = aws_iam_access_key.s3_access_key.id
-}
-
-output "s3_access_key_secret" {
-  sensitive = true
-  value     = aws_iam_access_key.s3_access_key.secret
 }
 
 data "aws_iam_policy_document" "helium_s3" {
@@ -30,12 +21,21 @@ data "aws_iam_policy_document" "helium_s3" {
 }
 
 resource "aws_iam_policy" "ses_sender" {
-  name   = "AWSS3HeliumPolicy"
+  name   = "helium-${var.environment}-s3-access"
   policy = data.aws_iam_policy_document.helium_s3.json
 }
 
 resource "aws_s3_bucket" "heliumedu_static" {
   bucket = "heliumedu.${var.environment}.static"
+}
+
+resource "aws_s3_bucket_public_access_block" "heliumedu_static_allow_public" {
+  bucket = aws_s3_bucket.heliumedu_static.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 data "aws_iam_policy_document" "allow_static_http_access" {
@@ -58,6 +58,8 @@ data "aws_iam_policy_document" "allow_static_http_access" {
 resource "aws_s3_bucket_policy" "allow_static_http_access" {
   bucket = aws_s3_bucket.heliumedu_static.id
   policy = data.aws_iam_policy_document.allow_static_http_access.json
+
+  depends_on = [aws_s3_bucket_public_access_block.heliumedu_static_allow_public]
 }
 
 resource "aws_s3_bucket_cors_configuration" "heliumedu_static" {

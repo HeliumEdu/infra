@@ -1,5 +1,5 @@
 resource "random_password" "platform_secret" {
-  length = 50
+  length  = 50
   special = true
 }
 
@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "helium_policy" {
     }
 
     actions = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
-    resources = ["arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:*/helium**"]
+    resources = ["arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:${var.environment}/helium**"]
   }
 }
 

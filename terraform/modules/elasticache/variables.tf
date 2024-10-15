@@ -10,4 +10,10 @@ variable "subnet_ids" {
 
 variable "elasticache_sg" {
   description = "The MySQL security group"
+  type        = string
+}
+
+variable "num_cache_nodes" {
+  description = "The number of cache nodes"
+  type        = number
 }

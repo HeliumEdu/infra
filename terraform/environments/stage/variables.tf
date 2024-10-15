@@ -5,7 +5,7 @@ variable "helium_version" {
 
 variable "environment" {
   description = "The environment"
-  default     = "prod"
+  default     = "stage"
 }
 
 variable "environment_prefix" {
@@ -15,7 +15,7 @@ variable "environment_prefix" {
 
 variable "aws_region" {
   description = "The AWS region"
-  default     = "us-east-1"
+  default     = "us-west-1"
 }
 
 variable "region_azs" {
@@ -23,29 +23,25 @@ variable "region_azs" {
   default = {
     az1 = {
       suffix = "a"
-      index  = "0"
+      index  = "10"
     }
     az2 = {
-      suffix = "b"
-      index  = "1"
-    }
-    az3 = {
       suffix = "c"
-      index  = "2"
+      index  = "11"
     }
   }
 }
 
 variable "frontend_host_count" {
   description = "The number of platform hosts desired in the cluster"
-  type        = number
-  default     = 1
+  type = number
+  default = 1
 }
 
 variable "platform_host_count" {
   description = "The number of platform hosts desired in the cluster"
-  type        = number
-  default     = 2
+  type = number
+  default = 2
 }
 
 variable "db_multi_az" {
@@ -61,13 +57,13 @@ variable "num_cache_nodes" {
 variable "helium_area_code" {
   description = "The area code for the Helium phone number"
   type        = string
-  default     = ""
+  default     = "815"
 }
 
 variable "ci_area_code" {
   description = "The area code for the CI phone number"
   type        = string
-  default     = ""
+  default     = "815"
 }
 
 ### Variables defined below this point must have their defaults defined in the Terraform Workspace

@@ -2,33 +2,12 @@ resource "aws_vpc" "helium_vpc" {
   cidr_block = "172.30.0.0/16"
 }
 
-output "vpc_id" {
-  value = aws_vpc.helium_vpc.id
-}
-
-resource "aws_subnet" "subnet_us_east_1a" {
+resource "aws_subnet" "subnets" {
+  for_each                = var.region_azs
   vpc_id                  = aws_vpc.helium_vpc.id
-  cidr_block              = "172.30.0.0/24"
-  availability_zone       = "us-east-1a"
+  cidr_block              = "172.30.${each.value["index"]}.0/24"
+  availability_zone       = "${var.aws_region}${each.value["suffix"]}"
   map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "subnet_us_east_1b" {
-  vpc_id                  = aws_vpc.helium_vpc.id
-  cidr_block              = "172.30.1.0/24"
-  availability_zone       = "us-east-1b"
-  map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "subnet_us_east_1c" {
-  vpc_id                  = aws_vpc.helium_vpc.id
-  cidr_block              = "172.30.2.0/24"
-  availability_zone       = "us-east-1c"
-  map_public_ip_on_launch = true
-}
-
-output "subnet_ids" {
-  value = [aws_subnet.subnet_us_east_1a.id, aws_subnet.subnet_us_east_1b.id, aws_subnet.subnet_us_east_1c.id]
 }
 
 resource "aws_internet_gateway" "helium_gateway" {
@@ -44,28 +23,15 @@ resource "aws_route_table" "helium_route_table" {
   }
 }
 
-resource "aws_route_table_association" "us_east_1a" {
-  subnet_id      = aws_subnet.subnet_us_east_1a.id
-  route_table_id = aws_route_table.helium_route_table.id
-}
-
-resource "aws_route_table_association" "us_east_1b" {
-  subnet_id      = aws_subnet.subnet_us_east_1b.id
-  route_table_id = aws_route_table.helium_route_table.id
-}
-
-resource "aws_route_table_association" "us_east_1c" {
-  subnet_id      = aws_subnet.subnet_us_east_1c.id
+resource "aws_route_table_association" "route_table_association" {
+  for_each       = aws_subnet.subnets
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.helium_route_table.id
 }
 
 resource "aws_security_group" "http_s" {
-  name   = "http/s (public)"
+  name   = "helium-http/s-public_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
-}
-
-output "http_s_sg_id" {
-  value = aws_security_group.http_s.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
@@ -93,12 +59,8 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_http_s" {
 }
 
 resource "aws_security_group" "http_helium_frontend" {
-  name   = "http-helium-frontend"
+  name   = "helium-http-frontend_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
-}
-
-output "http_sg_frontend" {
-  value = aws_security_group.http_helium_frontend.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http_helium_frontend_ipv4" {
@@ -118,12 +80,8 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_frontend" {
 }
 
 resource "aws_security_group" "http_helium_platform" {
-  name   = "http-helium-platform"
+  name   = "helium-http-platform_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
-}
-
-output "http_sg_platform" {
-  value = aws_security_group.http_helium_platform.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http_helium_platform_ipv4" {
@@ -143,12 +101,8 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_platform" {
 }
 
 resource "aws_security_group" "mysql" {
-  name   = "mysql"
+  name   = "helium-mysql_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
-}
-
-output "mysql_sg" {
-  value = aws_security_group.mysql.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_mysql_ipv4" {
@@ -160,12 +114,8 @@ resource "aws_vpc_security_group_ingress_rule" "allow_mysql_ipv4" {
 }
 
 resource "aws_security_group" "elasticache" {
-  name   = "elasticache"
+  name   = "helium-elasticache_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
-}
-
-output "elasticache_sg" {
-  value = aws_security_group.elasticache.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_elasticache_ipv4" {

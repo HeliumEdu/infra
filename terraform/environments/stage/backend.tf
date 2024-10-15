@@ -8,7 +8,7 @@ terraform {
   cloud {
     organization = "HeliumEdu"
     workspaces {
-      name = "prod"
+      name = "stage"
     }
   }
 
