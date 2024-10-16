@@ -130,6 +130,6 @@ module "twilio" {
   environment              = var.environment
   helium_area_code         = var.helium_area_code
   ci_area_code             = var.ci_area_code
-  helium_twiml_handler_url = var.helium_twiml_handler_url
-  ci_twiml_handler_url     = var.ci_twiml_handler_url
+  helium_twiml_handler_url = var.HELIUM_TWIML_HANDLER_URL
+  ci_twiml_handler_url     = var.CI_TWIML_HANDLER_URL
 }

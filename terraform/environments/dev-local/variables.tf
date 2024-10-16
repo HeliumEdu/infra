@@ -43,10 +43,10 @@ variable "TWILIO_AUTH_TOKEN" {
   description = "The Twilio auth token"
 }
 
-variable "helium_twiml_handler_url" {
-  description = "The URL for the TwiML Bin"
+variable "HELIUM_TWIML_HANDLER_URL" {
+  description = "The URL for the Helium TwiML Bin"
 }
 
-variable "ci_twiml_handler_url" {
-  description = "The URL for the TwiML Bin"
+variable "CI_TWIML_HANDLER_URL" {
+  description = "The URL for the CI TwiML Bin"
 }

@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.7.12"
+  default     = "1.7.13"
 }
 
 variable "environment" {
@@ -88,12 +88,12 @@ variable "TWILIO_AUTH_TOKEN" {
   description = "The Twilio auth token"
 }
 
-variable "helium_twiml_handler_url" {
-  description = "The URL for the TwiML Bin"
+variable "HELIUM_TWIML_HANDLER_URL" {
+  description = "The URL for the Helium TwiML Bin"
 }
 
-variable "ci_twiml_handler_url" {
-  description = "The URL for the TwiML Bin"
+variable "CI_TWIML_HANDLER_URL" {
+  description = "The URL for the CI TwiML Bin"
 }
 
 variable "DD_API_KEY" {
