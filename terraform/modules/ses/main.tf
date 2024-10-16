@@ -24,6 +24,11 @@ resource "aws_iam_policy" "ses_sender" {
   policy = data.aws_iam_policy_document.ses_sender.json
 }
 
+resource "aws_iam_user_policy_attachment" "s3_access_attachment" {
+  user       = aws_iam_user.smtp_user.name
+  policy_arn = aws_iam_policy.ses_sender.arn
+}
+
 resource "aws_ses_domain_identity" "heliumedu_com_identity" {
   domain = "${var.environment_prefix}heliumedu.com"
 }

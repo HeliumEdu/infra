@@ -5,26 +5,6 @@ module "ci_bucket" {
   environment    = var.environment
 }
 
-resource "aws_iam_user" "s3_user" {
-  name = "helium-${var.environment}-s3-user"
-}
-
-resource "aws_iam_access_key" "s3_access_key" {
-  user = aws_iam_user.s3_user.name
-}
-
-data "aws_iam_policy_document" "helium_s3" {
-  statement {
-    resources = ["arn:aws:s3:::heliumedu.${var.environment}**"]
-    actions = ["s3:*"]
-  }
-}
-
-resource "aws_iam_policy" "ses_sender" {
-  name   = "helium-${var.environment}-s3-access"
-  policy = data.aws_iam_policy_document.helium_s3.json
-}
-
 resource "aws_s3_bucket" "heliumedu_static" {
   bucket = "heliumedu.${var.environment}.static"
 }

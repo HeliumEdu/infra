@@ -427,13 +427,17 @@ resource "aws_ecs_service" "helium_platform" {
   }
 }
 
+# This service can never be autoscaled, only one Beat scheduler should ever be running at a time
 resource "aws_ecs_service" "helium_platform_beat" {
-  name                               = "helium_platform_beat"
-  cluster                            = aws_ecs_cluster.helium.id
-  task_definition                    = aws_ecs_task_definition.platform_beat_service.arn
-  desired_count                      = 1
+  name                       = "helium_platform_beat"
+  cluster                    = aws_ecs_cluster.helium.id
+  task_definition = aws_ecs_task_definition.platform_beat_service.arn
+  # Never set to more than 1, as only one Beat scheduler can be deployed at a time to ensure no duplication of tasks
+  desired_count = 1
+  # Set to 0 to ensure the existing Beat scheduler is stopped before deploying the new one, thus ensuring no duplication of tasks during deployment
   deployment_minimum_healthy_percent = 0
-  deployment_maximum_percent         = 100
+  # Never allow more than 100%, as only one Beat scheduler can be deployed at a time to ensure no duplication of tasks
+  deployment_maximum_percent = 100
 
   capacity_provider_strategy {
     base              = 1

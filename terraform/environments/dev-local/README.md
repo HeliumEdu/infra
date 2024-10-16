@@ -2,8 +2,8 @@
 
 The following services are necessary to deploy the minimalist `dev-local` environment:
 
-- [AWS](https://aws.amazon.com/) - hosting infrastructure
-- [Twilio](https://www.twilio.com/en-us) - in-app text reminders
+- [AWS](https://aws.amazon.com/) - emails
+- [Twilio](https://www.twilio.com/en-us) - text messages
 
 ### Twilio Setup
 
@@ -23,13 +23,21 @@ The following Terraform Workspace variables must be defined:
 
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
-  - `TWILIO_ACCOUNT_SID`
-  - `TWILIO_AUTH_TOKEN`
-  - `helium_twiml_handler_url`
-  - `ci_twiml_handler_url`
+  - `TWILIO_ACCOUNT_SID` (optional, if Twilio module is removed)
+  - `TWILIO_AUTH_TOKEN` (optional, if Twilio module is removed)
+  - `helium_twiml_handler_url` (optional, if Twilio module is removed)
+  - `ci_twiml_handler_url` (optional, if Twilio module is removed)
 
 Once all of the above is configured, you can trigger Terraform to provision the new environment by executing:
 
 ```
 terraform apply
 ```
+
+### Route 53 Subdomains
+
+For non-`prod` environments, note that once provisioned, Terraform will create a separate Route 53 Hosted Zoned for
+the environment, subdomains of their parent zones. For example, there will be a `heliumedu.dev` zone, and a
+`dev-local.heliumedu.dev` zone. In order to complete the mapping, take note of the name servers in the subdomain
+zone (`dev-loca.heliumedu.dev`, then go to the parent zone (`heliumedu.dev`), create a new NS record named `dev-local`,
+and for its value put all the name servers noted for the subdomain's zone.

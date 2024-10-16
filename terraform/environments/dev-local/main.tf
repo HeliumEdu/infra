@@ -37,12 +37,13 @@ module "ses" {
 }
 
 module "secretsmanager" {
-  source = "../../modules/secretsmanager/smtp_creds_secret"
+  source = "../../modules/secretsmanager/ci_creds"
 
-  environment         = var.environment
-  aws_region          = var.aws_region
-  smtp_email_user     = module.ses.smtp_username
-  smtp_email_password = module.ses.smtp_password
+  environment               = var.environment
+  smtp_email_user           = module.ses.smtp_username
+  smtp_email_password       = module.ses.smtp_password
+  s3_user_access_key_id     = module.s3.s3_access_key_id
+  s3_user_secret_access_key = module.s3.s3_access_key_secret
 }
 
 module "twilio" {

@@ -3,11 +3,6 @@ variable "environment" {
   type        = string
 }
 
-variable "aws_region" {
-  description = "The AWS region"
-  type        = string
-}
-
 # Below are the variable definitions for values to be stored in the Secrets Manager
 
 variable "smtp_email_user" {
@@ -15,5 +10,13 @@ variable "smtp_email_user" {
 }
 
 variable "smtp_email_password" {
+  type = string
+}
+
+variable "s3_user_access_key_id" {
+  type = string
+}
+
+variable "s3_user_secret_access_key" {
   type = string
 }
