@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.7.13"
+  default     = "1.7.14"
 }
 
 variable "environment" {
@@ -37,15 +37,13 @@ variable "region_azs" {
 }
 
 variable "frontend_host_count" {
-  description = "The number of platform hosts desired in the cluster"
-  type        = number
-  default     = 1
+  description = "The number of frontend hosts desired in the cluster"
+  default     = 2
 }
 
 variable "platform_host_count" {
   description = "The number of platform hosts desired in the cluster"
-  type        = number
-  default     = 2
+  default     = 3
 }
 
 variable "db_multi_az" {
@@ -60,13 +58,11 @@ variable "num_cache_nodes" {
 
 variable "helium_area_code" {
   description = "The area code for the Helium phone number"
-  type        = string
   default     = ""
 }
 
 variable "ci_area_code" {
   description = "The area code for the CI phone number"
-  type        = string
   default     = ""
 }
 
