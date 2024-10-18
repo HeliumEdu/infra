@@ -61,21 +61,26 @@ jobs:
       - name: Build
         run: TAG_VERSION=${{ github.event.inputs.version }} make build
       - name: Run CI tests against build
-        run: TAG_VERSION=${{ github.event.inputs.version }} make run-ci
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          retry_wait_seconds: 5
+          max_attempts: 3
+          command: TAG_VERSION=${{ github.event.inputs.version }} make run-ci
       - name: Build release
         run: helium-cli build-release ${{ github.event.inputs.version }}
       - name: Publish containers
         run: TAG_VERSION=${{ github.event.inputs.version }} make publish
       - name: Deploy release
         run: VERSION=${{ github.event.inputs.version }} python bin/bump-release.py
-      - name: Run CI tests
+      - name: Trigger CI tests for after deploy
         run: |
           # Wait before triggering CI tests, to allow Terraform to apply and ECS to roll nodes
           sleep 120
           curl -X POST https://api.github.com/repos/HeliumEdu/ci-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ secrets.PERSONAL_ACCESS_TOKEN }} \
-          --data '{"event_type": "Triggered from `deploy` Release", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          --data '{"event_type": "Triggered from `deploy` Release ${{ github.event.inputs.version }}", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
       - uses: actions/checkout@v3
       - name: Dump Docker logs on failure
         if: failure()
