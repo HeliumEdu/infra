@@ -4,7 +4,7 @@ variable "helium_version" {
 
 variable "default_arch" {
   description = "The target arch of container builds"
-  type        = "string"
+  type        = string
 }
 
 variable "frontend_host_count" {

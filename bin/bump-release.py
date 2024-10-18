@@ -7,6 +7,8 @@ import os
 import re
 import sys
 
+from git import Repo
+from heliumcli import utils
 from heliumcli.actions.buildrelease import BuildReleaseAction
 from heliumcli.utils import get_config
 
@@ -44,10 +46,12 @@ else:
           "defined, with a default, and is the first declaration in the file.")
     sys.exit(1)
 
-if updated:
+repo = Repo(BASE_DIR)
+if repo.is_dirty():
     config = get_config()
 
     build_release_action = BuildReleaseAction()
+    print(utils.get_repo_name(BASE_DIR, config["remoteName"]))
     build_release_action._commit_and_tag(BASE_DIR, VERSION, config["remoteName"], config["branchName"])
 else:
-    print("Nothing updated, nothing to commit")
+    print("No changes detected, nothing to commit")
