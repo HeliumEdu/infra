@@ -30,6 +30,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.SSH_KEY_GITHUB }}
       - name: Set up Node 18
         uses: actions/setup-node@v4
         with:
