@@ -51,9 +51,9 @@ module "rds" {
 module "elasticache" {
   source = "../../modules/elasticache"
 
-  environment    = var.environment
-  subnet_ids     = module.vpc.subnet_ids
-  elasticache_sg = module.vpc.elasticache_sg
+  environment     = var.environment
+  subnet_ids      = module.vpc.subnet_ids
+  elasticache_sg  = module.vpc.elasticache_sg
   num_cache_nodes = var.num_cache_nodes
 }
 
@@ -65,6 +65,7 @@ module "ecs" {
   source = "../../modules/ecs"
 
   helium_version                   = var.helium_version
+  default_arch                     = var.default_arch
   frontend_host_count              = var.frontend_host_count
   platform_host_count              = var.platform_host_count
   frontend_repository_uri          = module.ecr.frontend_repository_uri

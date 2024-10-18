@@ -129,7 +129,7 @@ resource "aws_ecs_task_definition" "frontend_service" {
   ]
 
   runtime_platform {
-    cpu_architecture        = "X86_64"
+    cpu_architecture        = var.default_arch
     operating_system_family = "LINUX"
   }
 }
@@ -176,7 +176,7 @@ resource "aws_ecs_task_definition" "platform_resource_task" {
   ]
 
   runtime_platform {
-    cpu_architecture        = "X86_64"
+    cpu_architecture        = var.default_arch
     operating_system_family = "LINUX"
   }
 }
@@ -272,7 +272,7 @@ resource "aws_ecs_task_definition" "platform_service" {
   ]
 
   runtime_platform {
-    cpu_architecture        = "X86_64"
+    cpu_architecture        = var.default_arch
     operating_system_family = "LINUX"
   }
 }
@@ -339,7 +339,7 @@ resource "aws_ecs_task_definition" "platform_beat_service" {
   ]
 
   runtime_platform {
-    cpu_architecture        = "X86_64"
+    cpu_architecture        = var.default_arch
     operating_system_family = "LINUX"
   }
 }

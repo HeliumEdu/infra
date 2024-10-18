@@ -2,6 +2,7 @@ ansibleCopyrightNameVar: project_developer
 ansibleRelativeDir: ansible
 branchName: main
 copyrightName: Helium Edu
+tagRootRelease: false
 gitProject: git@github.com:HeliumEdu
 hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && sudo
   apt-get -y autoremove

@@ -60,6 +60,8 @@ jobs:
         run: helium-cli build-release ${{ github.event.inputs.version }}
       - name: Publish containers
         run: TAG_VERSION=${{ github.event.inputs.version }} make publish
+      - name: Deploy release
+        run: VERSION=${{ github.event.inputs.version }} python bin/bump-release.py
       - name: Dump Docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2

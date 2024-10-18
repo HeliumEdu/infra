@@ -57,7 +57,7 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 	PROJECT_APP_HOST=http://localhost:3000 \
     PROJECT_API_HOST=http://localhost:8000 \
     AWS_REGION=$(DEV_LOCAL_AWS_REGION) \
-    make -C projects/ci-tests
+    make -C projects/ci-tests install test
 
 publish:
 	make -C projects/platform publish-docker

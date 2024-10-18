@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.7.14"
+  default     = "1.7.16"
 }
 
 variable "environment" {
@@ -34,6 +34,11 @@ variable "region_azs" {
       index  = "2"
     }
   }
+}
+
+variable "default_arch" {
+  description = "The target arch of container builds"
+  default     = "X86_64"
 }
 
 variable "frontend_host_count" {

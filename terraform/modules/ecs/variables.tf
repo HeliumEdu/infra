@@ -2,6 +2,11 @@ variable "helium_version" {
   description = "The container versions to deploy"
 }
 
+variable "default_arch" {
+  description = "The target arch of container builds"
+  type        = "string"
+}
+
 variable "frontend_host_count" {
   description = "The number of frontend hosts desired in the cluster"
   type        = number
