@@ -51,7 +51,9 @@ if repo.is_dirty():
     config = get_config()
 
     build_release_action = BuildReleaseAction()
+    print("Committing changes and creating release tag ...")
     print(utils.get_repo_name(BASE_DIR, config["remoteName"]))
     build_release_action._commit_and_tag(BASE_DIR, VERSION, config["remoteName"], config["branchName"])
+    print(f"... release version {VERSION} will be deployed by Terraform.")
 else:
     print("No changes detected, nothing to commit")
