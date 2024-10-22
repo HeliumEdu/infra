@@ -7,7 +7,7 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
   secret_string = jsonencode(sensitive({
     PLATFORM_EMAIL_HOST_USER          = var.smtp_email_user
     PLATFORM_EMAIL_HOST_PASSWORD      = var.smtp_email_password
-    PLATFORM_AWS_S3_ACCESS_KEY_ID     = var.s3_user_access_key_id
-    PLATFORM_AWS_S3_SECRET_ACCESS_KEY = var.s3_user_secret_access_key
+    CI_AWS_S3_ACCESS_KEY_ID     = var.s3_user_access_key_id
+    CI_AWS_S3_SECRET_ACCESS_KEY = var.s3_user_secret_access_key
   }))
 }
