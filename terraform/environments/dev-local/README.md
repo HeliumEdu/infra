@@ -7,7 +7,7 @@ The following services are necessary to deploy the minimalist `dev-local` enviro
 
 ### Twilio Setup
 
-See [the Twilio Setup section](https://github.com/HeliumEdu/deploy/tree/main/terraform/environments/prod#twilio-setup) of the `prod` environment, as the setup is the same (as the TwiML Bins can safely be reused in all environments).
+See [the Twilio Setup section](https://github.com/HeliumEdu/deploy/tree/main/terraform/environments/prod#twilio-setup) of the `prod` environment, as the setup is the same (and the TwiML Bins can safely be reused in all environments).
 
 ### Initializing a Terraform Workspace
 

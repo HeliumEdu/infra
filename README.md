@@ -10,6 +10,7 @@ This repository contains everything that is necessary to get a development envir
 [Docker](https://docs.docker.com/), as well as the [Terraform](https://app.terraform.io/app) code necessary to provision deployment environments.
 
 ## Development
+
 ### Docker Setup
 
 Here is a minimal set of commands that will get a Docker environment setup locally.
