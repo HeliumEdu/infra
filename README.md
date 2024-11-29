@@ -16,12 +16,16 @@ This repository contains everything that is necessary to get a development envir
 Here is a minimal set of commands that will get a Docker environment setup locally.
 
 ```sh
-git clone https://github.com/HeliumEdu/deploy.git ~/Developer/helium
-cd ~/Developer/helium
+git clone https://github.com/HeliumEdu/deploy.git helium
+cd helium
 make
 ```
 
-Done! Now that your environment has been initialized, to quickly bring up Docker in the future, simply run `make start`.
+Done! Now that your environment has been initialized, to quickly bring up Docker in the future, simply run:
+
+```
+make start
+```
 
 ## Deployment
 
