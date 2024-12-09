@@ -53,6 +53,8 @@ resource "aws_lb_target_group" "frontend" {
   health_check {
     path = "/health"
   }
+
+  depends_on = [aws_lb.helium]
 }
 
 resource "aws_lb_target_group" "platform" {
@@ -65,6 +67,8 @@ resource "aws_lb_target_group" "platform" {
   health_check {
     path = "/status/"
   }
+
+  depends_on = [aws_lb.helium]
 }
 
 resource "aws_lb_listener" "https" {
