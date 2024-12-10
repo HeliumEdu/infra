@@ -1,6 +1,6 @@
-name: "Release"
+name: "Build and Deploy Release"
 
-run-name: "Release ${{ inputs.version }}"
+run-name: "Build and deploy release ${{ inputs.version }}"
 
 on:
   workflow_dispatch:
