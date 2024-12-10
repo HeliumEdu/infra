@@ -20,6 +20,7 @@ jobs:
 
     env:
       FORCE_COLOR: 1
+      PYTHONUNBUFFERED: 1
       PLATFORM: linux/amd64
       TERRAFORM_API_TOKEN: ${{ secrets.TERRAFORM_API_TOKEN }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -84,7 +85,6 @@ jobs:
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ secrets.PERSONAL_ACCESS_TOKEN }} \
           --data '{"event_type": "Triggered from `deploy` Release ${{ github.event.inputs.version }}", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
-      - uses: actions/checkout@v3
       - name: Dump Docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2
