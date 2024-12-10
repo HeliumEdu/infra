@@ -41,10 +41,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ssh-key: ${{ secrets.SSH_KEY_GITHUB }}
-      - name: Set up Node 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
       - name: Set up Python "3.12"
         uses: actions/setup-python@v5
         with:
