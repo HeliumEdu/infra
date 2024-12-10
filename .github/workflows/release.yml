@@ -7,6 +7,12 @@ on:
     inputs:
       version:
         type: string
+        required: true
+      environment:
+        type: choice
+        required: true
+        options:
+        - prod
 
 jobs:
   release:
@@ -15,6 +21,7 @@ jobs:
     env:
       FORCE_COLOR: 1
       PLATFORM: linux/amd64
+      TERRAFORM_API_TOKEN: ${{ secrets.TERRAFORM_API_TOKEN }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -69,11 +76,10 @@ jobs:
       - name: Publish artifacts
         run: TAG_VERSION=${{ github.event.inputs.version }} make publish
       - name: Deploy release
-        run: VERSION=${{ github.event.inputs.version }} python bin/bump-release.py
+        run: VERSION=${{ github.event.inputs.version }} ENVIRONMENT=${{ github.event.inputs.environment }} python bin/trigger-release.py
       - name: Trigger CI tests against deploy
         run: |
           # Wait before triggering CI tests, to allow Terraform to apply and ECS to roll nodes
-          sleep 120
           curl -X POST https://api.github.com/repos/HeliumEdu/ci-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ secrets.PERSONAL_ACCESS_TOKEN }} \
