@@ -21,6 +21,7 @@ BASE_DIR = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__file_
 VERSION = os.environ.get("VERSION")
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TERRAFORM_API_TOKEN = os.environ.get("TERRAFORM_API_TOKEN")
+CUT_RELEASE = os.environ.get("CUT_RELEASE", "true") == "true"
 
 if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN:
     print("ERROR: Set all required env vars: VERSION, ENVIRONMENT, TERRAFORM_API_TOKEN.")
@@ -39,34 +40,40 @@ VERSION_VARIABLE_REGEX = VERSION_VARIABLE_PATTERN.format(version="(\\d+.\\d+.\\d
 # Bump release version and commit to prep for release deployment
 #####################################################################
 
-with open(FILE_PATH, "r") as fp:
-    file_contents = fp.read()
-
-match = re.match(VERSION_VARIABLE_REGEX, file_contents)
-if match:
-    result = re.sub(VERSION_VARIABLE_REGEX, VERSION_VARIABLE_PATTERN.format(version=VERSION), file_contents)
-
-    if file_contents != result:
-        with open(FILE_PATH, "w") as fp:
-            fp.write(result)
+if not CUT_RELEASE:
+    print("CUT_RELEASE is set to 'false'. Deploying old release means no changes committed, and VERSION will be used"
+          "to set Terraform's 'helium_version' as an override parameter.")
 else:
-    print("ERROR: variables.tf does not appear to be in the expected format. Ensure the \"helium_version\" variable is "
-          "defined, with a default, and is the first declaration in the file.")
-    sys.exit(1)
+    with open(FILE_PATH, "r") as fp:
+        file_contents = fp.read()
 
-repo = Repo(BASE_DIR)
-if not repo.is_dirty():
-    print("ERROR: No changes detected, nothing to commit, Terraform won't trigger the release.")
-    sys.exit(1)
+    match = re.match(VERSION_VARIABLE_REGEX, file_contents)
+    if match:
+        result = re.sub(VERSION_VARIABLE_REGEX, VERSION_VARIABLE_PATTERN.format(version=VERSION), file_contents)
 
-config = get_config()
+        if file_contents != result:
+            with open(FILE_PATH, "w") as fp:
+                fp.write(result)
+    else:
+        print(
+            "ERROR: variables.tf does not appear to be in the expected format. Ensure the \"helium_version\" variable is "
+            "defined, with a default, and is the first declaration in the file.")
+        sys.exit(1)
 
-build_release_action = BuildReleaseAction()
-print("Committing changes and creating release tag ...")
-print(utils.get_repo_name(BASE_DIR, config["remoteName"]))
-build_release_action._commit_and_tag(BASE_DIR, VERSION, config["remoteName"], config["branchName"])
+    repo = Repo(BASE_DIR)
+    if not repo.is_dirty() or VERSION in repo.tags:
+        print("ERROR: No changes detected or version already exists. Terraform won't trigger the release. "
+              "Set CUT_RELEASE=false if attempting to deploy a previous build.")
+        sys.exit(1)
+    else:
+        config = get_config()
 
-print(f"... release version {VERSION} committed.")
+        build_release_action = BuildReleaseAction()
+        print(f"Committing changes and creating release tag {VERSION} ...")
+        print(utils.get_repo_name(BASE_DIR, config["remoteName"]))
+        build_release_action._commit_and_tag(BASE_DIR, VERSION, config["remoteName"], config["branchName"])
+
+        print(f"... release version {VERSION} committed.")
 
 #####################################################################
 # Fetch Terraform Workspace details
@@ -80,6 +87,28 @@ workspaces_response = json.loads(urlopen(req).read())
 #####################################################################
 # Find planned [heliumcli] Terraform run, discard other pending
 #####################################################################
+
+if not CUT_RELEASE:
+    req = request.Request(f"https://app.terraform.io/api/v2/runs",
+                          headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
+                                   "Content-Type": "application/vnd.api+json"},
+                          data=json.dumps({"data":
+                              {"attributes": {
+                                  "message": f"[heliumcli] Release {VERSION} (direct)",
+                                  "allow-empty-apply": "true",
+                                  "auto-apply": "false",
+                                  "variables": [
+                                      {"key": "helium_version", "value": "\"VERSION\""}
+                                  ]
+                              }, "relationships": {
+                                  "workspace": {
+                                      "data": {
+                                          "id": workspaces_response["data"]["id"],
+                                          "type": "workspaces"
+                                      }
+                                  }
+                              }}}).encode())
+    resp = urlopen(req)
 
 heliumcli_run = None
 retries = 0
@@ -120,26 +149,14 @@ if not heliumcli_run:
     sys.exit(1)
 
 #####################################################################
-# Trigger Terraform plan-and-apply for release
+# Trigger Terraform apply for release
 #####################################################################
 
 print(f"Triggering Terraform apply on run ID {heliumcli_run['id']} in {ENVIRONMENT} ...")
 req = request.Request(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']}/actions/apply",
                       headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
                                "Content-Type": "application/vnd.api+json"},
-                      data=json.dumps({"data":
-                          {"attributes": {
-                              "message": f"[GitHub Actions] Release {VERSION}",
-                              "allow-empty-apply": "true",
-                              "auto-apply": "false"
-                          }, "relationships": {
-                              "workspace": {
-                                  "data": {
-                                      "id": workspaces_response["data"]["id"],
-                                      "type": "workspaces"
-                                  }
-                              }
-                          }}}).encode())
+                      data=json.dumps({"comments": f"[heliumcli] Apply {VERSION}"}).encode())
 resp = urlopen(req)
 
 #####################################################################
