@@ -15,16 +15,16 @@ on:
         - prod
 
 jobs:
-#   build:
-#     name: Build
-#     uses: ./.github/workflows/build-release.yml
-#     secrets: inherit
-#     with:
-#       version: ${{ inputs.version }}
+  build:
+    name: Build
+    uses: ./.github/workflows/build-release.yml
+    secrets: inherit
+    with:
+      version: ${{ inputs.version }}
 
   deploy:
     name: Deploy
-#     needs: build
+    needs: build
     uses: ./.github/workflows/deploy-release.yml
     secrets: inherit
     with:
