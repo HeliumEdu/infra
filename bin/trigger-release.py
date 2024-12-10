@@ -94,11 +94,11 @@ if not CUT_RELEASE:
                                    "Content-Type": "application/vnd.api+json"},
                           data=json.dumps({"data":
                               {"attributes": {
-                                  "message": f"[heliumcli] Release {VERSION} (direct)",
+                                  "message": f"[heliumcli] Deploy {VERSION}",
                                   "allow-empty-apply": "true",
                                   "auto-apply": "false",
                                   "variables": [
-                                      {"key": "helium_version", "value": "\"VERSION\""}
+                                      {"key": "helium_version", "value": f"\"{VERSION}\""}
                                   ]
                               }, "relationships": {
                                   "workspace": {
@@ -121,9 +121,10 @@ while retries < ((wait_minutes * 60) / retry_sleep_seconds):
     runs_response = json.loads(urlopen(req).read())
 
     for run in runs_response["data"]:
-        # Discard all planned or pending plans that are not what was just triggered by [heliumcli]
-        if run["attributes"]["status"] in ["planned", "pending"] and not run["attributes"]["message"].startswith(
-                "[heliumcli]"):
+        # Discard all planned or pending plans that are not what was just triggered by [heliumcli] for this version
+        if (run["attributes"]["status"] in ["planned", "pending"] and
+                (not run["attributes"]["message"].startswith("[heliumcli]") or VERSION not in run["attributes"][
+                    "message"])):
             reject_endpoint = "cancel" if run["attributes"]["actions"]["is-cancelable"] else "discard"
             req = request.Request(f"https://app.terraform.io/api/v2/runs/{run['id']}/actions/{reject_endpoint}",
                                   headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
@@ -132,8 +133,10 @@ while retries < ((wait_minutes * 60) / retry_sleep_seconds):
                                       {"comment": "Discarding plan in favor of official release plan"}).encode())
             json.loads(urlopen(req).read())
         # Continue to wait until the [heliumcli] plan is in the correct state
-        elif run["attributes"]["status"] == "planned" and run["attributes"]["message"].startswith("[heliumcli]"):
-            print(f"... found planned [heliumcli] run with ID {run['id']}.")
+        elif (run["attributes"]["status"] == "planned" and
+              run["attributes"]["message"].startswith("[heliumcli]") and
+              VERSION in run["attributes"]["message"]):
+            print(f"... found planned [heliumcli] run for {VERSION} with ID {run['id']}.")
             heliumcli_run = run
             break
 

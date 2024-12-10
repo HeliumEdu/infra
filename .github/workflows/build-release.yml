@@ -1,6 +1,6 @@
 name: "Build Release"
 
-run-name: "Build release ${{ github.event.inputs.version }}"
+run-name: "Build release ${{ inputs.version }}"
 
 on:
   workflow_dispatch:
@@ -57,18 +57,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build
-        run: TAG_VERSION=${{ github.event.inputs.version }} make build
+        run: TAG_VERSION=${{ inputs.version }} make build
       - name: Run CI tests against build
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           retry_wait_seconds: 5
           max_attempts: 3
-          command: TAG_VERSION=${{ github.event.inputs.version }} make test-ci
+          command: TAG_VERSION=${{ inputs.version }} make test-ci
       - name: Cut release tags
-        run: helium-cli build-release ${{ github.event.inputs.version }}
+        run: helium-cli build-release ${{ inputs.version }}
       - name: Publish artifacts
-        run: TAG_VERSION=${{ github.event.inputs.version }} make publish
+        run: TAG_VERSION=${{ inputs.version }} make publish
       - name: Dump Docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2
