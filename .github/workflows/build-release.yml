@@ -61,9 +61,9 @@ jobs:
       - name: Run CI tests against build
         uses: nick-fields/retry@v3
         with:
-          timeout_minutes: 10
-          retry_wait_seconds: 5
-          max_attempts: 3
+          timeout_minutes: 4
+          retry_wait_seconds: 15
+          max_attempts: 2
           command: TAG_VERSION=${{ inputs.version }} make test-ci
       - name: Cut release tags
         run: helium-cli build-release ${{ inputs.version }}
