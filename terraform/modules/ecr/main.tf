@@ -1,11 +1,18 @@
+locals {
+  about_text = "Helium is an online student planner that lets you organize and color-coordinate your schedule and schoolwork, capture details about every assignment, and plan your study time efficiently. Check it out at https://www.heliumedu.com."
+  platform_usage_text = "Helium is open source, and usage details for this image be found at https://github.com/heliumedu/platform."
+}
+
 resource "aws_ecrpublic_repository" "repository_helium_frontend" {
   repository_name = "helium/frontend"
 
   catalog_data {
-    architectures = ["x86-64"]
-    description = "Frontend images for https://www.heliumedu.com"
-    logo_image_blob = filebase64("${path.module}/logo.png")
     operating_systems = ["Linux"]
+    architectures = ["x86-64"]
+    logo_image_blob = filebase64("${path.module}/../../resources/logo.png")
+    description = "Images for the frontend's containers."
+    about_text = local.about_text
+    usage_text = "HeliumEdu is open source, and usage details for this image be found at https://github.com/heliumedu/frontend."
   }
 
   tags = {
@@ -18,10 +25,12 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_resource" {
   repository_name = "helium/platform-resource"
 
   catalog_data {
-    architectures = ["x86-64"]
-    description = "Base platform images for https://www.heliumedu.com"
-    logo_image_blob = filebase64("${path.module}/logo.png")
     operating_systems = ["Linux"]
+    architectures = ["x86-64"]
+    logo_image_blob = filebase64("${path.module}/../../resources/logo.png")
+    description = "Images for the platform's resource containers (short-lived data provisioning)."
+    about_text = local.about_text
+    usage_text = local.platform_usage_text
   }
 
   tags = {
@@ -34,10 +43,12 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_api" {
   repository_name = "helium/platform-api"
 
   catalog_data {
-    architectures = ["x86-64"]
-    description = "API platform images for https://www.heliumedu.com"
-    logo_image_blob = filebase64("${path.module}/logo.png")
     operating_systems = ["Linux"]
+    architectures = ["x86-64"]
+    logo_image_blob = filebase64("${path.module}/../../resources/logo.png")
+    description = "Images for the platform's API containers."
+    about_text = local.about_text
+    usage_text = local.platform_usage_text
   }
 
   tags = {
@@ -50,10 +61,12 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_worker" {
   repository_name = "helium/platform-worker"
 
   catalog_data {
-    architectures = ["x86-64"]
-    description = "Worker platform images for https://www.heliumedu.com"
-    logo_image_blob = filebase64("${path.module}/logo.png")
     operating_systems = ["Linux"]
+    architectures = ["x86-64"]
+    logo_image_blob = filebase64("${path.module}/../../resources/logo.png")
+    description = "Image's for the platform's Worker containers."
+    about_text = local.about_text
+    usage_text = local.platform_usage_text
   }
 
   tags = {

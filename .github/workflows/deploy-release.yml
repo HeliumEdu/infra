@@ -17,7 +17,7 @@ on:
         type: boolean
         required: true
         default: false
-        description: "Check to cut a tag (if deploying as part of a build pipeline), leave unchecked if directly deploying an existing build"
+        description: "Cut the release tag for the `deploy` repo. Usually only needed if manually re-deploying a \"Build and Deploy Release\" pipeline that failed."
   workflow_call:
     inputs:
       version:
@@ -124,4 +124,4 @@ jobs:
           curl -X POST https://api.github.com/repos/HeliumEdu/ci-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u $GITHB_ACCESS_TOKEN \
-          --data '{"event_type": "Triggered from `deploy` Release $VERSION", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          --data '{"event_type": "Triggered from `deploy` Release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
