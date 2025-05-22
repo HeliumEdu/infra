@@ -1,6 +1,7 @@
-.PHONY: all install start test-ci publish
+.PHONY: all install-reqs install build start test-ci publish
 
 SHELL := /usr/bin/env bash
+PYTHON_BIN := python
 HELIUMCLI_PROJECTS ?= '["platform", "frontend", "ci-tests"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
@@ -8,8 +9,11 @@ PLATFORM ?= linux/arm64
 
 all: install build start
 
-install:
-	@python -m pip install -r requirements.txt
+install-reqs:
+	$(PYTHON_BIN) -m pip install -r requirements.txt
+
+install: install-reqs
+	$(PYTHON_BIN) -m pip install -r requirements.txt
 
 	@HELIUMCLI_FORCE_FETCH=True HELIUMCLI_SKIP_UPDATE_PULL=True HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
 
@@ -22,7 +26,7 @@ start: build
 	cd projects/platform && ./bin/runserver
 	cd projects/frontend && ./bin/runserver
 
-test-ci: build
+test-ci:
 	@if [[ -z "${PLATFORM_EMAIL_HOST_USER}" ]] || \
 		[[ -z "${PLATFORM_EMAIL_HOST_PASSWORD}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_ACCOUNT_SID}" ]] || \
@@ -43,10 +47,12 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
       exit 1; \
     fi
 
+	@rm -f projects/platform/.env
+
 	./projects/platform/bin/provision-dot-env.sh
 
-	make -C projects/frontend run-docker
 	make -C projects/platform run-docker
+	make -C projects/frontend run-docker
 
 	ENVIRONMENT=dev-local \
 	PROJECT_APP_HOST=http://localhost:3000 \
