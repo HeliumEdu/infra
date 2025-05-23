@@ -73,7 +73,7 @@ resource "aws_ecs_task_definition" "frontend_service" {
   container_definitions = jsonencode([
     {
       name      = "helium_frontend"
-      image     = "${var.frontend_repository_uri}:${var.helium_version}"
+      image     = "${var.frontend_repository_uri}:amd64-${var.helium_version}"
       cpu       = 0
       essential = true
       portMappings = [
@@ -139,7 +139,7 @@ resource "aws_ecs_task_definition" "platform_resource_task" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_resource"
-      image     = "${var.platform_resource_repository_uri}:${var.helium_version}"
+      image     = "${var.platform_resource_repository_uri}:amd64-${var.helium_version}"
       cpu       = 0
       essential = true
       environment = [
@@ -186,7 +186,7 @@ resource "aws_ecs_task_definition" "platform_service" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_api"
-      image     = "${var.platform_api_repository_uri}:${var.helium_version}"
+      image     = "${var.platform_api_repository_uri}:amd64-${var.helium_version}"
       cpu       = 0
       essential = true
       portMappings = [
@@ -219,7 +219,7 @@ resource "aws_ecs_task_definition" "platform_service" {
     },
     {
       name      = "helium_platform_worker"
-      image     = "${var.platform_worker_repository_uri}:${var.helium_version}"
+      image     = "${var.platform_worker_repository_uri}:amd64-${var.helium_version}"
       cpu       = 0
       essential = true
       environment = [
@@ -282,7 +282,7 @@ resource "aws_ecs_task_definition" "platform_beat_service" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_beat"
-      image     = "${var.platform_worker_repository_uri}:${var.helium_version}"
+      image     = "${var.platform_worker_repository_uri}:amd64-${var.helium_version}"
       cpu       = 0
       essential = true
       environment = [

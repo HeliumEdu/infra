@@ -124,3 +124,12 @@ jobs:
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u $GITHB_ACCESS_TOKEN \
           --data '{"event_type": "Triggered from `deploy` Release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+      - name: Notify deploy to Rollbar
+        uses: rollbar/github-deploy-action@2.1.2
+        id: rollbar_deploy
+        with:
+          environment: ${{inputs.environment}}
+          version: ${{ github.sha }}
+        env:
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
+          ROLLBAR_USERNAME: ${{ github.actor }}
