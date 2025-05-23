@@ -1,11 +1,11 @@
 ## Initializing a new Environment
 
-The following services are necessary to deploy Helium:
+The following services are setup in a `prod`-like environment:
 
-- [AWS](https://aws.amazon.com/) - hosting infrastructure and emails
-- [Twilio](https://www.twilio.com/en-us) - text messages
-- [DataDog](https://www.datadoghq.com/) - infrastructure monitoring
-- [Rollbar](https://rollbar.com/) - real-time error logging and tracking
+- [AWS](https://aws.amazon.com/) - hosting infrastructure, attachments, and emails
+- [Twilio](https://www.twilio.com/en-us) - (optional, text messages)
+- [DataDog](https://www.datadoghq.com/) - (optional, infrastructure monitoring)
+- [Rollbar](https://rollbar.com/) - (optional, real-time error logging and tracking)
 
 ### Twilio Setup
 

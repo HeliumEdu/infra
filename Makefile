@@ -7,7 +7,7 @@ SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= linux/arm64
 
-all: install build start
+all: install start
 
 install-reqs:
 	$(PYTHON_BIN) -m pip install -r requirements.txt
@@ -18,13 +18,18 @@ install: install-reqs
 	@HELIUMCLI_FORCE_FETCH=True HELIUMCLI_SKIP_UPDATE_PULL=True HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
 
 build: install
-	@rm -f projects/platform/.env
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
 	PLATFORM=$(PLATFORM) make -C projects/frontend build-docker
 
-start: build
+start:
 	cd projects/platform && ./bin/runserver
 	cd projects/frontend && ./bin/runserver
+
+stop:
+	make -C projects/platform stop-docker
+	make -C projects/frontend stop-docker
+
+restart: stop start
 
 test-ci:
 	@if [[ -z "${PLATFORM_EMAIL_HOST_USER}" ]] || \
@@ -46,8 +51,6 @@ CI_AWS_S3_SECRET_ACCESS_KEY, \
 CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
       exit 1; \
     fi
-
-	@rm -f projects/platform/.env
 
 	./projects/platform/bin/provision-dot-env.sh
 

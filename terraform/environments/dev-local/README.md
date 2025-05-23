@@ -1,9 +1,9 @@
 ## Initializing a new Environment
 
-The following services are necessary to deploy the minimalist `dev-local` environment:
+The following services are setup in a minimal `dev-local` environment:
 
 - [AWS](https://aws.amazon.com/) - emails
-- [Twilio](https://www.twilio.com/en-us) - text messages
+- [Twilio](https://www.twilio.com/en-us) - (optional, text messages)
 
 ### Twilio Setup
 

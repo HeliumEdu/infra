@@ -4,12 +4,33 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/HeliumEdu/deploy/build.yml)](https://github.com/HeliumEdu/deploy/actions/workflows/build.yml)
 ![GitHub License](https://img.shields.io/github/license/heliumedu/deploy)
 
-# Helium Deployment
+# Helium Infrastructure
 
-This repository contains everything that is necessary to get a development environment setup on a local machine using
-[Docker](https://docs.docker.com/), as well as the [Terraform](https://app.terraform.io/app) code necessary to provision deployment environments.
+The deployment infastructure for [Helium Edu](https://www.heliumedu.com/).
+
+Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/w6u3m4h5/).
+
+## Prerequisites
+
+- Docker
+- Python (>= 3.12)
+- Terraform (>= 1.9)
+- See [Deployment](#deployment) for others
+
+## Getting Started
+
+This repository contains everything that is necessary for deployment and local development, including setting up a
+local machine to use [Docker](https://docs.docker.com/), and the [Terraform](https://app.terraform.io/app) necessary to
+provision environments.
 
 ## Development
+
+### Initialize `dev-local` Environment in Terraform
+
+For more information on setting up a minimal (but fully functional) `dev-local` environment, see
+[the `dev-local` Terraform Workspace](https://github.com/HeliumEdu/deploy/tree/main/terraform/environments/dev-local#readme).
+This is not necessary to develop locally with Docker, but certain features (like emails and text messages)
+will not be available without this.
 
 ### Docker Setup
 
@@ -21,11 +42,24 @@ cd helium
 make
 ```
 
-Done! Now that your environment has been initialized, to quickly bring up Docker in the future, simply run:
+Done! The [`frontend`](https://github.com/HeliumEdu/frontend), [`platform`](https://github.com/HeliumEdu/platform), and
+[`ci-tests`](https://github.com/HeliumEdu/ci-tests) are now setup for you.
+
+If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` in [`platforms'`s `.env` file](https://github.com/HeliumEdu/platform/blob/main/.env.docker.example)
+(and restart Docker with `make restart`). Helium is now accessible at http://localhost:3000, and you should be able to register for an
+account. Or have a look at [the `platform`'s README](https://github.com/HeliumEdu/platform?tab=readme-ov-file#docker-setup)
+for steps to create a superuser with access to [the admin site](http://localhost:8000/admin).
+
+In the future, this local Docker environment can quickly be brought up again simply by running:
 
 ```
 make start
 ```
+
+#### Image Architecture
+
+By default, deployable Docker images will be built for `linux/arm64`. To build native images on an `x86` architecture
+instead, set `PLATFORM=linux/amd64`.
 
 ## Deployment
 
@@ -34,7 +68,7 @@ Use [the Release action](https://github.com/HeliumEdu/deploy/actions/workflows/r
 and [hooks to this repo are setup](https://developer.hashicorp.com/terraform/cloud-docs/vcs), then bumping the
 [Image URI version variable in Terraform](https://github.com/HeliumEdu/deploy/blob/main/terraform/environments/prod/variables.tf#L1) will trigger a new deployment to this version when the Terraform applies.
 
-### Initializing a New Environment
+### Initialize `prod`-like Environment in Terraform
 
-For more information on initializing infrastructure in a new environment for the first time, see
+For more information on deploying a hosted, fully functional `prod`-like environment, see
 [the `prod` Terraform Workspace](https://github.com/HeliumEdu/deploy/tree/main/terraform/environments/prod#readme).
