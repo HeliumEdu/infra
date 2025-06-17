@@ -8,7 +8,7 @@
 
 The deployment infastructure for [Helium Edu](https://www.heliumedu.com/).
 
-Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/w6u3m4h5/).
+Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ make start
 #### Image Architecture
 
 By default, deployable Docker images will be built for `linux/arm64`. To build native images on an `x86` architecture
-instead, set `PLATFORM=linux/amd64`.
+instead, set `PLATFORM=amd64`.
 
 ## Deployment
 

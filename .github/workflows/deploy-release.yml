@@ -41,10 +41,10 @@ jobs:
       FORCE_COLOR: 1
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
-      FRONTEND_IMAGE: public.ecr.aws/w6u3m4h5/helium/frontend:amd64-${{ inputs.version }}
-      PLATFORM_RESOURCE_IMAGE: public.ecr.aws/w6u3m4h5/helium/platform-resource:amd64-${{ inputs.version }}
-      PLATFORM_API_IMAGE: public.ecr.aws/w6u3m4h5/helium/platform-api:amd64-${{ inputs.version }}
-      PLATFORM_WORKER_IMAGE: public.ecr.aws/w6u3m4h5/helium/platform-worker:amd64-${{ inputs.version }}
+      FRONTEND_IMAGE: public.ecr.aws/heliumedu/helium/frontend:amd64-${{ inputs.version }}
+      PLATFORM_RESOURCE_IMAGE: public.ecr.aws/heliumedu/helium/platform-resource:amd64-${{ inputs.version }}
+      PLATFORM_API_IMAGE: public.ecr.aws/heliumedu/helium/platform-api:amd64-${{ inputs.version }}
+      PLATFORM_WORKER_IMAGE: public.ecr.aws/heliumedu/helium/platform-worker:amd64-${{ inputs.version }}
       PLATFORM_EMAIL_HOST_USER: ${{ secrets.PLATFORM_EMAIL_HOST_USER }}
       PLATFORM_EMAIL_HOST_PASSWORD: ${{ secrets.PLATFORM_EMAIL_HOST_PASSWORD }}
       PLATFORM_TWILIO_ACCOUNT_SID: ${{ secrets.PLATFORM_TWILIO_ACCOUNT_SID }}

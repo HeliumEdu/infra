@@ -5,7 +5,7 @@ PYTHON_BIN := python
 HELIUMCLI_PROJECTS ?= '["platform", "frontend", "ci-tests"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
-PLATFORM ?= linux/arm64
+PLATFORM ?= arm64
 
 all: install start
 
