@@ -27,7 +27,7 @@ resource "aws_db_instance" "helium" {
   auto_minor_version_upgrade = true
   deletion_protection        = true
   backup_retention_period    = 7
-  vpc_security_group_ids = [var.mysql_sg]
+  vpc_security_group_ids     = [var.mysql_sg]
   db_subnet_group_name       = aws_db_subnet_group.helium.name
   multi_az                   = var.multi_az
 }
