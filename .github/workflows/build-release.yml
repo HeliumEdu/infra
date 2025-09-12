@@ -14,6 +14,11 @@ on:
         type: string
         required: true
 
+permissions:
+  contents: read
+  issues: none
+  pull-requests: none
+
 jobs:
   release:
     name: Build Release

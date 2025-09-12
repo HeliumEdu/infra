@@ -30,6 +30,11 @@ on:
         type: boolean
         required: true
 
+permissions:
+  contents: read
+  issues: none
+  pull-requests: none
+
 concurrency:
   group: "helium-deploy-${{inputs.environment}}"
 
