@@ -9,6 +9,7 @@ hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && s
 projects:
 - platform
 - frontend
+- mobile
 - ci-tests
 projectsRelativeDir: projects
 remoteName: origin
