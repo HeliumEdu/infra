@@ -12,11 +12,11 @@ data "aws_iam_policy_document" "helium_policy" {
     effect = "Allow"
 
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = [var.task_execution_role_arn]
     }
 
-    actions = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+    actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
     resources = ["arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:${var.environment}/helium**"]
   }
 }
@@ -44,5 +44,11 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
     PROJECT_DATADOG_API_KEY                        = var.datadog_api_key
     PROJECT_DATADOG_APP_KEY                        = var.datadog_app_key
     PLATFORM_ROLLBAR_POST_SERVER_ITEM_ACCESS_TOKEN = var.rollbar_access_token
+    PLATFORM_FIREBASE_PROJECT_ID                   = var.firebase_project_id
+    PLATFORM_FIREBASE_PRIVATE_KEY_ID               = var.firebase_private_key_id
+    PLATFORM_FIREBASE_PRIVATE_KEY                  = var.firebase_private_key
+    PLATFORM_FIREBASE_CLIENT_EMAIL                 = var.firebase_client_email
+    PLATFORM_FIREBASE_CLIENT_ID                    = var.firebase_client_id
+    PLATFORM_FIREBASE_CLIENT_X509_CERT_URL         = var.firebase_client_x509_cert_url
   }))
 }

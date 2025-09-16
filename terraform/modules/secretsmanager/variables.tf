@@ -75,3 +75,27 @@ variable "datadog_app_key" {
 variable "rollbar_access_token" {
   type = string
 }
+
+variable "firebase_project_id" {
+  type = string
+}
+
+variable "firebase_private_key_id" {
+  type = string
+}
+
+variable "firebase_private_key" {
+  type = string
+}
+
+variable "firebase_client_email" {
+  type = string
+}
+
+variable "firebase_client_id" {
+  type = string
+}
+
+variable "firebase_client_x509_cert_url" {
+  type = string
+}
