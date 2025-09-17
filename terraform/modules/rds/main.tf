@@ -19,7 +19,7 @@ resource "aws_db_instance" "helium" {
   db_name                    = "platform_${var.environment}"
   engine                     = "mysql"
   engine_version             = "8.0"
-  instance_class             = "db.t3.micro"
+  instance_class             = "db.t4g.small"
   username                   = random_string.username.result
   password                   = random_password.password.result
   storage_encrypted          = true
