@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.11.4"
+  default     = "1.11.5"
 }
 
 variable "environment" {
