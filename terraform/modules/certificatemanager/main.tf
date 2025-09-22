@@ -20,7 +20,7 @@ resource "aws_route53_record" "heliumedu_com" {
   allow_overwrite = true
   name            = each.value.name
   records         = [each.value.record]
-  ttl             = 60
+  ttl             = "3600"
   type            = each.value.type
   zone_id         = var.route53_heliumedu_com_zone_id
 }
@@ -46,7 +46,7 @@ resource "aws_route53_record" "heliumedu_dev" {
   allow_overwrite = true
   name            = each.value.name
   records         = [each.value.record]
-  ttl             = 60
+  ttl             = "3600"
   type            = each.value.type
   zone_id         = var.route53_heliumedu_dev_zone_id
 }
