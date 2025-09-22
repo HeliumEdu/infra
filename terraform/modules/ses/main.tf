@@ -48,7 +48,7 @@ resource "aws_route53_record" "heliumedu_com_mail_from_mx" {
 
 resource "aws_route53_record" "heliumedu_com_mail_from_txt" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = aws_ses_domain_mail_from.heliumedu_com_mail_from.domain
+  name    = aws_ses_domain_mail_from.heliumedu_com_mail_from.mail_from_domain
   type    = "TXT"
   ttl     = "3600"
   records = ["v=spf1 include:amazonses.com ~all"]
@@ -102,7 +102,7 @@ resource "aws_route53_record" "heliumedu_dev_mail_from_mx" {
 
 resource "aws_route53_record" "heliumedu_dev_mail_from_txt" {
   zone_id = var.route53_heliumedu_dev_zone_id
-  name    = aws_ses_domain_mail_from.heliumedu_dev_mail_from.domain
+  name    = aws_ses_domain_mail_from.heliumedu_dev_mail_from.mail_from_domain
   type    = "TXT"
   ttl     = "3600"
   records = ["v=spf1 include:amazonses.com ~all"]
@@ -137,7 +137,7 @@ resource "aws_route53_record" "heliumedu_dev_amazonses_dkim_record" {
   records = ["${aws_ses_domain_dkim.heliumedu_dev_dkim.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }
 
-resource "aws_route53_record" "heliumedu_dev_inbound_smtp" {
+resource "aws_route53_record" "heliumedu_dev_inbound_mx" {
   zone_id = var.route53_heliumedu_dev_zone_id
   name    = "${var.environment_prefix}heliumedu.dev"
   type    = "MX"
