@@ -10,7 +10,7 @@ projects:
 - platform
 - frontend
 - mobile
-- ci-tests
+- cluster-tests
 projectsRelativeDir: projects
 remoteName: origin
 serverBinFilename: bin/runserver

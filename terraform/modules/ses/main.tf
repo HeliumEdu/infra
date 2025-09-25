@@ -43,7 +43,7 @@ resource "aws_route53_record" "heliumedu_com_mail_from_mx" {
   name    = aws_ses_domain_mail_from.heliumedu_com_mail_from.mail_from_domain
   type    = "MX"
   ttl     = "3600"
-  records = ["10 feedback-smtp.us-east-1.amazonses.com"]
+  records = ["10 feedback-smtp.${var.aws_region}.amazonses.com"]
 }
 
 resource "aws_route53_record" "heliumedu_com_mail_from_txt" {
@@ -67,7 +67,7 @@ resource "aws_route53_record" "heliumedu_com_amazonses_dmarc" {
   name    = "_dmarc.${var.environment_prefix}heliumedu.com"
   type    = "TXT"
   ttl     = "3600"
-  records = ["v=DMARC1; p=reject;"]
+  records = ["v=DMARC1; p=quarantine;"]
 }
 
 resource "aws_ses_domain_dkim" "heliumedu_com_dkim" {
@@ -97,7 +97,7 @@ resource "aws_route53_record" "heliumedu_dev_mail_from_mx" {
   name    = aws_ses_domain_mail_from.heliumedu_dev_mail_from.mail_from_domain
   type    = "MX"
   ttl     = "3600"
-  records = ["10 feedback-smtp.us-east-1.amazonses.com"]
+  records = ["10 feedback-smtp.${var.aws_region}.amazonses.com"]
 }
 
 resource "aws_route53_record" "heliumedu_dev_mail_from_txt" {
@@ -121,7 +121,7 @@ resource "aws_route53_record" "heliumedu_dev_amazonses_dmarc" {
   name    = "_dmarc.${var.environment_prefix}heliumedu.dev"
   type    = "TXT"
   ttl     = "3600"
-  records = ["v=DMARC1; p=reject;"]
+  records = ["v=DMARC1; p=quarantine;"]
 }
 
 resource "aws_ses_domain_dkim" "heliumedu_dev_dkim" {
@@ -153,16 +153,30 @@ resource "aws_ses_active_receipt_rule_set" "main" {
   rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
 }
 
-resource "aws_ses_receipt_rule" "store_s3" {
-  name          = "heliumedu-ci-${var.environment}-test-email-to-s3"
+resource "aws_ses_receipt_rule" "cluster1_store_s3" {
+  name          = "heliumedu-cluster1-${var.environment}-test-email-to-s3"
   rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
-  recipients    = ["heliumedu-ci-test@${var.environment_prefix}heliumedu.dev"]
+  recipients    = ["heliumedu-cluster1@${var.environment_prefix}heliumedu.dev"]
   enabled       = true
   scan_enabled  = false
 
   s3_action {
     bucket_name       = var.heliumedu_s3_bucket_name
-    object_key_prefix = "ci.email/heliumedu-ci-test"
+    object_key_prefix = "ci.email/heliumedu-cluster1"
+    position          = 1
+  }
+}
+
+resource "aws_ses_receipt_rule" "cluster2_store_s3" {
+  name          = "heliumedu-cluster2-${var.environment}-test-email-to-s3"
+  rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
+  recipients    = ["heliumedu-cluster2@${var.environment_prefix}heliumedu.dev"]
+  enabled       = true
+  scan_enabled  = false
+
+  s3_action {
+    bucket_name       = var.heliumedu_s3_bucket_name
+    object_key_prefix = "ci.email/heliumedu-cluster2"
     position          = 1
   }
 }

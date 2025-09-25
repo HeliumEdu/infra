@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.11.12"
+  default     = "1.11.14"
 }
 
 variable "environment" {
@@ -104,10 +104,6 @@ variable "CI_TWIML_HANDLER_URL" {
 
 variable "DD_API_KEY" {
   description = "The DataDog API key"
-}
-
-variable "DD_APP_KEY" {
-  description = "The DataDog app key"
 }
 
 variable "ROLLBAR_API_KEY" {

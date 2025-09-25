@@ -1,8 +1,8 @@
-.PHONY: all install-reqs install build start test-ci publish
+.PHONY: all install-reqs install build start test-cluster publish
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-HELIUMCLI_PROJECTS ?= '["platform", "frontend", "mobile", "ci-tests"]'
+HELIUMCLI_PROJECTS ?= '["platform", "frontend", "mobile", "cluster-tests"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
@@ -31,7 +31,7 @@ stop:
 
 restart: stop start
 
-test-ci:
+test-cluster:
 	@if [[ -z "${PLATFORM_EMAIL_HOST_USER}" ]] || \
 		[[ -z "${PLATFORM_EMAIL_HOST_PASSWORD}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_ACCOUNT_SID}" ]] || \
@@ -61,7 +61,7 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 	PROJECT_APP_HOST=http://localhost:3000 \
     PROJECT_API_HOST=http://localhost:8000 \
     AWS_REGION=$(DEV_LOCAL_AWS_REGION) \
-    make -C projects/ci-tests test
+    make -C projects/cluster-tests test
 
 publish: install
 	make -C projects/platform publish-docker

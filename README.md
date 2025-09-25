@@ -43,7 +43,7 @@ make
 ```
 
 Done! The [`frontend`](https://github.com/HeliumEdu/frontend), [`platform`](https://github.com/HeliumEdu/platform), and
-[`ci-tests`](https://github.com/HeliumEdu/ci-tests) are now setup for you.
+[`cluster-tests`](https://github.com/HeliumEdu/cluster-tests) are now setup for you.
 
 If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` and `PROJECT_DISABLE_TEXTS=True`
 in [`platforms'`s `.env` file](https://github.com/HeliumEdu/platform/blob/main/.env.docker.example) (and restart Docker

@@ -81,7 +81,7 @@ jobs:
           timeout_minutes: 6
           retry_wait_seconds: 15
           max_attempts: 2
-          command: TAG_VERSION=${{ inputs.version }} make test-ci
+          command: TAG_VERSION=${{ inputs.version }} make test-cluster
       - name: Dump Docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2
@@ -125,7 +125,7 @@ jobs:
         run: CUT_RELEASE=${{ inputs.cut_release }} python bin/trigger-release.py
       - name: Trigger CI tests against deploy
         run: |
-          curl -X POST https://api.github.com/repos/HeliumEdu/ci-tests/dispatches \
+          curl -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u $GITHB_ACCESS_TOKEN \
           --data '{"event_type": "Triggered from `deploy` Release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'

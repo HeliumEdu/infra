@@ -118,7 +118,6 @@ module "secretsmanager" {
   aws_region                    = var.aws_region
   task_execution_role_arn       = module.ecs.task_execution_role_arn
   datadog_api_key               = var.DD_API_KEY
-  datadog_app_key               = var.DD_APP_KEY
   redis_host                    = module.elasticache.elasticache_host
   db_host                       = module.rds.db_host
   db_user                       = module.rds.db_username

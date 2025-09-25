@@ -4,6 +4,7 @@
 *.iml
 *.pyc
 *.swp
+.env
 .DS_Store
 *.terraform
 *.lock.hcl
