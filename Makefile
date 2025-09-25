@@ -40,7 +40,7 @@ test-cluster:
 		[[ -z "${CI_AWS_S3_ACCESS_KEY_ID}" ]] || \
 		[[ -z "${CI_AWS_S3_SECRET_ACCESS_KEY}" ]] || \
 		[[ -z "${CI_TWILIO_RECIPIENT_PHONE_NUMBER}" ]]; then \
-  	  echo "Set all env vars required to run CI tests end-to-end against a local Docker build: [\
+  	  echo "Set all env vars required to run cluster tests end-to-end against a local Docker build: [\
 PLATFORM_EMAIL_HOST_USER, \
 PLATFORM_EMAIL_HOST_PASSWORD, \
 PLATFORM_TWILIO_ACCOUNT_SID, \

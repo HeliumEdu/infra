@@ -19,7 +19,7 @@ variable "helium_area_code" {
 }
 
 variable "ci_area_code" {
-  description = "The area code for the CI phone number"
+  description = "The area code for the CI test phone number"
   default     = "815"
 }
 

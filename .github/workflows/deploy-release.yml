@@ -75,7 +75,7 @@ jobs:
           if_key_exists: replace
       - name: Install dependencies
         run: make install
-      - name: Run CI tests against release build
+      - name: Run cluster tests against release build
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 6
@@ -123,7 +123,7 @@ jobs:
         run: make install-reqs
       - name: Deploy release
         run: CUT_RELEASE=${{ inputs.cut_release }} python bin/trigger-release.py
-      - name: Trigger CI tests against deploy
+      - name: Trigger cluster tests against deploy
         run: |
           curl -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
