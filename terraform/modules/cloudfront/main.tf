@@ -11,7 +11,9 @@ resource "aws_cloudfront_function" "rewrites" {
 }
 
 resource "aws_cloudfront_distribution" "heliumedu_frontend" {
-  enabled = true
+  enabled     = true
+  aliases     = ["${var.environment_prefix}heliumedu.com", "www.${var.environment_prefix}heliumedu.com"]
+  price_class = "PriceClass_100"
 
   origin {
     origin_id   = local.s3_origin_id
@@ -48,13 +50,17 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend" {
     }
   }
 
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
+  custom_error_response {
+    error_code         = 404
+    response_code      = 404
+    response_page_path = "/404.html"
   }
 
-  aliases = ["${var.environment_prefix}heliumedu.com", "www.${var.environment_prefix}heliumedu.com"]
+  custom_error_response {
+    error_code         = 500
+    response_code         = 500
+    response_page_path = "/500.html"
+  }
 
   viewer_certificate {
     cloudfront_default_certificate = false
@@ -63,7 +69,11 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend" {
     minimum_protocol_version       = "TLSv1.2_2021"
   }
 
-  price_class = "PriceClass_100"
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
 }
 
 resource "aws_s3_bucket" "heliumedu_frontend_non_www_redirect" {
