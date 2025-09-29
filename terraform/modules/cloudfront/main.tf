@@ -3,8 +3,14 @@ locals {
   s3_domain_name = "${var.s3_bucket}.s3-website-${var.aws_region}.amazonaws.com"
 }
 
-resource "aws_cloudfront_distribution" "heliumedu_frontend" {
+resource "aws_cloudfront_function" "rewrites" {
+  name    = "rewrites"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/rewrites.js")
+}
 
+resource "aws_cloudfront_distribution" "heliumedu_frontend" {
   enabled = true
 
   origin {
@@ -19,7 +25,6 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend" {
   }
 
   default_cache_behavior {
-
     target_origin_id = local.s3_origin_id
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -36,6 +41,11 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend" {
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 0
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rewrites.arn
+    }
   }
 
   restrictions {

@@ -7,6 +7,7 @@ locals {
 module "route53" {
   source = "../../modules/route53"
 
+  environment        = var.environment
   environment_prefix = var.environment_prefix
 }
 
@@ -100,7 +101,8 @@ module "s3" {
 }
 
 module "cloudfront" {
-  source     = "../../modules/cloudfront"
+  source = "../../modules/cloudfront"
+
   aws_region = var.aws_region
   s3_bucket  = module.s3.heliumedu_s3_frontend_bucket_name
 }
