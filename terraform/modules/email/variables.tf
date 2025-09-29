@@ -1,5 +1,5 @@
-variable "environment_prefix" {
-  description = "Prefix used for env in hostnames (empty string when `prod`)"
+variable "environment" {
+  description = "The environment"
   type        = string
 }
 

@@ -89,7 +89,7 @@ module "email" {
   source = "../../modules/email"
 
   dkim_public_key               = var.dkim_public_key
-  environment_prefix            = var.environment_prefix
+  environment                   = var.environment
   route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
 }
 
@@ -103,8 +103,12 @@ module "s3" {
 module "cloudfront" {
   source = "../../modules/cloudfront"
 
-  aws_region = var.aws_region
-  s3_bucket  = module.s3.heliumedu_s3_frontend_bucket_name
+  environment                   = var.environment
+  environment_prefix            = var.environment_prefix
+  aws_region                    = var.aws_region
+  s3_bucket                     = module.s3.heliumedu_s3_frontend_bucket_name
+  heliumedu_com_cert_arn        = module.certificatemanager.heliumedu_com_cert_arn
+  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
 }
 
 module "ses" {
