@@ -59,8 +59,8 @@ resource "aws_s3_bucket_cors_configuration" "heliumedu_platform_static" {
   bucket = aws_s3_bucket.heliumedu_platform_static.id
 
   cors_rule {
-    allowed_headers = ["Authorization"]
-    allowed_methods = ["GET"]
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
     allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
@@ -108,8 +108,8 @@ resource "aws_s3_bucket_cors_configuration" "heliumedu_frontend_static" {
   bucket = aws_s3_bucket.heliumedu_frontend_static.id
 
   cors_rule {
-    allowed_headers = ["Authorization"]
-    allowed_methods = ["GET"]
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
     allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000

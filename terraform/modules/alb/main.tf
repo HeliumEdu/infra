@@ -8,18 +8,6 @@ resource "aws_lb" "helium" {
   enable_deletion_protection = true
 }
 
-resource "aws_route53_record" "heliumedu_com_lb_cname" {
-  zone_id = var.route53_heliumedu_com_zone_id
-  name    = "${var.environment_prefix}heliumedu.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.helium.dns_name
-    zone_id                = aws_lb.helium.zone_id
-    evaluate_target_health = true
-  }
-}
-
 resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
   zone_id = var.route53_heliumedu_com_zone_id
   name    = "api.${var.environment_prefix}heliumedu.com"
