@@ -181,7 +181,7 @@ assets_source_prefix = f"helium/frontend/{VERSION}/assets"
 assets_dest_prefix = "assets/"
 print(f"Copying frontend resources from {source_bucket_name}{assets_source_prefix} to {dest_bucket_name} ...")
 for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
-    new_key = f"{assets_dest_prefix}/" + obj.key[len(assets_source_prefix):].lstrip("/")
+    new_key = f"{assets_dest_prefix}" + obj.key[len(assets_source_prefix):].lstrip("/")
     copy_source = {
         'Bucket': source_bucket_name,
         'Key': obj.key
