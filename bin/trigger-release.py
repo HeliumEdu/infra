@@ -11,6 +11,7 @@ import time
 from urllib import request
 from urllib.request import urlopen
 
+import boto3
 from git import Repo
 from heliumcli import utils
 from heliumcli.actions.buildrelease import BuildReleaseAction
@@ -161,6 +162,28 @@ req = request.Request(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id'
                                "Content-Type": "application/vnd.api+json"},
                       data=json.dumps({"comments": f"[heliumcli] Apply {VERSION}"}).encode())
 resp = urlopen(req)
+
+#####################################################################
+# Move frontend S3 code from artifact bucket to live bucket
+#####################################################################
+s3 = boto3.resource('s3')
+source_bucket_name = "heliumedu"
+source_bucket = s3.Bucket(source_bucket_name)
+destination_bucket = s3.Bucket(f"heliumedu.{ENVIRONMENT}.frontend.static")
+source_prefix = f"/helium/frontend/{VERSION}"
+dest_prefix = "/"
+
+for obj in source_bucket.objects.filter(Prefix=source_prefix):
+    # Create the new key by replacing the source prefix with the destination prefix
+    new_key = dest_prefix + obj.key[len(source_prefix):]
+
+    copy_source = {
+        'Bucket': source_bucket_name,
+        'Key': obj.key
+    }
+
+    destination_bucket.Object(new_key).copy_from(CopySource=copy_source)
+    print(f"Copied '{obj.key}' to '{new_key}'")
 
 #####################################################################
 # Wait for the Terraform apply to be live

@@ -5,6 +5,25 @@ module "ci_bucket" {
   environment    = var.environment
 }
 
+resource "aws_s3_bucket" "heliumedu" {
+  count = var.environment == "prod" ? 1 : 0
+
+  bucket = "heliumedu"
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
+  bucket = aws_s3_bucket.heliumedu[0].id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_s3_bucket" "heliumedu_media" {
   bucket = "heliumedu.${var.environment}.media"
 }

@@ -65,4 +65,4 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 
 publish: install
 	make -C projects/platform publish-docker
-	make -C projects/frontend publish-docker
+	make -C projects/frontend publish-docker publish-s3
