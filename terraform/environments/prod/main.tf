@@ -99,13 +99,19 @@ module "s3" {
   environment    = var.environment
 }
 
+module "cloudfront" {
+  source     = "../../modules/cloudfront"
+  aws_region = var.aws_region
+  s3_bucket  = module.s3.heliumedu_s3_frontend_bucket_name
+}
+
 module "ses" {
   source = "../../modules/ses"
 
   environment                   = var.environment
   environment_prefix            = var.environment_prefix
   aws_region                    = var.aws_region
-  heliumedu_s3_bucket_name      = module.s3.heliumedu_s3_bucket_name
+  heliumedu_s3_bucket_name      = module.s3.heliumedu_s3_ci_bucket_name
   route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
   route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
 }

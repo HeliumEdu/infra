@@ -134,3 +134,15 @@ resource "aws_s3_bucket_cors_configuration" "heliumedu_frontend_static" {
     max_age_seconds = 3000
   }
 }
+
+resource "aws_s3_bucket_website_configuration" "example" {
+  bucket = aws_s3_bucket.heliumedu_frontend_static.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "404.html"
+  }
+}
