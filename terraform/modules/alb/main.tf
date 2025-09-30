@@ -31,20 +31,6 @@ resource "aws_lb_listener" "http_redirect" {
   }
 }
 
-resource "aws_lb_target_group" "frontend" {
-  name        = "helium-frontend-http"
-  port        = 3000
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = var.helium_vpc_id
-
-  health_check {
-    path = "/info"
-  }
-
-  depends_on = [aws_lb.helium]
-}
-
 resource "aws_lb_target_group" "platform" {
   name        = "helium-platform-http"
   port        = 8000
@@ -74,23 +60,6 @@ resource "aws_lb_listener" "https" {
       content_type = "text/plain"
       message_body = "Unknown host header."
       status_code  = "400"
-    }
-  }
-}
-
-resource "aws_lb_listener_rule" "frontend" {
-  listener_arn = aws_lb_listener.https.arn
-  priority     = 1
-
-  action {
-    type = "forward"
-
-    target_group_arn = aws_lb_target_group.frontend.arn
-  }
-
-  condition {
-    host_header {
-      values = ["${var.environment_prefix}heliumedu.com", "www.${var.environment_prefix}heliumedu.com"]
     }
   }
 }

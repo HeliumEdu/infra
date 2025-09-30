@@ -7,18 +7,9 @@ variable "default_arch" {
   type        = string
 }
 
-variable "frontend_host_count" {
-  description = "The number of frontend hosts desired in the cluster"
-  type        = number
-}
-
 variable "platform_host_count" {
   description = "The number of platform hosts desired in the cluster"
   type        = number
-}
-
-variable "frontend_repository_uri" {
-  description = "Frontend container repo URI"
 }
 
 variable "platform_resource_repository_uri" {
@@ -63,18 +54,8 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "http_frontend" {
-  description = "The HTTP frontend security group"
-  type        = string
-}
-
 variable "http_platform" {
   description = "The HTTP platform security group"
-  type        = string
-}
-
-variable "frontend_target_group" {
-  description = "The frontend LB target group"
   type        = string
 }
 

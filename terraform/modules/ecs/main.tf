@@ -58,82 +58,6 @@ resource "aws_iam_role_policy" "get_secret_policy" {
   policy = data.aws_iam_policy_document.get_secret_policy_document.json
 }
 
-resource "aws_cloudwatch_log_group" "helium_frontend" {
-  name              = "/ecs/helium_frontend_${var.environment}"
-  retention_in_days = 30
-}
-
-resource "aws_cloudwatch_log_group" "helium_platform" {
-  name              = "/ecs/helium_platform_${var.environment}"
-  retention_in_days = 30
-}
-
-resource "aws_ecs_task_definition" "frontend_service" {
-  family = "helium_frontend_${var.environment}"
-  container_definitions = jsonencode([
-    {
-      name      = "helium_frontend"
-      image     = "${var.frontend_repository_uri}:amd64-${var.helium_version}"
-      cpu       = 0
-      essential = true
-      portMappings = [
-        {
-          containerPort = 3000
-          protocol      = "tcp"
-          appProtocol   = "http"
-        }
-      ]
-      environment = [
-        {
-          name  = "PROJECT_API_HOST"
-          value = "https://api.${var.environment_prefix}heliumedu.com"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "/ecs/helium_frontend_${var.environment}"
-          mode                  = "non-blocking"
-          awslogs-region        = var.aws_region
-          awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
-        }
-      }
-    },
-    {
-      name      = "datadog-agent"
-      image     = "public.ecr.aws/datadog/agent:latest"
-      cpu       = 0
-      essential = false
-      environment = [
-        {
-          name  = "ECS_FARGATE"
-          value = "true"
-        },
-        {
-          name  = "DD_API_KEY"
-          value = var.datadog_api_key
-        }
-      ]
-    }
-  ])
-
-  cpu    = "256"
-  memory = "512"
-
-  task_role_arn      = aws_iam_role.ecs_role.arn
-  execution_role_arn = aws_iam_role.ecs_role.arn
-  network_mode       = "awsvpc"
-  requires_compatibilities = [
-    "FARGATE"
-  ]
-
-  runtime_platform {
-    cpu_architecture        = var.default_arch
-    operating_system_family = "LINUX"
-  }
-}
-
 resource "aws_ecs_task_definition" "platform_resource_task" {
   family = "helium_platform_resource_${var.environment}"
   container_definitions = jsonencode([
@@ -352,34 +276,6 @@ resource "aws_ecs_cluster_capacity_providers" "helium" {
   cluster_name = aws_ecs_cluster.helium.name
 
   capacity_providers = ["FARGATE"]
-}
-
-resource "aws_ecs_service" "helium_frontend" {
-  name                               = "helium_frontend"
-  cluster                            = aws_ecs_cluster.helium.id
-  task_definition                    = aws_ecs_task_definition.frontend_service.arn
-  desired_count                      = var.frontend_host_count
-  health_check_grace_period_seconds  = 10
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
-
-  capacity_provider_strategy {
-    base              = 1
-    weight            = 100
-    capacity_provider = "FARGATE"
-  }
-
-  network_configuration {
-    subnets          = [for id in var.subnet_ids : id]
-    security_groups = [var.http_frontend]
-    assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = var.frontend_target_group
-    container_name   = "helium_frontend"
-    container_port   = 3000
-  }
 }
 
 data "aws_ecs_task_execution" "helium_platform_resource" {

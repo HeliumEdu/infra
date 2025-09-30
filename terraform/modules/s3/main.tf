@@ -116,7 +116,7 @@ resource "aws_s3_bucket_cors_configuration" "heliumedu_frontend_static" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "example" {
+resource "aws_s3_bucket_website_configuration" "heliumedu_frontend" {
   bucket = aws_s3_bucket.heliumedu_frontend_static.id
 
   index_document {

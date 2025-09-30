@@ -10,10 +10,6 @@ output "http_s_sg_id" {
   value = aws_security_group.http_s.id
 }
 
-output "http_sg_frontend" {
-  value = aws_security_group.http_helium_frontend.id
-}
-
 output "http_sg_platform" {
   value = aws_security_group.http_helium_platform.id
 }
