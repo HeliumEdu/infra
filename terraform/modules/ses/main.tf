@@ -153,30 +153,16 @@ resource "aws_ses_active_receipt_rule_set" "main" {
   rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
 }
 
-resource "aws_ses_receipt_rule" "cluster1_store_s3" {
-  name          = "heliumedu-cluster1-${var.environment}-test-email-to-s3"
+resource "aws_ses_receipt_rule" "cluster_store_s3" {
+  name          = "heliumedu-cluster-${var.environment}-test-email-to-s3"
   rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
-  recipients    = ["heliumedu-cluster1@${var.environment_prefix}heliumedu.dev"]
+  recipients    = ["heliumedu-cluster@${var.environment_prefix}heliumedu.dev"]
   enabled       = true
   scan_enabled  = false
 
   s3_action {
     bucket_name       = var.heliumedu_s3_bucket_name
-    object_key_prefix = "ci.email/heliumedu-cluster1"
-    position          = 1
-  }
-}
-
-resource "aws_ses_receipt_rule" "cluster2_store_s3" {
-  name          = "heliumedu-cluster2-${var.environment}-test-email-to-s3"
-  rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
-  recipients    = ["heliumedu-cluster2@${var.environment_prefix}heliumedu.dev"]
-  enabled       = true
-  scan_enabled  = false
-
-  s3_action {
-    bucket_name       = var.heliumedu_s3_bucket_name
-    object_key_prefix = "ci.email/heliumedu-cluster2"
+    object_key_prefix = "inbound.email/heliumedu-cluster"
     position          = 1
   }
 }

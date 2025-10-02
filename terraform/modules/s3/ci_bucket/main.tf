@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "allow_ses_access" {
     }
 
     resources = [
-      "arn:aws:s3:::heliumedu.${var.environment}/ci.email/**",
+      "arn:aws:s3:::heliumedu.${var.environment}/inbound.email/**",
     ]
 
     actions = [
