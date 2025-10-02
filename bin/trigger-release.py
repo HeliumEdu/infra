@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__copyright__ = "Copyright (c) 2018 Helium Edu"
+__copyright__ = "Copyright (c) 2025 Helium Edu"
 __license__ = "MIT"
 
 import json
