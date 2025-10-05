@@ -1,6 +1,10 @@
 resource "aws_acm_certificate" "heliumedu_com" {
-  domain_name       = "${var.environment_prefix}heliumedu.com"
-  subject_alternative_names = ["www.${var.environment_prefix}heliumedu.com", "api.${var.environment_prefix}heliumedu.com"]
+  domain_name = "${var.environment_prefix}heliumedu.com"
+  subject_alternative_names = ["www.${var.environment_prefix}heliumedu.com",
+    "api.${var.environment_prefix}heliumedu.com",
+    "app.${var.environment_prefix}heliumedu.com",
+    "support.${var.environment_prefix}heliumedu.com",
+  ]
   validation_method = "DNS"
 
   lifecycle {

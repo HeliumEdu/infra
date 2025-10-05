@@ -7,8 +7,8 @@ locals {
 module "route53" {
   source = "../../modules/route53"
 
-  environment        = var.environment
-  environment_prefix = var.environment_prefix
+  environment            = var.environment
+  environment_prefix     = var.environment_prefix
 }
 
 module "certificatemanager" {
