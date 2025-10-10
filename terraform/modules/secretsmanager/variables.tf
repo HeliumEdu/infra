@@ -68,7 +68,7 @@ variable "datadog_api_key" {
   type = string
 }
 
-variable "rollbar_access_token" {
+variable "rollbar_platform_client_access_token" {
   type = string
 }
 

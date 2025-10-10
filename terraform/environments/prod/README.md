@@ -48,7 +48,7 @@ The following Terraform Workspace variables must be defined:
   - `HELIUM_TWIML_HANDLER_URL` (optional if Twilio module is removed)
   - `CI_TWIML_HANDLER_URL` (optional if Twilio module is removed)
   - `DD_API_KEY` (the DataDog API key, leave blank to disable)
-  - `ROLLBAR_API_KEY` (leave blank to disable)
+  - `ROLLBAR_PLATFORM_CLIENT_ACCESS_TOKEN` (leave blank to disable)
 
 Once all of the above is configured, you can trigger Terraform to provision the new environment by executing:
 
