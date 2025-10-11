@@ -121,29 +121,29 @@ module "ses" {
 module "secretsmanager" {
   source = "../../modules/secretsmanager"
 
-  environment                          = var.environment
-  aws_account_id                       = local.aws_account_id
-  aws_region                           = var.aws_region
-  task_execution_role_arn              = module.ecs.task_execution_role_arn
-  datadog_api_key                      = var.DD_API_KEY
-  redis_host                           = module.elasticache.elasticache_host
-  db_host                              = module.rds.db_host
-  db_user                              = module.rds.db_username
-  db_password                          = module.rds.db_password
-  rollbar_platform_client_access_token = var.ROLLBAR_PLATFORM_CLIENT_ACCESS_TOKEN
-  s3_user_access_key_id                = module.s3.s3_access_key_id
-  s3_user_secret_access_key            = module.s3.s3_access_key_secret
-  smtp_email_user                      = module.ses.smtp_username
-  smtp_email_password                  = module.ses.smtp_password
-  twilio_account_sid                   = var.TWILIO_ACCOUNT_SID
-  twilio_auth_token                    = var.TWILIO_AUTH_TOKEN
-  twilio_phone_number                  = module.twilio.helium_phone_number
-  firebase_project_id                  = var.FIREBASE_PROJECT_ID
-  firebase_private_key_id              = var.FIREBASE_PRIVATE_KEY_ID
-  firebase_private_key                 = var.FIREBASE_PRIVATE_KEY
-  firebase_client_email                = var.FIREBASE_CLIENT_EMAIL
-  firebase_client_id                   = var.FIREBASE_CLIENT_ID
-  firebase_client_x509_cert_url        = var.FIREBASE_CLIENT_X509_CERT_URL
+  environment                               = var.environment
+  aws_account_id                            = local.aws_account_id
+  aws_region                                = var.aws_region
+  task_execution_role_arn                   = module.ecs.task_execution_role_arn
+  datadog_api_key                           = var.DD_API_KEY
+  redis_host                                = module.elasticache.elasticache_host
+  db_host                                   = module.rds.db_host
+  db_user                                   = module.rds.db_username
+  db_password                               = module.rds.db_password
+  platform_rollbar_client_item_access_token = var.PLATFORM_ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN
+  s3_user_access_key_id                     = module.s3.s3_access_key_id
+  s3_user_secret_access_key                 = module.s3.s3_access_key_secret
+  smtp_email_user                           = module.ses.smtp_username
+  smtp_email_password                       = module.ses.smtp_password
+  twilio_account_sid                        = var.TWILIO_ACCOUNT_SID
+  twilio_auth_token                         = var.TWILIO_AUTH_TOKEN
+  twilio_phone_number                       = module.twilio.helium_phone_number
+  firebase_project_id                       = var.FIREBASE_PROJECT_ID
+  firebase_private_key_id                   = var.FIREBASE_PRIVATE_KEY_ID
+  firebase_private_key                      = var.FIREBASE_PRIVATE_KEY
+  firebase_client_email                     = var.FIREBASE_CLIENT_EMAIL
+  firebase_client_id                        = var.FIREBASE_CLIENT_ID
+  firebase_client_x509_cert_url             = var.FIREBASE_CLIENT_X509_CERT_URL
 }
 
 module "twilio" {

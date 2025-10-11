@@ -151,7 +151,7 @@ jobs:
           environment: ${{inputs.environment}}
           version: ${{ github.sha }}
         env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_PLATFORM_SERVER_ACCESS_TOKEN }}
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.PLATFORM_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}
           ROLLBAR_USERNAME: ${{ github.actor }}
       - name: Notify Rollbar of frontend deploy
         uses: rollbar/github-deploy-action@2.1.2
@@ -160,5 +160,5 @@ jobs:
           environment: ${{inputs.environment}}
           version: ${{ github.sha }}
         env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_FRONTEND_SERVER_ACCESS_TOKEN }}
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}
           ROLLBAR_USERNAME: ${{ github.actor }}
