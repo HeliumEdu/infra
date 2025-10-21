@@ -23,6 +23,7 @@ VERSION = os.environ.get("VERSION")
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TERRAFORM_API_TOKEN = os.environ.get("TERRAFORM_API_TOKEN")
 FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN = os.environ.get("FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN")
+DEPLOY_SOURCE_MAPS = os.environ.get("DEPLOY_SOURCE_MAPS", "false").lower() == "true"
 CUT_RELEASE = os.environ.get("CUT_RELEASE", "true") == "true"
 
 if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or not FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN or \
@@ -209,17 +210,13 @@ print(f"Copying frontend resources from {source_bucket_name}{assets_source_prefi
 for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
     new_key = f"{assets_dest_prefix}" + obj.key[len(assets_source_prefix):].lstrip("/")
 
-    # Don't move source maps as part of deployment, instead  upload them to Rollbar
     if obj.key.endswith(".min.js.map"):
-        if CUT_RELEASE:
-            print(f"Uploading JS source map {obj.key}")
-            try:
-                upload_source_map(obj.key)
-            except Exception as e:
-                print(f"An error occurred uploading JS source map {obj.key}: {e}")
-        else:
-            print(f"Skipping JS source map upload of {obj.key}")
-    elif ENVIRONMENT != "prod" or not obj.key.endswith(".min.css.map"):
+        try:
+            upload_source_map(obj.key)
+        except Exception as e:
+            print(f"An error occurred uploading JS source map {obj.key}: {e}")
+
+    if not (obj.key.endswith(".min.js.map") and obj.key.endswith(".min.css.map")) or DEPLOY_SOURCE_MAPS:
         copy_source = {
             'Bucket': source_bucket_name,
             'Key': obj.key
@@ -227,7 +224,7 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
         print(f"--> '{obj.key}' to '{new_key}'")
     else:
-        print(f"Skipping file {obj.key} in environment {ENVIRONMENT}")
+        print(f"Skipping file {obj.key}, DEPLOY_SOURCE_MAPS={DEPLOY_SOURCE_MAPS}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
