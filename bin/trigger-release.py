@@ -8,7 +8,7 @@ import os
 import re
 import sys
 import time
-from urllib import request
+from urllib import request, parse
 from urllib.request import urlopen
 
 import boto3
@@ -22,13 +22,14 @@ BASE_DIR = os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(__file_
 VERSION = os.environ.get("VERSION")
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TERRAFORM_API_TOKEN = os.environ.get("TERRAFORM_API_TOKEN")
+FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN = os.environ.get("FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN")
 CUT_RELEASE = os.environ.get("CUT_RELEASE", "true") == "true"
 
-if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or \
+if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or not FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN or \
         not os.environ.get("AWS_ACCOUNT_ID") or not os.environ.get("AWS_ACCESS_KEY_ID") or not os.environ.get(
     "AWS_SECRET_ACCESS_KEY"):
     print(
-        "ERROR: Set all required env vars: VERSION, ENVIRONMENT, TERRAFORM_API_TOKEN, AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY.")
+        "ERROR: Set all required env vars: VERSION, ENVIRONMENT, TERRAFORM_API_TOKEN, FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN, AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY.")
     sys.exit(1)
 
 INFO_URI = "https://{}.heliumedu.com/info".format("api" if ENVIRONMENT == "prod" else f"api.{ENVIRONMENT}")
@@ -175,6 +176,31 @@ source_bucket = s3.Bucket(source_bucket_name)
 dest_bucket_name = f"heliumedu.{ENVIRONMENT}.frontend.static"
 dest_bucket = s3.Bucket(dest_bucket_name)
 
+
+def upload_source_map(s3_key):
+    s3_client = boto3.client('s3')
+
+    min_map_url = s3_client.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': source_bucket_name, 'Key': obj.key},
+        ExpiresIn=(60 * 5)
+    )
+
+    encoded_data = parse.urlencode({
+        'access_token': FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN,
+        'version': VERSION,
+        'minified_url': min_map_url,
+    }).encode('ascii')
+
+    req = request.Request('https://api.rollbar.com/api/1/sourcemap/download', data=encoded_data, method='POST')
+
+    req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+
+    with request.urlopen(req) as response:
+        response_body = response.read().decode('utf-8')
+        print(f"Response from {obj.key} source map upload: {response_body}")
+
+
 # Copy assets first, so that new versioned bundles exist before pages are updated
 
 assets_source_prefix = f"helium/frontend/{VERSION}/assets"
@@ -182,12 +208,26 @@ assets_dest_prefix = "assets/"
 print(f"Copying frontend resources from {source_bucket_name}{assets_source_prefix} to {dest_bucket_name} ...")
 for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
     new_key = f"{assets_dest_prefix}" + obj.key[len(assets_source_prefix):].lstrip("/")
-    copy_source = {
-        'Bucket': source_bucket_name,
-        'Key': obj.key
-    }
-    dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
-    print(f"--> '{obj.key}' to '{new_key}'")
+
+    # Don't move source maps as part of deployment, instead  upload them to Rollbar
+    if obj.key.endswith(".min.js.map"):
+        if CUT_RELEASE:
+            print(f"Uploading JS source map {obj.key}")
+            try:
+                upload_source_map(obj.key)
+            except Exception as e:
+                print(f"An error occurred uploading JS source map {obj.key}: {e}")
+        else:
+            print(f"Skipping JS source map upload of {obj.key}")
+    elif ENVIRONMENT != "prod" or not obj.key.endswith(".min.css.map"):
+        copy_source = {
+            'Bucket': source_bucket_name,
+            'Key': obj.key
+        }
+        dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
+        print(f"--> '{obj.key}' to '{new_key}'")
+    else:
+        print(f"Skipping file {obj.key} in environment {ENVIRONMENT}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
