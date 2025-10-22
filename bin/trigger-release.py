@@ -23,8 +23,9 @@ VERSION = os.environ.get("VERSION")
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TERRAFORM_API_TOKEN = os.environ.get("TERRAFORM_API_TOKEN")
 FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN = os.environ.get("FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN")
+
 DEPLOY_SOURCE_MAPS = os.environ.get("DEPLOY_SOURCE_MAPS", "false").lower() == "true"
-CUT_RELEASE = os.environ.get("CUT_RELEASE", "true") == "true"
+CUT_RELEASE = os.environ.get("CUT_RELEASE", "true").lower() == "true"
 
 if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or not FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN or \
         not os.environ.get("AWS_ACCOUNT_ID") or not os.environ.get("AWS_ACCESS_KEY_ID") or not os.environ.get(
@@ -216,7 +217,7 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         except Exception as e:
             print(f"An error occurred uploading JS source map {obj.key}: {e}")
 
-    if not (obj.key.endswith(".min.js.map") and obj.key.endswith(".min.css.map")) or DEPLOY_SOURCE_MAPS:
+    if DEPLOY_SOURCE_MAPS or not (obj.key.endswith(".min.js.map") and obj.key.endswith(".min.css.map")):
         copy_source = {
             'Bucket': source_bucket_name,
             'Key': obj.key
