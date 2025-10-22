@@ -50,6 +50,9 @@ jobs:
       PLATFORM_RESOURCE_IMAGE: public.ecr.aws/heliumedu/helium/platform-resource:amd64-${{ inputs.version }}
       PLATFORM_API_IMAGE: public.ecr.aws/heliumedu/helium/platform-api:amd64-${{ inputs.version }}
       PLATFORM_WORKER_IMAGE: public.ecr.aws/heliumedu/helium/platform-worker:amd64-${{ inputs.version }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       PLATFORM_EMAIL_HOST_USER: ${{ secrets.PLATFORM_EMAIL_HOST_USER }}
       PLATFORM_EMAIL_HOST_PASSWORD: ${{ secrets.PLATFORM_EMAIL_HOST_PASSWORD }}
       PLATFORM_TWILIO_ACCOUNT_SID: ${{ secrets.PLATFORM_TWILIO_ACCOUNT_SID }}
