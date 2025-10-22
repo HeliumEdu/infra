@@ -200,7 +200,7 @@ def upload_source_map(s3_key):
 
     with request.urlopen(req) as response:
         response_body = response.read().decode('utf-8')
-        print(f"Response from {obj.key} source map upload: {response_body}")
+        print(f"--> Response from {obj.key} source map upload: {response_body}")
 
 
 # Copy assets first, so that new versioned bundles exist before pages are updated

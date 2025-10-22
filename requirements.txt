@@ -1,2 +1,2 @@
-heliumcli>=1.6.35
+heliumcli>=1.6.36
 boto3>=1.40.40
