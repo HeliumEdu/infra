@@ -181,12 +181,12 @@ dest_bucket_name = f"heliumedu.{ENVIRONMENT}.frontend.static"
 dest_bucket = s3.Bucket(dest_bucket_name)
 
 
-def upload_source_map(minified_url, key):
+def upload_source_map(minified_url, source_map_key):
     s3_client = boto3.client('s3')
 
     map_url = s3_client.generate_presigned_url(
         'get_object',
-        Params={'Bucket': source_bucket_name, 'Key': key},
+        Params={'Bucket': source_bucket_name, 'Key': source_map_key},
         ExpiresIn=(60 * 60 * 30)
     )
 
@@ -214,13 +214,6 @@ print(f"Copying frontend resources from {source_bucket_name}{assets_source_prefi
 for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
     new_key = f"{assets_dest_prefix}" + obj.key[len(assets_source_prefix):].lstrip("/")
 
-    if obj.key.endswith(".min.js.map"):
-        try:
-            new_key_url = f"{BASE_URL}/{new_key}"
-            upload_source_map(new_key_url, obj.key)
-        except Exception as e:
-            print(f"An error occurred uploading JS source map {obj.key}: {e}")
-
     if (obj.key.endswith(".min.js.map") or obj.key.endswith(".min.css.map")) and not DEPLOY_SOURCE_MAPS:
         print(f"Skipping file {obj.key}, DEPLOY_SOURCE_MAPS={DEPLOY_SOURCE_MAPS}")
     else:
@@ -230,6 +223,13 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         }
         dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
         print(f"--> '{obj.key}' to '{new_key}'")
+
+    if obj.key.endswith(".min.js.map"):
+        try:
+            new_key_url = f"{BASE_URL}/{new_key}"
+            upload_source_map(new_key_url.removesuffix(".map"), obj.key)
+        except Exception as e:
+            print(f"An error occurred uploading JS source map {obj.key}: {e}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
