@@ -217,15 +217,15 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         except Exception as e:
             print(f"An error occurred uploading JS source map {obj.key}: {e}")
 
-    if DEPLOY_SOURCE_MAPS or not (obj.key.endswith(".min.js.map") and obj.key.endswith(".min.css.map")):
+    if (obj.key.endswith(".min.js.map") or obj.key.endswith(".min.css.map")) and not DEPLOY_SOURCE_MAPS:
+        print(f"Skipping file {obj.key}, DEPLOY_SOURCE_MAPS={DEPLOY_SOURCE_MAPS}")
+    else:
         copy_source = {
             'Bucket': source_bucket_name,
             'Key': obj.key
         }
         dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
         print(f"--> '{obj.key}' to '{new_key}'")
-    else:
-        print(f"Skipping file {obj.key}, DEPLOY_SOURCE_MAPS={DEPLOY_SOURCE_MAPS}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
