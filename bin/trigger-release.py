@@ -8,10 +8,9 @@ import os
 import re
 import sys
 import time
-from urllib import request, parse
-from urllib.request import urlopen
 
 import boto3
+import requests
 from git import Repo
 from heliumcli import utils
 from heliumcli.actions.buildrelease import BuildReleaseAction
@@ -88,17 +87,16 @@ else:
 # Fetch Terraform Workspace details
 #####################################################################
 
-req = request.Request(f"https://app.terraform.io/api/v2/organizations/HeliumEdu/workspaces/{ENVIRONMENT}",
+workspaces_response = requests.get(f"https://app.terraform.io/api/v2/organizations/HeliumEdu/workspaces/{ENVIRONMENT}",
                       headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
-                               "Content-Type": "application/vnd.api+json"})
-workspaces_response = json.loads(urlopen(req).read())
+                               "Content-Type": "application/vnd.api+json"}).json()
 
 #####################################################################
 # Find planned [heliumcli] Terraform run, discard other pending
 #####################################################################
 
 if not CUT_RELEASE:
-    req = request.Request(f"https://app.terraform.io/api/v2/runs",
+    response = requests.post(f"https://app.terraform.io/api/v2/runs",
                           headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
                                    "Content-Type": "application/vnd.api+json"},
                           data=json.dumps({"data":
@@ -116,18 +114,16 @@ if not CUT_RELEASE:
                                           "type": "workspaces"
                                       }
                                   }
-                              }}}).encode())
-    resp = urlopen(req)
+                              }}}).encode()).json()
 
 heliumcli_run = None
 retries = 0
 retry_sleep_seconds = 10
 wait_minutes = 3
 while retries < ((wait_minutes * 60) / retry_sleep_seconds):
-    req = request.Request(f"https://app.terraform.io/api/v2/workspaces/{workspaces_response['data']['id']}/runs",
+    runs_response = requests.get(f"https://app.terraform.io/api/v2/workspaces/{workspaces_response['data']['id']}/runs",
                           headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
-                                   "Content-Type": "application/vnd.api+json"})
-    runs_response = json.loads(urlopen(req).read())
+                                   "Content-Type": "application/vnd.api+json"}).json()
 
     for run in runs_response["data"]:
         # Discard all planned or pending plans that are not what was just triggered by [heliumcli] for this version
@@ -135,12 +131,11 @@ while retries < ((wait_minutes * 60) / retry_sleep_seconds):
                 (not run["attributes"]["message"].startswith("[heliumcli]") or VERSION not in run["attributes"][
                     "message"])):
             reject_endpoint = "cancel" if run["attributes"]["actions"]["is-cancelable"] else "discard"
-            req = request.Request(f"https://app.terraform.io/api/v2/runs/{run['id']}/actions/{reject_endpoint}",
+            requests.post(f"https://app.terraform.io/api/v2/runs/{run['id']}/actions/{reject_endpoint}",
                                   headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
                                            "Content-Type": "application/vnd.api+json"},
                                   data=json.dumps(
                                       {"comment": "Discarding plan in favor of official release plan"}).encode())
-            json.loads(urlopen(req).read())
         # Continue to wait until the [heliumcli] plan is in the correct state
         elif (run["attributes"]["status"] == "planned" and
               run["attributes"]["message"].startswith("[heliumcli]") and
@@ -165,11 +160,10 @@ if not heliumcli_run:
 #####################################################################
 
 print(f"Triggering Terraform apply on run ID {heliumcli_run['id']} in {ENVIRONMENT} ...")
-req = request.Request(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']}/actions/apply",
+resp = requests.post(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']}/actions/apply",
                       headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
                                "Content-Type": "application/vnd.api+json"},
-                      data=json.dumps({"comments": f"[heliumcli] Apply {VERSION}"}).encode())
-resp = urlopen(req)
+                      data=json.dumps({"comments": f"[heliumcli] Apply {VERSION}"}).encode()).json()
 
 #####################################################################
 # Release frontend code from artifact S3 bucket to live
@@ -184,27 +178,23 @@ dest_bucket = s3.Bucket(dest_bucket_name)
 def upload_source_map(minified_url, source_map_key):
     s3_client = boto3.client('s3')
 
-    map_url = s3_client.generate_presigned_url(
-        'get_object',
-        Params={'Bucket': source_bucket_name, 'Key': source_map_key},
-        ExpiresIn=(60 * 60 * 30)
-    )
+    os.makedirs('source_maps', exist_ok=True)
 
-    encoded_data = parse.urlencode({
-        'access_token': FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN,
-        'version': VERSION,
-        'minified_url': minified_url,
-        'source_map': map_url,
-    }).encode('ascii')
+    source_map_path = os.path.join('source_maps', os.path.basename(obj.key))
+    s3_client.download_file(source_bucket_name, source_map_key, source_map_path)
+    with open(source_map_path, 'rb') as f:
+        data = {
+            'access_token': FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN,
+            'version': VERSION,
+            'minified_url': minified_url,
+        }
+        files = {
+            'source_map': f
+        }
 
-    req = request.Request('https://api.rollbar.com/api/1/sourcemap', data=encoded_data, method='POST')
+        response = requests.post('https://api.rollbar.com/api/1/sourcemap', data=data, files=files)
 
-    req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-
-    with request.urlopen(req) as response:
-        response_body = response.read().decode('utf-8')
-        print(f"--> Response from {obj.key} source map upload: {response_body}")
-
+        print(f"--> Response from {obj.key} source map upload: {response.content}")
 
 # Copy assets first, so that new versioned bundles exist before pages are updated
 
@@ -225,11 +215,11 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         print(f"--> '{obj.key}' to '{new_key}'")
 
     if obj.key.endswith(".min.js.map"):
-        try:
-            new_key_url = f"{BASE_URL}/{new_key}"
-            upload_source_map(new_key_url.removesuffix(".map"), obj.key)
-        except Exception as e:
-            print(f"An error occurred uploading JS source map {obj.key}: {e}")
+        # try:
+        new_key_url = f"{BASE_URL}/{new_key}"
+        upload_source_map(new_key_url.removesuffix(".map"), obj.key)
+        # except Exception as e:
+        #     print(f"An error occurred uploading JS source map {new_key}: {e}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
@@ -257,7 +247,7 @@ retries = 0
 retry_sleep_seconds = 20
 wait_minutes = 10
 while retries < ((wait_minutes * 60) / retry_sleep_seconds):
-    result = json.load(urlopen(INFO_URI))
+    result = requests.get(INFO_URI).json()
     if result["version"] == VERSION:
         version_is_live = True
         break
