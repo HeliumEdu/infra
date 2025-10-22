@@ -24,8 +24,10 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT")
 TERRAFORM_API_TOKEN = os.environ.get("TERRAFORM_API_TOKEN")
 FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN = os.environ.get("FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN")
 
-DEPLOY_SOURCE_MAPS = os.environ.get("DEPLOY_SOURCE_MAPS", "false").lower() == "true"
 CUT_RELEASE = os.environ.get("CUT_RELEASE", "true").lower() == "true"
+DEPLOY_SOURCE_MAPS = os.environ.get("DEPLOY_SOURCE_MAPS", "false").lower() == "true"
+ENVIRONMENT_PREFIX = f'{ENVIRONMENT}.' if 'prod' not in ENVIRONMENT else ''
+BASE_URL = f'https://www.{ENVIRONMENT_PREFIX}heliumedu.com'
 
 if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or not FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN or \
         not os.environ.get("AWS_ACCOUNT_ID") or not os.environ.get("AWS_ACCESS_KEY_ID") or not os.environ.get(
@@ -179,22 +181,23 @@ dest_bucket_name = f"heliumedu.{ENVIRONMENT}.frontend.static"
 dest_bucket = s3.Bucket(dest_bucket_name)
 
 
-def upload_source_map(s3_key):
+def upload_source_map(minified_url, key):
     s3_client = boto3.client('s3')
 
-    min_map_url = s3_client.generate_presigned_url(
+    map_url = s3_client.generate_presigned_url(
         'get_object',
-        Params={'Bucket': source_bucket_name, 'Key': obj.key},
-        ExpiresIn=(60 * 5)
+        Params={'Bucket': source_bucket_name, 'Key': key},
+        ExpiresIn=(60 * 60 * 30)
     )
 
     encoded_data = parse.urlencode({
         'access_token': FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN,
         'version': VERSION,
-        'minified_url': min_map_url,
+        'minified_url': minified_url,
+        'source_map': map_url,
     }).encode('ascii')
 
-    req = request.Request('https://api.rollbar.com/api/1/sourcemap/download', data=encoded_data, method='POST')
+    req = request.Request('https://api.rollbar.com/api/1/sourcemap', data=encoded_data, method='POST')
 
     req.add_header('Content-Type', 'application/x-www-form-urlencoded')
 
@@ -213,7 +216,8 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
 
     if obj.key.endswith(".min.js.map"):
         try:
-            upload_source_map(obj.key)
+            new_key_url = f"{BASE_URL}/{new_key}"
+            upload_source_map(new_key_url, obj.key)
         except Exception as e:
             print(f"An error occurred uploading JS source map {obj.key}: {e}")
 
