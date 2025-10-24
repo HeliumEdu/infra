@@ -11,7 +11,9 @@ on:
       environment:
         type: choice
         required: true
+        default: prod
         options:
+        - dev
         - prod
 
 jobs:

@@ -12,3 +12,8 @@ variable "route53_heliumedu_dev_zone_id" {
   description = "The Route 53 Zone ID"
   type = string
 }
+
+variable "aws_region" {
+  description = "The AWS region"
+  type = string
+}

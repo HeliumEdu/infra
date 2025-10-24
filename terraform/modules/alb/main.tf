@@ -2,7 +2,7 @@ resource "aws_lb" "helium" {
   name               = "helium-${var.environment}"
   internal           = false
   load_balancer_type = "application"
-  security_groups = [var.security_group]
+  security_groups    = [var.security_group]
   subnets            = [for id in var.subnet_ids : id]
 
   enable_deletion_protection = true

@@ -9,6 +9,8 @@ module "route53" {
 
   environment        = var.environment
   environment_prefix = var.environment_prefix
+  parent_com_zone_id = var.prod_com_zone_id
+  parent_dev_zone_id = var.prod_dev_zone_id
 }
 
 module "certificatemanager" {
@@ -17,6 +19,7 @@ module "certificatemanager" {
   environment_prefix            = var.environment_prefix
   route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
   route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
+  aws_region                    = var.aws_region
 }
 
 module "s3" {

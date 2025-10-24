@@ -87,6 +87,8 @@ else:
 # Fetch Terraform Workspace details
 #####################################################################
 
+# TODO: migrate this Terraform deployment code in to `heliumcli`, then it can be removed from deploy and platform
+
 workspaces_response = requests.get(f"https://app.terraform.io/api/v2/organizations/HeliumEdu/workspaces/{ENVIRONMENT}",
                       headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
                                "Content-Type": "application/vnd.api+json"}).json()
@@ -168,6 +170,9 @@ resp = requests.post(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']
 #####################################################################
 # Release frontend code from artifact S3 bucket to live
 #####################################################################
+
+# TODO: migrate this deployment code in to `heliumcli`, then it can be removed from deploy and frontend
+
 s3 = boto3.resource('s3')
 source_bucket_name = "heliumedu"
 source_bucket = s3.Bucket(source_bucket_name)
@@ -215,11 +220,8 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         print(f"--> '{obj.key}' to '{new_key}'")
 
     if obj.key.endswith(".min.js.map"):
-        # try:
         new_key_url = f"{BASE_URL}/{new_key}"
         upload_source_map(new_key_url.removesuffix(".map"), obj.key)
-        # except Exception as e:
-        #     print(f"An error occurred uploading JS source map {new_key}: {e}")
 
 source_prefix = f"helium/frontend/{VERSION}"
 print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")

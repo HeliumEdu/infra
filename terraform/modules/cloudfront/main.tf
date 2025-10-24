@@ -1,5 +1,5 @@
 resource "aws_cloudfront_function" "rewrites" {
-  name    = "rewrites"
+  name    = "${var.environment}-rewrites"
   runtime = "cloudfront-js-2.0"
   publish = true
   code    = file("${path.module}/rewrites.js")

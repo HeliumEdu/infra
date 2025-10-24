@@ -55,11 +55,3 @@ Once all of the above is configured, you can trigger Terraform to provision the 
 ```
 terraform apply
 ```
-
-### Route 53 Subdomains
-
-For non-`prod` environments, note that once provisioned, Terraform will create separate Route 53 Hosted Zones for
-each environment (subdomains of their parent zones). For example, there will be a `heliumedu.dev` zone, and a
-`dev-local.heliumedu.dev` zone. In order to complete the mapping, take note of the name servers in the subdomain
-zone (`dev-loca.heliumedu.dev`, then go to the parent zone (`heliumedu.dev`), create a new NS record named `dev-local`,
-and for its value use all of the subdomain zone's name servers.

@@ -64,5 +64,5 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
     make -C projects/cluster-tests test
 
 publish: install
-	make -C projects/platform publish-docker
-	make -C projects/frontend publish-docker
+	make -C projects/platform publish
+	make -C projects/frontend publish

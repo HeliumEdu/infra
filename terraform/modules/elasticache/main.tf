@@ -6,7 +6,7 @@ resource "aws_elasticache_subnet_group" "helium" {
 resource "aws_elasticache_cluster" "helium" {
   cluster_id        = "helium-${var.environment}"
   engine            = "redis"
-  node_type         = "cache.t4g.micro"
+  node_type         = var.instance_size
   num_cache_nodes   = var.num_cache_nodes
   engine_version    = "7.1"
   security_group_ids = [var.elasticache_sg]

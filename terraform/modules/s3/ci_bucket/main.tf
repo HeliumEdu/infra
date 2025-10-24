@@ -2,6 +2,23 @@ resource "aws_s3_bucket" "heliumedu" {
   bucket = "heliumedu.${var.environment}"
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "heliumedu_lifecycle" {
+  bucket = aws_s3_bucket.heliumedu.id
+
+  rule {
+    id = "inbound-email"
+
+    filter {
+      prefix = "inbound.email/"
+    }
+    expiration {
+      days = 7
+    }
+
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
   bucket = aws_s3_bucket.heliumedu.id
 
@@ -14,7 +31,7 @@ resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
 data "aws_iam_policy_document" "allow_ses_access" {
   statement {
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["ses.amazonaws.com"]
     }
 
@@ -29,7 +46,7 @@ data "aws_iam_policy_document" "allow_ses_access" {
     condition {
       test     = "StringEquals"
       variable = "aws:Referer"
-      values = [var.aws_account_id]
+      values   = [var.aws_account_id]
     }
   }
 }
@@ -52,7 +69,7 @@ data "aws_iam_policy_document" "helium_s3" {
     resources = [
       "arn:aws:s3:::heliumedu.${var.environment}**",
       "arn:aws:s3:::heliumedu.${var.environment}/**",
-      "arn:aws:s3:::heliumedu.${var.environment}.*/**"]
+    "arn:aws:s3:::heliumedu.${var.environment}.*/**"]
     actions = ["s3:*"]
   }
 }
