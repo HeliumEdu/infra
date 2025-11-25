@@ -6,7 +6,7 @@
 
 # Helium Infrastructure
 
-The deployment infastructure for [Helium Edu](https://www.heliumedu.com/).
+The deployment infrastructure for [Helium](https://www.heliumedu.com/).
 
 Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
 
