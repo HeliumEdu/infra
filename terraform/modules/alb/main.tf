@@ -10,7 +10,7 @@ resource "aws_lb" "helium" {
 
 resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "api.${var.environment_prefix}heliumedu.com"
+  name    = "api.${var.route53_heliumedu_com_zone_name}"
   type    = "CNAME"
   ttl     = "86400"
   records = [aws_lb.helium.dns_name]
@@ -76,7 +76,7 @@ resource "aws_lb_listener_rule" "platform" {
 
   condition {
     host_header {
-      values = ["api.${var.environment_prefix}heliumedu.com"]
+      values = ["api.${var.route53_heliumedu_com_zone_name}"]
     }
   }
 }

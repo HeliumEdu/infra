@@ -3,14 +3,14 @@ variable "environment" {
   type        = string
 }
 
-variable "environment_prefix" {
-  description = "Prefix used for env in hostnames (empty string when `prod`)"
-  type = string
-}
-
 variable "route53_heliumedu_com_zone_id" {
   description = "The Route 53 zone ID"
-  type = string
+  type        = string
+}
+
+variable "route53_heliumedu_com_zone_name" {
+  description = "The Route 53 zone name"
+  type        = string
 }
 
 variable "security_group" {
@@ -20,7 +20,7 @@ variable "security_group" {
 
 variable "subnet_ids" {
   description = "The list of subnets"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "helium_vpc_id" {

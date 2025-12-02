@@ -14,10 +14,10 @@ module "route53" {
 module "certificatemanager" {
   source = "../../modules/certificatemanager"
 
-  environment_prefix            = var.environment_prefix
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
-  aws_region                    = var.aws_region
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
 module "vpc" {
@@ -31,13 +31,13 @@ module "vpc" {
 module "alb" {
   source = "../../modules/alb"
 
-  environment                   = var.environment
-  environment_prefix            = var.environment_prefix
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
-  security_group                = module.vpc.http_s_sg_id
-  subnet_ids                    = module.vpc.subnet_ids
-  helium_vpc_id                 = module.vpc.vpc_id
-  heliumedu_com_cert_arn        = module.certificatemanager.heliumedu_com_cert_arn
+  environment                     = var.environment
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  security_group                  = module.vpc.http_s_sg_id
+  subnet_ids                      = module.vpc.subnet_ids
+  helium_vpc_id                   = module.vpc.vpc_id
+  heliumedu_com_cert_arn          = module.certificatemanager.heliumedu_com_cert_arn
 }
 
 module "rds" {
@@ -86,8 +86,9 @@ module "elasticache" {
 module "email" {
   source = "../../modules/email"
 
-  environment                   = var.environment
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
+  environment                     = var.environment
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
 }
 
 module "s3" {
@@ -100,23 +101,25 @@ module "s3" {
 module "cloudfront" {
   source = "../../modules/cloudfront"
 
-  environment                   = var.environment
-  environment_prefix            = var.environment_prefix
-  s3_bucket                     = module.s3.heliumedu_s3_frontend_bucket_name
-  s3_website_endpoint           = module.s3.heliumedu_s3_website_endpoint
-  heliumedu_com_cert_arn        = module.certificatemanager.heliumedu_com_cert_arn
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
+  environment                     = var.environment
+  environment_prefix              = var.environment_prefix
+  s3_bucket                       = module.s3.heliumedu_s3_frontend_bucket_name
+  s3_website_endpoint             = module.s3.heliumedu_s3_website_endpoint
+  heliumedu_com_cert_arn          = module.certificatemanager.heliumedu_com_cert_arn
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
 }
 
 module "ses" {
   source = "../../modules/ses"
 
-  environment                   = var.environment
-  environment_prefix            = var.environment_prefix
-  aws_region                    = var.aws_region
-  heliumedu_s3_bucket_name      = module.s3.heliumedu_s3_ci_bucket_name
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
+  environment                     = var.environment
+  aws_region                      = var.aws_region
+  heliumedu_s3_bucket_name        = module.s3.heliumedu_s3_ci_bucket_name
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
 module "secretsmanager" {

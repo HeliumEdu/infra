@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "ses_sender" {
     condition {
       test     = "StringLike"
       variable = "ses:FromAddress"
-      values   = ["*@${var.environment_prefix}heliumedu.com"]
+      values   = ["*@${var.route53_heliumedu_com_zone_name}"]
     }
   }
 }
@@ -30,12 +30,12 @@ resource "aws_iam_user_policy_attachment" "s3_access_attachment" {
 }
 
 resource "aws_ses_domain_identity" "heliumedu_com_identity" {
-  domain = "${var.environment_prefix}heliumedu.com"
+  domain = var.route53_heliumedu_com_zone_name
 }
 
 resource "aws_ses_domain_mail_from" "heliumedu_com_mail_from" {
   domain           = aws_ses_domain_identity.heliumedu_com_identity.domain
-  mail_from_domain = "bounce.${var.environment_prefix}heliumedu.com"
+  mail_from_domain = "bounce.${var.route53_heliumedu_com_zone_name}"
 }
 
 resource "aws_route53_record" "heliumedu_com_mail_from_mx" {
@@ -56,7 +56,7 @@ resource "aws_route53_record" "heliumedu_com_mail_from_txt" {
 
 resource "aws_route53_record" "heliumedu_com_amazonses_verification_record" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "_amazonses.${var.environment_prefix}heliumedu.com"
+  name    = "_amazonses.${var.route53_heliumedu_com_zone_name}"
   type    = "TXT"
   ttl     = "3600"
   records = [aws_ses_domain_identity.heliumedu_com_identity.verification_token]
@@ -64,7 +64,7 @@ resource "aws_route53_record" "heliumedu_com_amazonses_verification_record" {
 
 resource "aws_route53_record" "heliumedu_com_amazonses_dmarc" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "_dmarc.${var.environment_prefix}heliumedu.com"
+  name    = "_dmarc.${var.route53_heliumedu_com_zone_name}"
   type    = "TXT"
   ttl     = "3600"
   records = ["v=DMARC1; p=quarantine;"]
@@ -84,12 +84,12 @@ resource "aws_route53_record" "heliumedu_com_amazonses_dkim_record" {
 }
 
 resource "aws_ses_domain_identity" "heliumedu_dev_identity" {
-  domain = "${var.environment_prefix}heliumedu.dev"
+  domain = var.route53_heliumedu_dev_zone_name
 }
 
 resource "aws_ses_domain_mail_from" "heliumedu_dev_mail_from" {
   domain           = aws_ses_domain_identity.heliumedu_dev_identity.domain
-  mail_from_domain = "bounce.${var.environment_prefix}heliumedu.dev"
+  mail_from_domain = "bounce.${var.route53_heliumedu_dev_zone_name}"
 }
 
 resource "aws_route53_record" "heliumedu_dev_mail_from_mx" {
@@ -110,7 +110,7 @@ resource "aws_route53_record" "heliumedu_dev_mail_from_txt" {
 
 resource "aws_route53_record" "heliumedu_dev_amazonses_verification_record" {
   zone_id = var.route53_heliumedu_dev_zone_id
-  name    = "_amazonses.${var.environment_prefix}heliumedu.dev"
+  name    = "_amazonses.${var.route53_heliumedu_dev_zone_name}"
   type    = "TXT"
   ttl     = "3600"
   records = [aws_ses_domain_identity.heliumedu_dev_identity.verification_token]
@@ -118,7 +118,7 @@ resource "aws_route53_record" "heliumedu_dev_amazonses_verification_record" {
 
 resource "aws_route53_record" "heliumedu_dev_amazonses_dmarc" {
   zone_id = var.route53_heliumedu_dev_zone_id
-  name    = "_dmarc.${var.environment_prefix}heliumedu.dev"
+  name    = "_dmarc.${var.route53_heliumedu_dev_zone_name}"
   type    = "TXT"
   ttl     = "3600"
   records = ["v=DMARC1; p=quarantine;"]
@@ -139,7 +139,7 @@ resource "aws_route53_record" "heliumedu_dev_amazonses_dkim_record" {
 
 resource "aws_route53_record" "heliumedu_dev_inbound_mx" {
   zone_id = var.route53_heliumedu_dev_zone_id
-  name    = "${var.environment_prefix}heliumedu.dev"
+  name    = "${var.route53_heliumedu_dev_zone_name}"
   type    = "MX"
   ttl     = "3600"
   records = ["10 inbound-smtp.${var.aws_region}.amazonaws.com"]
@@ -156,7 +156,7 @@ resource "aws_ses_active_receipt_rule_set" "main" {
 resource "aws_ses_receipt_rule" "cluster_store_s3" {
   name          = "heliumedu-cluster-${var.environment}-test-email-to-s3"
   rule_set_name = aws_ses_receipt_rule_set.helium_rule_set.rule_set_name
-  recipients    = ["heliumedu-cluster@${var.environment_prefix}heliumedu.dev"]
+  recipients    = ["heliumedu-cluster@${var.route53_heliumedu_dev_zone_name}"]
   enabled       = true
   scan_enabled  = false
 

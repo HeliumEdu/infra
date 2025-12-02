@@ -7,8 +7,8 @@ resource "aws_cloudfront_function" "rewrites" {
 
 resource "aws_cloudfront_distribution" "heliumedu_frontend" {
   enabled             = true
-  aliases             = ["www.${var.environment_prefix}heliumedu.com"]
-  comment             = "www.${var.environment_prefix}heliumedu.com"
+  aliases             = ["www.${var.route53_heliumedu_com_zone_name}"]
+  comment             = "www.${var.route53_heliumedu_com_zone_name}"
   default_root_object = "index.html"
   price_class         = "PriceClass_100"
 
@@ -75,7 +75,7 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend" {
 
 resource "aws_route53_record" "www_heliumedu_com" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "www.${var.environment_prefix}heliumedu.com"
+  name    = "www.${var.route53_heliumedu_com_zone_name}"
   type    = "A"
 
   alias {
@@ -93,15 +93,15 @@ resource "aws_s3_bucket_website_configuration" "heliumedu_frontend_non_www_confi
   bucket = aws_s3_bucket.heliumedu_frontend_non_www.bucket
 
   redirect_all_requests_to {
-    host_name = "www.${var.environment_prefix}heliumedu.com"
+    host_name = "www.${var.route53_heliumedu_com_zone_name}"
     protocol  = "https"
   }
 }
 
 resource "aws_cloudfront_distribution" "heliumedu_frontend_non_www" {
   enabled     = true
-  aliases     = ["${var.environment_prefix}heliumedu.com"]
-  comment     = "${var.environment_prefix}heliumedu.com"
+  aliases     = [var.route53_heliumedu_com_zone_name]
+  comment     = var.route53_heliumedu_com_zone_name
   price_class = "PriceClass_100"
 
   origin {
@@ -148,7 +148,7 @@ resource "aws_cloudfront_distribution" "heliumedu_frontend_non_www" {
 
 resource "aws_route53_record" "heliumedu_com" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "${var.environment_prefix}heliumedu.com"
+  name    = var.route53_heliumedu_com_zone_name
   type    = "A"
 
   alias {
@@ -206,8 +206,8 @@ resource "aws_s3_bucket_policy" "heliumedu_support_redirect_allow_http_access" {
 
 resource "aws_cloudfront_distribution" "support_heliumedu_com" {
   enabled     = true
-  aliases     = ["support.${var.environment_prefix}heliumedu.com"]
-  comment     = "support.${var.environment_prefix}heliumedu.com"
+  aliases     = ["support.${var.route53_heliumedu_com_zone_name}"]
+  comment     = "support.${var.route53_heliumedu_com_zone_name}"
   price_class = "PriceClass_100"
 
   origin {
@@ -254,7 +254,7 @@ resource "aws_cloudfront_distribution" "support_heliumedu_com" {
 
 resource "aws_route53_record" "support_heliumedu_com" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "support.${var.environment_prefix}heliumedu.com"
+  name    = "support.${var.route53_heliumedu_com_zone_name}"
   type    = "A"
 
   alias {
@@ -312,8 +312,8 @@ resource "aws_s3_bucket_policy" "heliumedu_app_redirect_allow_http_access" {
 
 resource "aws_cloudfront_distribution" "app_heliumedu_com" {
   enabled     = true
-  aliases     = ["app.${var.environment_prefix}heliumedu.com"]
-  comment     = "app.${var.environment_prefix}heliumedu.com"
+  aliases     = ["app.${var.route53_heliumedu_com_zone_name}"]
+  comment     = "app.${var.route53_heliumedu_com_zone_name}"
   price_class = "PriceClass_100"
 
   origin {
@@ -360,7 +360,7 @@ resource "aws_cloudfront_distribution" "app_heliumedu_com" {
 
 resource "aws_route53_record" "app_heliumedu_com" {
   zone_id = var.route53_heliumedu_com_zone_id
-  name    = "app.${var.environment_prefix}heliumedu.com"
+  name    = "app.${var.route53_heliumedu_com_zone_name}"
   type    = "A"
 
   alias {

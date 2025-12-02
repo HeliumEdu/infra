@@ -1,9 +1,9 @@
 resource "aws_acm_certificate" "heliumedu_com" {
-  domain_name = "${var.environment_prefix}heliumedu.com"
-  subject_alternative_names = ["www.${var.environment_prefix}heliumedu.com",
-    "api.${var.environment_prefix}heliumedu.com",
-    "app.${var.environment_prefix}heliumedu.com",
-    "support.${var.environment_prefix}heliumedu.com",
+  domain_name = var.route53_heliumedu_com_zone_name
+  subject_alternative_names = ["www.${var.route53_heliumedu_com_zone_name}",
+    "api.${var.route53_heliumedu_com_zone_name}",
+    "app.${var.route53_heliumedu_com_zone_name}",
+    "support.${var.route53_heliumedu_com_zone_name}",
   ]
   validation_method = "DNS"
 
@@ -39,7 +39,7 @@ resource "aws_acm_certificate_validation" "com_cert_validation" {
 }
 
 resource "aws_acm_certificate" "heliumedu_dev" {
-  domain_name       = "${var.environment_prefix}heliumedu.dev"
+  domain_name       = var.route53_heliumedu_dev_zone_name
   validation_method = "DNS"
 
   lifecycle {

@@ -16,10 +16,10 @@ module "route53" {
 module "certificatemanager" {
   source = "../../modules/certificatemanager"
 
-  environment_prefix            = var.environment_prefix
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
-  aws_region                    = var.aws_region
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
 module "s3" {
@@ -32,12 +32,13 @@ module "s3" {
 module "ses" {
   source = "../../modules/ses"
 
-  environment                   = var.environment
-  environment_prefix            = var.environment_prefix
-  aws_region                    = var.aws_region
-  heliumedu_s3_bucket_name      = module.s3.heliumedu_s3_bucket_name
-  route53_heliumedu_com_zone_id = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_dev_zone_id = module.route53.heliumedu_dev_zone_id
+  environment                     = var.environment
+  aws_region                      = var.aws_region
+  heliumedu_s3_bucket_name        = module.s3.heliumedu_s3_bucket_name
+  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
 module "secretsmanager" {

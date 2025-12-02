@@ -8,6 +8,11 @@ variable "route53_heliumedu_com_zone_id" {
   type        = string
 }
 
+variable "route53_heliumedu_com_zone_name" {
+  description = "The Route 53 zone name"
+  type        = string
+}
+
 variable "dkim_public_key" {
   description = "The DKIM public key"
   type        = string
