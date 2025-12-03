@@ -106,7 +106,7 @@ jobs:
       FORCE_COLOR: 1
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
-      GITHB_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN: ${{ secrets.FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}
       TERRAFORM_API_TOKEN: ${{ secrets.TERRAFORM_API_TOKEN }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -148,7 +148,7 @@ jobs:
         run: |
           curl -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
-          -u $GITHB_ACCESS_TOKEN \
+          -u $GITHUB_TOKEN \
           --data '{"event_type": "Triggered from `deploy` release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
       - name: Notify Rollbar of platform deploy
         uses: rollbar/github-deploy-action@2.1.2
