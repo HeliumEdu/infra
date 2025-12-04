@@ -17,9 +17,9 @@ resource "aws_route53_zone" "heliumedu_dev_zone" {
 // Record only created once, to point non-production zones' subdomain to the primary zone
 
 resource "aws_route53_record" "heliumedu_com_ns" {
-  count = var.parent_com_zone_id != null ? 1 : 0
+  count = var.heliumedu_com_zone_id != null ? 1 : 0
 
-  zone_id = var.parent_com_zone_id
+  zone_id = var.heliumedu_com_zone_id
   name    = "${var.environment_prefix}heliumedu.com"
   type    = "NS"
   ttl     = "300"
@@ -27,13 +27,33 @@ resource "aws_route53_record" "heliumedu_com_ns" {
 }
 
 resource "aws_route53_record" "heliumedu_dev_ns" {
-  count = var.parent_dev_zone_id != null ? 1 : 0
+  count = var.heliumedu_dev_zone_id != null ? 1 : 0
 
-  zone_id = var.parent_dev_zone_id
+  zone_id = var.heliumedu_dev_zone_id
   name    = "${var.environment_prefix}heliumedu.dev"
   type    = "NS"
   ttl     = "300"
   records = aws_route53_zone.heliumedu_dev_zone.name_servers
+}
+
+resource "aws_route53_record" "heliumstudy_com_ns" {
+  count = var.heliumstudy_com_zone_id != null ? 1 : 0
+
+  zone_id = var.heliumstudy_com_zone_id
+  name    = "${var.environment_prefix}heliumstudy.com"
+  type    = "NS"
+  ttl     = "300"
+  records = aws_route53_zone.heliumstudy_com_zone.name_servers
+}
+
+resource "aws_route53_record" "heliumstudy_dev_ns" {
+  count = var.heliumstudy_dev_zone_id != null ? 1 : 0
+
+  zone_id = var.heliumstudy_dev_zone_id
+  name    = "${var.environment_prefix}heliumstudy.dev"
+  type    = "NS"
+  ttl     = "300"
+  records = aws_route53_zone.heliumstudy_dev_zone.name_servers
 }
 
 // Records only created once, for production

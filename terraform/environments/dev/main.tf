@@ -9,8 +9,8 @@ module "route53" {
 
   environment        = var.environment
   environment_prefix = var.environment_prefix
-  parent_com_zone_id = var.prod_com_zone_id
-  parent_dev_zone_id = var.prod_dev_zone_id
+  heliumedu_com_zone_id = var.prod_com_zone_id
+  heliumedu_dev_zone_id = var.prod_dev_zone_id
 }
 
 module "certificatemanager" {
@@ -20,6 +20,10 @@ module "certificatemanager" {
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
   route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
+  route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
+  route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
+  route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
+  route53_heliumstudy_dev_zone_name = module.route53.heliumstudy_dev_zone_name
 }
 
 module "vpc" {
@@ -104,8 +108,11 @@ module "cloudfront" {
   s3_bucket                       = module.s3.heliumedu_s3_frontend_bucket_name
   s3_website_endpoint             = module.s3.heliumedu_s3_website_endpoint
   heliumedu_com_cert_arn          = module.certificatemanager.heliumedu_com_cert_arn
+  heliumstudy_com_cert_arn          = module.certificatemanager.heliumstudy_com_cert_arn
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
+  route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
+  route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
 }
 
 module "ses" {

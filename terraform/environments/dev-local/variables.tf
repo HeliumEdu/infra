@@ -23,11 +23,19 @@ variable "ci_area_code" {
   default     = "815"
 }
 
-variable "prod_com_zone_id" {
+variable "heliumedu_com_zone_id" {
   description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
 }
 
-variable "prod_dev_zone_id" {
+variable "heliumedu_dev_zone_id" {
+  description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
+}
+
+variable "heliumstudy_com_zone_id" {
+  description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
+}
+
+variable "heliumstudy_dev_zone_id" {
   description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
 }
 

@@ -13,6 +13,11 @@ variable "heliumedu_com_cert_arn" {
   type        = string
 }
 
+variable "heliumstudy_com_cert_arn" {
+  description = "The ARN of the <env>heliumstudy.com SSL certificate"
+  type        = string
+}
+
 variable "s3_bucket" {
   description = "The S3 bucket to host"
   type        = string
@@ -28,6 +33,16 @@ variable "route53_heliumedu_com_zone_id" {
 }
 
 variable "route53_heliumedu_com_zone_name" {
+  description = "The Route 53 zone name"
+  type        = string
+}
+
+variable "route53_heliumstudy_com_zone_id" {
+  description = "The Route 53 Zone ID"
+  type        = string
+}
+
+variable "route53_heliumstudy_com_zone_name" {
   description = "The Route 53 zone name"
   type        = string
 }

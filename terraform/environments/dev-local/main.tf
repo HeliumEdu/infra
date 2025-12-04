@@ -9,8 +9,10 @@ module "route53" {
 
   environment        = var.environment
   environment_prefix = var.environment_prefix
-  parent_com_zone_id = var.prod_com_zone_id
-  parent_dev_zone_id = var.prod_dev_zone_id
+  heliumedu_com_zone_id = var.heliumedu_com_zone_id
+  heliumedu_dev_zone_id = var.heliumedu_dev_zone_id
+  heliumstudy_com_zone_id = var.heliumstudy_com_zone_id
+  heliumstudy_dev_zone_id = var.heliumstudy_dev_zone_id
 }
 
 module "certificatemanager" {
@@ -20,6 +22,10 @@ module "certificatemanager" {
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
   route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
+  route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
+  route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
+  route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
+  route53_heliumstudy_dev_zone_name = module.route53.heliumstudy_dev_zone_name
 }
 
 module "s3" {

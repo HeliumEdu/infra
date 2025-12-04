@@ -8,12 +8,22 @@ variable "environment_prefix" {
   type        = string
 }
 
-variable "parent_com_zone_id" {
+variable "heliumedu_com_zone_id" {
   description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
   default     = null
 }
 
-variable "parent_dev_zone_id" {
+variable "heliumedu_dev_zone_id" {
+  description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
+  default     = null
+}
+
+variable "heliumstudy_com_zone_id" {
+  description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
+  default     = null
+}
+
+variable "heliumstudy_dev_zone_id" {
   description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
   default     = null
 }
