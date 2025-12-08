@@ -451,7 +451,7 @@ resource "aws_s3_bucket_website_configuration" "heliumstudy_com_redirect_bucket"
   bucket = aws_s3_bucket.heliumstudy_com_redirect_bucket.bucket
 
   redirect_all_requests_to {
-    host_name = "www.${var.environment_prefix}heliumstudy.com"
+    host_name = "www.${var.environment_prefix}heliumedu.com"
     protocol  = "https"
   }
 }
