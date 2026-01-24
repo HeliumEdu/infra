@@ -42,7 +42,7 @@ cd helium
 make
 ```
 
-Done! The [`frontend`](https://github.com/HeliumEdu/frontend), [`platform`](https://github.com/HeliumEdu/platform), and
+Done! The [`frontend`](https://github.com/HeliumEdu/frontend-legacy), [`platform`](https://github.com/HeliumEdu/platform), and
 [`cluster-tests`](https://github.com/HeliumEdu/cluster-tests) are now setup for you.
 
 If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` and `PROJECT_DISABLE_TEXTS=True`

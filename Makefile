@@ -2,7 +2,7 @@
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-HELIUMCLI_PROJECTS ?= '["platform", "frontend", "mobile", "cluster-tests"]'
+HELIUMCLI_PROJECTS ?= '["platform", "frontend", "cluster-tests", "frontend-legacy"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
@@ -19,15 +19,15 @@ install: install-reqs
 
 build: install
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
-	PLATFORM=$(PLATFORM) make -C projects/frontend build-docker
+	PLATFORM=$(PLATFORM) make -C projects/frontend-legacy build-docker
 
 start:
 	cd projects/platform && ./bin/runserver
-	cd projects/frontend && ./bin/runserver
+	cd projects/frontend-legacy && ./bin/runserver
 
 stop:
 	make -C projects/platform stop-docker
-	make -C projects/frontend stop-docker
+	make -C projects/frontend-legacy stop-docker
 
 restart: stop start
 
@@ -55,7 +55,7 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 	./projects/platform/bin/provision-dot-env.sh
 
 	make -C projects/platform run-docker
-	make -C projects/frontend run-docker
+	make -C projects/frontend-legacy run-docker
 
 	ENVIRONMENT=dev-local \
 	PROJECT_APP_HOST=http://localhost:3000 \
@@ -65,4 +65,4 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 
 publish: install
 	make -C projects/platform publish
-	make -C projects/frontend publish
+	make -C projects/frontend-legacy publish
