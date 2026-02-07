@@ -128,6 +128,69 @@ resource "aws_s3_bucket_website_configuration" "heliumedu_frontend" {
   }
 }
 
+// Flutter app frontend bucket (app.heliumedu.com)
+
+resource "aws_s3_bucket" "heliumedu_frontend_app_static" {
+  bucket = "heliumedu.${var.environment}.frontend-app.static"
+}
+
+resource "aws_s3_bucket_public_access_block" "heliumedu_frontend_app_static_allow_public" {
+  bucket = aws_s3_bucket.heliumedu_frontend_app_static.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+data "aws_iam_policy_document" "heliumedu_frontend_app_static_allow_http_access" {
+  statement {
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    resources = [
+      "arn:aws:s3:::heliumedu.${var.environment}.frontend-app.static/**",
+    ]
+
+    actions = [
+      "s3:GetObject"
+    ]
+  }
+}
+
+resource "aws_s3_bucket_policy" "heliumedu_frontend_app_static_allow_http_access" {
+  bucket = aws_s3_bucket.heliumedu_frontend_app_static.id
+  policy = data.aws_iam_policy_document.heliumedu_frontend_app_static_allow_http_access.json
+
+  depends_on = [aws_s3_bucket_public_access_block.heliumedu_frontend_app_static_allow_public]
+}
+
+resource "aws_s3_bucket_cors_configuration" "heliumedu_frontend_app_static" {
+  bucket = aws_s3_bucket.heliumedu_frontend_app_static.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "heliumedu_frontend_app" {
+  bucket = aws_s3_bucket.heliumedu_frontend_app_static.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
+  }
+}
+
 // Buckets only created once, for production
 
 resource "aws_s3_bucket" "heliumedu" {

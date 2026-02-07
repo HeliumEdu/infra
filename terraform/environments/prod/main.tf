@@ -105,15 +105,17 @@ module "s3" {
 module "cloudfront" {
   source = "../../modules/cloudfront"
 
-  environment                     = var.environment
-  environment_prefix              = var.environment_prefix
-  s3_bucket                       = module.s3.heliumedu_s3_frontend_bucket_name
-  s3_website_endpoint             = module.s3.heliumedu_s3_website_endpoint
-  heliumedu_com_cert_arn          = module.certificatemanager.heliumedu_com_cert_arn
-  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
-  heliumstudy_com_cert_arn        = module.certificatemanager.heliumstudy_com_cert_arn
-  route53_heliumstudy_com_zone_id = module.route53.heliumstudy_com_zone_id
+  environment                      = var.environment
+  environment_prefix               = var.environment_prefix
+  s3_bucket                        = module.s3.heliumedu_s3_frontend_bucket_name
+  s3_website_endpoint              = module.s3.heliumedu_s3_website_endpoint
+  s3_frontend_app_bucket           = module.s3.heliumedu_s3_frontend_app_bucket_name
+  s3_frontend_app_website_endpoint = module.s3.heliumedu_s3_frontend_app_website_endpoint
+  heliumedu_com_cert_arn           = module.certificatemanager.heliumedu_com_cert_arn
+  route53_heliumedu_com_zone_id    = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name  = module.route53.heliumedu_com_zone_name
+  heliumstudy_com_cert_arn         = module.certificatemanager.heliumstudy_com_cert_arn
+  route53_heliumstudy_com_zone_id  = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
 }
 

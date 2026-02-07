@@ -27,6 +27,16 @@ variable "s3_website_endpoint" {
   default = "The endpoint for the S3 site"
 }
 
+variable "s3_frontend_app_bucket" {
+  description = "The S3 bucket for the Flutter app frontend"
+  type        = string
+}
+
+variable "s3_frontend_app_website_endpoint" {
+  description = "The endpoint for the Flutter app frontend S3 site"
+  type        = string
+}
+
 variable "route53_heliumedu_com_zone_id" {
   description = "The Route 53 Zone ID"
   type        = string
