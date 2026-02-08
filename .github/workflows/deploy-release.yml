@@ -156,7 +156,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: helium-edu
-          SENTRY_PROJECT: 4510851407413248
+          SENTRY_PROJECT: "4510851407413248"
         with:
           environment: ${{ inputs.environment }}
           version: ${{ inputs.version }}
