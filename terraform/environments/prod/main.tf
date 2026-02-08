@@ -14,10 +14,10 @@ module "route53" {
 module "certificatemanager" {
   source = "../../modules/certificatemanager"
 
-  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
-  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
-  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
+  route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id     = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name   = module.route53.heliumedu_dev_zone_name
   route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
   route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
@@ -105,17 +105,17 @@ module "s3" {
 module "cloudfront" {
   source = "../../modules/cloudfront"
 
-  environment                      = var.environment
-  environment_prefix               = var.environment_prefix
-  s3_bucket                        = module.s3.heliumedu_s3_frontend_bucket_name
-  s3_website_endpoint              = module.s3.heliumedu_s3_website_endpoint
-  s3_frontend_app_bucket           = module.s3.heliumedu_s3_frontend_app_bucket_name
-  s3_frontend_app_website_endpoint = module.s3.heliumedu_s3_frontend_app_website_endpoint
-  heliumedu_com_cert_arn           = module.certificatemanager.heliumedu_com_cert_arn
-  route53_heliumedu_com_zone_id    = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_com_zone_name  = module.route53.heliumedu_com_zone_name
-  heliumstudy_com_cert_arn         = module.certificatemanager.heliumstudy_com_cert_arn
-  route53_heliumstudy_com_zone_id  = module.route53.heliumstudy_com_zone_id
+  environment                       = var.environment
+  environment_prefix                = var.environment_prefix
+  s3_bucket                         = module.s3.heliumedu_s3_frontend_bucket_name
+  s3_website_endpoint               = module.s3.heliumedu_s3_website_endpoint
+  s3_frontend_app_bucket            = module.s3.heliumedu_s3_frontend_app_bucket_name
+  s3_frontend_app_website_endpoint  = module.s3.heliumedu_s3_frontend_app_website_endpoint
+  heliumedu_com_cert_arn            = module.certificatemanager.heliumedu_com_cert_arn
+  route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
+  heliumstudy_com_cert_arn          = module.certificatemanager.heliumstudy_com_cert_arn
+  route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
 }
 
@@ -134,29 +134,29 @@ module "ses" {
 module "secretsmanager" {
   source = "../../modules/secretsmanager"
 
-  environment                               = var.environment
-  aws_account_id                            = local.aws_account_id
-  aws_region                                = var.aws_region
-  task_execution_role_arn                   = module.ecs.task_execution_role_arn
-  datadog_api_key                           = var.DD_API_KEY
-  redis_host                                = module.elasticache.elasticache_host
-  db_host                                   = module.rds.db_host
-  db_user                                   = module.rds.db_username
-  db_password                               = module.rds.db_password
-  platform_rollbar_server_item_access_token = var.PLATFORM_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN
-  s3_user_access_key_id                     = module.s3.s3_access_key_id
-  s3_user_secret_access_key                 = module.s3.s3_access_key_secret
-  smtp_email_user                           = module.ses.smtp_username
-  smtp_email_password                       = module.ses.smtp_password
-  twilio_account_sid                        = var.TWILIO_ACCOUNT_SID
-  twilio_auth_token                         = var.TWILIO_AUTH_TOKEN
-  twilio_phone_number                       = module.twilio.helium_phone_number
-  firebase_project_id                       = var.FIREBASE_PROJECT_ID
-  firebase_private_key_id                   = var.FIREBASE_PRIVATE_KEY_ID
-  firebase_private_key                      = var.FIREBASE_PRIVATE_KEY
-  firebase_client_email                     = var.FIREBASE_CLIENT_EMAIL
-  firebase_client_id                        = var.FIREBASE_CLIENT_ID
-  firebase_client_x509_cert_url             = var.FIREBASE_CLIENT_X509_CERT_URL
+  environment                   = var.environment
+  aws_account_id                = local.aws_account_id
+  aws_region                    = var.aws_region
+  task_execution_role_arn       = module.ecs.task_execution_role_arn
+  datadog_api_key               = var.DD_API_KEY
+  redis_host                    = module.elasticache.elasticache_host
+  db_host                       = module.rds.db_host
+  db_user                       = module.rds.db_username
+  db_password                   = module.rds.db_password
+  platform_sentry_dsn           = var.PLATFORM_SENTRY_DSN
+  s3_user_access_key_id         = module.s3.s3_access_key_id
+  s3_user_secret_access_key     = module.s3.s3_access_key_secret
+  smtp_email_user               = module.ses.smtp_username
+  smtp_email_password           = module.ses.smtp_password
+  twilio_account_sid            = var.TWILIO_ACCOUNT_SID
+  twilio_auth_token             = var.TWILIO_AUTH_TOKEN
+  twilio_phone_number           = module.twilio.helium_phone_number
+  firebase_project_id           = var.FIREBASE_PROJECT_ID
+  firebase_private_key_id       = var.FIREBASE_PRIVATE_KEY_ID
+  firebase_private_key          = var.FIREBASE_PRIVATE_KEY
+  firebase_client_email         = var.FIREBASE_CLIENT_EMAIL
+  firebase_client_id            = var.FIREBASE_CLIENT_ID
+  firebase_client_x509_cert_url = var.FIREBASE_CLIENT_X509_CERT_URL
 }
 
 module "twilio" {

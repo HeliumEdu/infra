@@ -68,7 +68,7 @@ variable "datadog_api_key" {
   type = string
 }
 
-variable "platform_rollbar_server_item_access_token" {
+variable "platform_sentry_dsn" {
   type = string
 }
 

@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.17.82"
+  default     = "1.17.86"
 }
 
 variable "environment" {
@@ -106,8 +106,8 @@ variable "DD_API_KEY" {
   description = "The DataDog API key"
 }
 
-variable "PLATFORM_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN" {
-  description = "The Rollbar project server item access token"
+variable "PLATFORM_SENTRY_DSN" {
+  description = "The Sentry DSN for error tracking"
 }
 
 variable "FIREBASE_PROJECT_ID" {

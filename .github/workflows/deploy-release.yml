@@ -150,15 +150,14 @@ jobs:
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u $GITHUB_TOKEN \
           --data '{"event_type": "Triggered from `deploy` release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
-      - name: Notify Rollbar of platform deploy
-        uses: rollbar/github-deploy-action@2.1.2
-        id: rollbar_platform
-        with:
-          environment: ${{inputs.environment}}
-          version: ${{ inputs.version }}
+      - name: Notify Sentry of platform deploy
+        uses: getsentry/action-release@v1
         env:
-          ROLLBAR_ACCESS_TOKEN: ${{ secrets.PLATFORM_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}
-          ROLLBAR_USERNAME: ${{ github.actor }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        with:
+          environment: ${{ inputs.environment }}
+          version: ${{ inputs.version }}
+          working_directory: ./projects/platform
       - name: Notify Rollbar of frontend deploy
         uses: rollbar/github-deploy-action@2.1.2
         id: rollbar_frontend
