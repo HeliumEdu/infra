@@ -150,14 +150,16 @@ jobs:
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u $GITHUB_TOKEN \
           --data '{"event_type": "Triggered from `deploy` release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+# TODO: When this step gets migrated in to `platform`, use `SENTRY_ORG` and `SENTRY_PROJECT` to utilize sentry.properties instead
       - name: Notify Sentry of platform deploy
         uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: heliumedu
+          SENTRY_PROJECT: 4510851407413248
         with:
           environment: ${{ inputs.environment }}
           version: ${{ inputs.version }}
-          working_directory: ./projects/platform
       - name: Notify Rollbar of frontend deploy
         uses: rollbar/github-deploy-action@2.1.2
         id: rollbar_frontend
