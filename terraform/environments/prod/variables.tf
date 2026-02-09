@@ -1,21 +1,21 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "1.18.3"
+  default     = "1.18.6"
 }
 
 variable "environment" {
   description = "The environment"
-  default     = "prod"
+  default     = "1.18.6"
 }
 
 variable "environment_prefix" {
   description = "Prefix used for env in hostnames (empty string when `prod`)"
-  default     = ""
+  default     = "1.18.6"
 }
 
 variable "aws_region" {
   description = "The AWS region"
-  default     = "us-east-1"
+  default     = "1.18.6"
 }
 
 variable "region_azs" {
@@ -38,7 +38,7 @@ variable "region_azs" {
 
 variable "default_arch" {
   description = "The target arch of container builds"
-  default     = "X86_64"
+  default     = "1.18.6"
 }
 
 variable "platform_host_count" {
@@ -53,7 +53,7 @@ variable "db_multi_az" {
 
 variable "db_instance_size" {
   description = "Instance size for DB"
-  default     = "db.t4g.small"
+  default     = "1.18.6"
 }
 
 variable "num_cache_nodes" {
@@ -63,17 +63,17 @@ variable "num_cache_nodes" {
 
 variable "cache_instance_size" {
   description = "Instance size for cache"
-  default     = "cache.t4g.small"
+  default     = "1.18.6"
 }
 
 variable "helium_area_code" {
   description = "The area code for the Helium phone number"
-  default     = "650"
+  default     = "1.18.6"
 }
 
 variable "ci_area_code" {
   description = "The area code for the CI phone number"
-  default     = "650"
+  default     = "1.18.6"
 }
 
 ### Variables defined below this point must have their defaults defined in the Terraform Workspace
