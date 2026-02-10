@@ -1,6 +1,6 @@
-name: "Build and Deploy Release"
+name: "Build and Deploy Legacy Frontend"
 
-run-name: "Build and deploy release ${{ inputs.version }}"
+run-name: "Build and deploy legacy frontend v${{ inputs.version }}"
 
 on:
   workflow_dispatch:
@@ -15,6 +15,11 @@ on:
         options:
         - dev
         - prod
+      run_cluster_tests:
+        description: 'Run cluster tests before deploying'
+        required: true
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -25,11 +30,12 @@ jobs:
       version: ${{ inputs.version }}
 
   deploy:
-    name: Deploy
+    name: Deploy Legacy Frontend
     needs: build
     uses: ./.github/workflows/deploy-release.yml
     secrets: inherit
     with:
       version: ${{ inputs.version }}
       environment: ${{ inputs.environment }}
+      run_cluster_tests: ${{ inputs.run_cluster_tests }}
       cut_release: true

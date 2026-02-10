@@ -63,5 +63,5 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
     AWS_REGION=$(DEV_LOCAL_AWS_REGION) \
     make -C projects/cluster-tests test
 
-publish: install
-	make -C projects/frontend-legacy publish
+publish:
+	TAG_VERSION=$(TAG_VERSION) make -C projects/frontend-legacy publish
