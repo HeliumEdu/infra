@@ -6,7 +6,7 @@
 
 # Helium Infrastructure
 
-The deployment infrastructure for [Helium](https://www.heliumedu.com/).
+The infrastructure for [Helium](https://www.heliumedu.com/).
 
 Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
 
@@ -15,7 +15,6 @@ Released container images are published to [Helium's AWS ECR](https://gallery.ec
 - Docker
 - Python (>= 3.12)
 - Terraform (>= 1.9)
-- See [Deployment](#deployment) for others
 
 ## Getting Started
 
@@ -61,13 +60,6 @@ make start
 
 By default, deployable Docker images will be built for `linux/arm64`. To build native images on an `x86` architecture
 instead, set `PLATFORM=amd64`.
-
-## Deployment
-
-Use [the Release action](https://github.com/HeliumEdu/deploy/actions/workflows/release.yml) to cut a release and publish container images to
-[AWS ECR](https://aws.amazon.com/ecr/). If a [Terraform Workspace](https://developer.hashicorp.com/terraform/cli/workspaces) has been provisioned
-and [hooks to this repo are setup](https://developer.hashicorp.com/terraform/cloud-docs/vcs), then bumping the
-[Image URI version variable in Terraform](https://github.com/HeliumEdu/deploy/blob/main/terraform/environments/prod/variables.tf#L1) will trigger a new deployment to this version when the Terraform applies.
 
 ### Initialize `prod`-like Environment in Terraform
 

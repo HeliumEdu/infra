@@ -41,75 +41,14 @@ concurrency:
   group: "helium-deploy-${{inputs.environment}}"
 
 jobs:
-  test:
-    name: Test Release
-
-    env:
-      FORCE_COLOR: 1
-      PYTHONUNBUFFERED: 1
-      PYTHONDONTWRITEBYTECODE: 1
-      FRONTEND_IMAGE: public.ecr.aws/heliumedu/helium/frontend:amd64-${{ inputs.version }}
-      PLATFORM_RESOURCE_IMAGE: public.ecr.aws/heliumedu/helium/platform-resource:amd64-${{ inputs.version }}
-      PLATFORM_API_IMAGE: public.ecr.aws/heliumedu/helium/platform-api:amd64-${{ inputs.version }}
-      PLATFORM_WORKER_IMAGE: public.ecr.aws/heliumedu/helium/platform-worker:amd64-${{ inputs.version }}
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      PLATFORM_EMAIL_HOST_USER: ${{ secrets.PLATFORM_EMAIL_HOST_USER }}
-      PLATFORM_EMAIL_HOST_PASSWORD: ${{ secrets.PLATFORM_EMAIL_HOST_PASSWORD }}
-      PLATFORM_TWILIO_ACCOUNT_SID: ${{ secrets.PLATFORM_TWILIO_ACCOUNT_SID }}
-      PLATFORM_TWILIO_AUTH_TOKEN: ${{ secrets.PLATFORM_TWILIO_AUTH_TOKEN }}
-      PLATFORM_TWILIO_SMS_FROM: ${{ vars.PLATFORM_TWILIO_SMS_FROM }}
-      CI_AWS_S3_ACCESS_KEY_ID: ${{ secrets.CI_AWS_S3_ACCESS_KEY_ID }}
-      CI_AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_S3_SECRET_ACCESS_KEY }}
-      CI_TWILIO_RECIPIENT_PHONE_NUMBER: ${{ secrets.CI_TWILIO_RECIPIENT_PHONE_NUMBER }}
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python "3.12"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install GitHub SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY_GITHUB }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
-          if_key_exists: replace
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Install dependencies
-        run: make install
-      - name: Run cluster tests against release build
-        run: TAG_VERSION=${{ inputs.version }} make test-cluster
-      - name: Upload test output
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: cluster-test-output
-          path: projects/cluster-tests/build/screenshots/
-          retention-days: 30
-      - name: Dump Docker logs on failure
-        if: failure()
-        uses: jwalton/gh-docker-logs@v2
-
   release:
-    name: Deploy Release
-    needs: test
+    name: Deploy Frontend-Legacy Release
 
     env:
       FORCE_COLOR: 1
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
-      GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN: ${{ secrets.FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}
-      TERRAFORM_API_TOKEN: ${{ secrets.TERRAFORM_API_TOKEN }}
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ENVIRONMENT: ${{ inputs.environment }}
@@ -119,52 +58,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.SSH_KEY_GITHUB }}
+
       - name: Set up Python "3.12"
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Setup git
-        run: |
-          git config --global user.name "GitHub Release Bot"
-          git config --global user.email "<contact@alexlaird.com>"
-      - name: Install GitHub SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY_GITHUB }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
-          if_key_exists: replace
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Install dependencies
-        run: make install-reqs
-      - name: Deploy release
-        run: CUT_RELEASE=${{ inputs.cut_release }} python bin/trigger-release.py
-      - name: Trigger cluster tests against deploy
-        run: |
-          curl -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
-          -H 'Accept: application/vnd.github.everest-preview+json' \
-          -u $GITHUB_TOKEN \
-          --data '{"event_type": "Triggered from `deploy` release '"$VERSION"'", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
-# TODO: When this step gets migrated in to `platform`, use `SENTRY_ORG` and `SENTRY_PROJECT` to utilize sentry.properties instead
-      - name: Notify Sentry of platform deploy
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: helium-edu
-          SENTRY_PROJECT: "4510851407413248"
-        with:
-          environment: ${{ inputs.environment }}
-          version: ${{ inputs.version }}
+        run: pip install boto3 requests
+
+      - name: Deploy frontend-legacy to S3
+        run: python bin/trigger-frontend-legacy-release.py
+
       - name: Notify Rollbar of frontend deploy
         uses: rollbar/github-deploy-action@2.1.2
-        id: rollbar_frontend
         with:
-          environment: ${{inputs.environment}}
+          environment: ${{ inputs.environment }}
           version: ${{ inputs.version }}
         env:
           ROLLBAR_ACCESS_TOKEN: ${{ secrets.FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN }}

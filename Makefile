@@ -19,15 +19,15 @@ install: install-reqs
 
 build: install
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
-	PLATFORM=$(PLATFORM) make -C projects/frontend-legacy build-docker
+	PLATFORM=$(PLATFORM) make -C projects/frontend build-web
 
 start:
 	cd projects/platform && ./bin/runserver
-	cd projects/frontend-legacy && ./bin/runserver
+	# TODO: clean this up to be Dockerized
+	cd projects/frontend && make run
 
 stop:
 	make -C projects/platform stop-docker
-	make -C projects/frontend-legacy stop-docker
 
 restart: stop start
 
@@ -64,5 +64,4 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
     make -C projects/cluster-tests test
 
 publish: install
-	make -C projects/platform publish
 	make -C projects/frontend-legacy publish
