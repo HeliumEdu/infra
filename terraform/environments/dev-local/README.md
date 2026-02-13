@@ -1,1 +1,1 @@
-See [the README for under `prod`](https://github.com/HeliumEdu/deploy/tree/main/terraform/environments/prod#readme) for instructions on setting up Terraform environments.
+See [the README for under `prod`](https://github.com/HeliumEdu/infra/tree/main/terraform/environments/prod#readme) for instructions on setting up Terraform environments.

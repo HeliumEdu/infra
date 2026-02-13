@@ -87,7 +87,7 @@ else:
 # Fetch Terraform Workspace details
 #####################################################################
 
-# TODO: migrate this Terraform deployment code in to `heliumcli`, then it can be removed from deploy and platform
+# TODO: migrate this Terraform deployment code in to `heliumcli`, then it can be removed from infra and platform
 
 workspaces_response = requests.get(f"https://app.terraform.io/api/v2/organizations/HeliumEdu/workspaces/{ENVIRONMENT}",
                       headers={"Authorization": f"Bearer {TERRAFORM_API_TOKEN}",
@@ -171,7 +171,7 @@ resp = requests.post(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']
 # Release frontend code from artifact S3 bucket to live
 #####################################################################
 
-# TODO: migrate this deployment code in to `heliumcli`, then it can be removed from deploy and frontend
+# TODO: migrate this deployment code in to `heliumcli`, then it can be removed from infra and frontend
 
 s3 = boto3.resource('s3')
 source_bucket_name = "heliumedu"

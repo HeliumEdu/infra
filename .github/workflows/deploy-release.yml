@@ -24,7 +24,7 @@ on:
         type: boolean
         required: true
         default: false
-        description: "Cut the release tag for the `deploy` repo. Usually only needed if manually re-deploying a \"Build and Deploy Release\" pipeline that failed."
+        description: "Cut the release tag for the `infra` repo. Usually only needed if manually re-deploying a \"Build and Deploy Release\" pipeline that failed."
   workflow_call:
     inputs:
       version:
@@ -46,7 +46,7 @@ permissions:
   pull-requests: none
 
 concurrency:
-  group: "helium-deploy-${{inputs.environment}}"
+  group: "helium-infra-${{inputs.environment}}"
 
 jobs:
   test:
@@ -98,7 +98,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          VERSION=$(gh api repos/HeliumEdu/platform/tags --jq '[.[] | select(.name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))][0].name')
+          VERSION=$(gh api repos/HeliumEdu/platform/tags --jq '[.[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))][0].name')
 
           if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
             echo "Error: No version tags found in HeliumEdu/platform"
