@@ -72,7 +72,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale   = false
           precision   = 0
           request {
-            q          = "avg:platform.action.text.sent{$env, $version}.as_count() + avg:platform.action.email.sent{$env, $version}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count()"
+            q          = "avg:platform.action.email.sent{$env, $version}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count()"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -298,18 +298,6 @@ resource "datadog_dashboard" "helium_heads_up" {
           legend_layout = "auto"
           request {
             q            = "sum:platform.action.push.sent{$env, $version}.as_count()"
-            display_type = "bars"
-            style { palette = "dog_classic" }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Texts Sent"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "sum:platform.action.text.sent{$env, $version}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -637,11 +625,23 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "SMS Delivery Failures"
+          title         = "Push Delivery Failures"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.text.failed{$env, $version}.as_count()"
+            q            = "sum:platform.action.push.failed{$env, $version}.as_count()"
+            display_type = "bars"
+            style { palette = "red" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Firebase/OAuth Failures"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.external.firebase.failed{$env, $version}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -677,7 +677,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale = false
           precision = 0
           request {
-            q          = "sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.text.failed{$env}.as_count() + sum:platform.feed.ical.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count()"
+            q          = "sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.push.failed{$env}.as_count() + sum:platform.external.firebase.failed{$env}.as_count() + sum:platform.feed.ical.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count()"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
