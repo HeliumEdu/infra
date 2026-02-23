@@ -3,9 +3,9 @@
 The following services are setup in a `prod`-like environment:
 
 - [AWS](https://aws.amazon.com/) - hosting infrastructure, attachments, and emails
-- [Twilio](https://www.twilio.com/en-us) - (optional, text messages)
 - [DataDog](https://www.datadoghq.com/) - (optional, infrastructure monitoring)
-- [Rollbar](https://rollbar.com/) - (optional, real-time error logging and tracking)
+- [Sentry](https://rollbar.com/) - (optional, real-time error logging and tracking)
+- [Twilio](https://www.twilio.com/en-us) - (optional, text messages, deprecating in favor of Push on new frontend)
 
 ### Twilio Setup
 
@@ -43,12 +43,12 @@ The following Terraform Workspace variables must be defined:
 
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
+  - `DD_API_KEY` (the DataDog API key, leave blank to disable)
+  - `PLATFORM_SENTRY_DSN` (leave blank to disable)
   - `TWILIO_ACCOUNT_SID` (optional if Twilio module is removed)
   - `TWILIO_AUTH_TOKEN` (optional if Twilio module is removed)
   - `HELIUM_TWIML_HANDLER_URL` (optional if Twilio module is removed)
   - `CI_TWIML_HANDLER_URL` (optional if Twilio module is removed)
-  - `DD_API_KEY` (the DataDog API key, leave blank to disable)
-  - `PLATFORM_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN` (leave blank to disable)
 
 Once all of the above is configured, you can trigger Terraform to provision the new environment by executing:
 
