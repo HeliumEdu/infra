@@ -39,7 +39,10 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title       = "Logins"
           title_size  = "16"
@@ -54,7 +57,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title     = "Account's Activated (non-Staff)"
           autoscale = false
@@ -67,7 +73,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title       = "Reminders Sent"
           title_size  = "16"
@@ -82,7 +91,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title       = "Total Mobile Requests (Browser)"
           title_size  = "16"
@@ -98,7 +110,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title       = "Total Mobile Requests (Mobile)"
           title_size  = "16"
@@ -114,7 +129,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title     = "Account's Deleted (non-Staff)"
           autoscale = false
@@ -127,7 +145,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title       = "Total Requests"
           title_size  = "16"
@@ -143,7 +164,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 3 }
+        widget_layout {
+          width  = 4
+          height = 3
+        }
         toplist_definition {
           title       = "Most Used Routes"
           title_size  = "16"
@@ -165,7 +189,10 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "/planner 200s"
           show_legend   = true
@@ -178,7 +205,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "/token 200s"
           show_legend   = true
@@ -191,7 +221,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "/token/refresh 200s"
           show_legend   = true
@@ -204,7 +237,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "500s"
           show_legend   = true
@@ -217,7 +253,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "400s"
           show_legend   = true
@@ -230,7 +269,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "429s"
           show_legend   = true
@@ -243,7 +285,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "/feed/*.ics 200s"
           show_legend   = true
@@ -256,7 +301,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "/feed/externalcalendars/*/events 200s"
           show_legend   = true
@@ -280,7 +328,10 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Feed Reindex Time"
           title_size    = "16"
@@ -295,7 +346,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Purge Refresh Tokens Time"
           title_size    = "16"
@@ -310,7 +364,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Push Notifications Sent"
           show_legend   = true
@@ -323,7 +380,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Texts Sent"
           show_legend   = true
@@ -336,7 +396,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Emails Sent"
           show_legend   = true
@@ -349,7 +412,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Reminders Queued"
           show_legend   = true
@@ -362,7 +428,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Refresh Tokens Blacklisted"
           show_legend   = true
@@ -375,7 +444,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Refresh Tokens Purged"
           show_legend   = true
@@ -388,7 +460,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Unverified Users Purged"
           show_legend   = true
@@ -401,7 +476,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Category Grade Calculation"
           show_legend   = true
@@ -414,7 +492,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Course Grade Calculation"
           show_legend   = true
@@ -427,7 +508,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Course Group Grade Calculation"
           show_legend   = true
@@ -451,7 +535,10 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Average memory usage per container"
           title_size  = "16"
@@ -465,7 +552,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "CPU percent usage per container"
           title_size  = "16"
@@ -479,7 +569,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Cloudfront Requests"
           title_size  = "13"
@@ -493,7 +586,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Average bytes sent per container"
           title_size  = "16"
@@ -507,7 +603,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Average bytes received per container"
           title_size  = "16"
@@ -521,7 +620,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Cloudfront Error Rate"
           title_size  = "13"
@@ -535,7 +637,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "RDS Connections"
           title_size  = "13"
@@ -549,7 +654,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "RDS Network Throughput"
           show_legend = true
@@ -566,7 +674,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "RDS CPU Utilization"
           title_size  = "13"
@@ -580,7 +691,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "RDS Available RAM"
           title_size  = "13"
@@ -594,7 +708,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Redis Connections"
           title_size  = "16"
@@ -608,7 +725,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Redis Network Throughput"
           title_size  = "16"
@@ -627,7 +747,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Redis CPU Utilization"
           title_size  = "16"
@@ -641,7 +764,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title       = "Redis Available RAM"
           title_size  = "13"
@@ -666,7 +792,10 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Email Delivery Failures"
           show_legend   = true
@@ -679,7 +808,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "SMS Delivery Failures"
           show_legend   = true
@@ -692,7 +824,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Calendar Sync Failures"
           show_legend   = true
@@ -705,7 +840,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 4, height = 2 }
+        widget_layout {
+          width  = 4
+          height = 2
+        }
         timeseries_definition {
           title         = "Task Failures"
           show_legend   = true
@@ -718,7 +856,10 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        widget_layout { width = 2, height = 2 }
+        widget_layout {
+          width  = 2
+          height = 2
+        }
         query_value_definition {
           title     = "Total Failures (24h)"
           autoscale = false
