@@ -11,10 +11,10 @@ output "dashboard_id" {
 output "monitor_ids" {
   description = "Map of monitor names to IDs"
   value = {
-    no_emails_sent         = datadog_monitor.no_emails_sent.id
-    no_push_sent           = datadog_monitor.no_push_notifications_sent.id
-    token_api_down         = datadog_monitor.token_api_down.id
-    token_refresh_api_down = datadog_monitor.token_refresh_api_down.id
+    low_email_traffic      = datadog_monitor.low_email_traffic.id
+    low_push_traffic       = datadog_monitor.low_push_notification_traffic.id
+    low_login_traffic      = datadog_monitor.token_api_low_traffic.id
+    low_session_traffic    = datadog_monitor.token_refresh_api_low_traffic.id
     feed_reindex_slow      = datadog_monitor.feed_reindex_time_exceeded.id
     email_failures         = datadog_monitor.email_delivery_failures.id
     push_failures          = datadog_monitor.push_delivery_failures.id

@@ -157,24 +157,24 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        timeseries_definition {
-          title         = "Email Delivery Failures"
-          show_legend   = true
-          legend_layout = "auto"
+        query_value_definition {
+          title     = "Total Failures (24h)"
+          autoscale = false
+          precision = 0
           request {
-            q            = "sum:platform.action.email.failed{$env, $version}.as_count()"
-            display_type = "bars"
-            style { palette = "red" }
+            q          = "sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.push.failed{$env}.as_count() + sum:platform.external.firebase.failed{$env}.as_count() + sum:platform.feed.ical.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count()"
+            aggregator = "sum"
           }
+          timeseries_background { type = "bars" }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Push Delivery Failures"
+          title         = "Task Failures"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.push.failed{$env, $version}.as_count()"
+            q            = "sum:platform.task.failed{$env, $version} by {name}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -194,6 +194,30 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
+          title         = "Push Delivery Failures"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.action.push.failed{$env, $version}.as_count()"
+            display_type = "bars"
+            style { palette = "red" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Email Delivery Failures"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.action.email.failed{$env, $version}.as_count()"
+            display_type = "bars"
+            style { palette = "red" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
           title         = "Calendar Sync Failures"
           show_legend   = true
           legend_layout = "auto"
@@ -202,30 +226,6 @@ resource "datadog_dashboard" "helium_heads_up" {
             display_type = "bars"
             style { palette = "red" }
           }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Task Failures"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "sum:platform.task.failed{$env, $version} by {name}.as_count()"
-            display_type = "bars"
-            style { palette = "red" }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title     = "Total Failures (24h)"
-          autoscale = false
-          precision = 0
-          request {
-            q          = "sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.push.failed{$env}.as_count() + sum:platform.external.firebase.failed{$env}.as_count() + sum:platform.feed.ical.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count()"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
         }
       }
     }
