@@ -11,7 +11,8 @@ resource "datadog_monitor" "low_email_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning = 1
+    warning  = 1
+    critical = 0
   }
 
   tags = ["managed_by:terraform"]
@@ -30,7 +31,8 @@ resource "datadog_monitor" "token_api_low_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning = 5
+    warning  = 5
+    critical = 0
   }
 
   tags = ["managed_by:terraform"]
@@ -71,7 +73,8 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning = 5
+    warning  = 5
+    critical = 0
   }
 
   tags = ["managed_by:terraform"]
@@ -90,7 +93,8 @@ resource "datadog_monitor" "low_push_notification_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning = 1
+    warning  = 1
+    critical = 0
   }
 
   tags = ["managed_by:terraform"]
