@@ -1,7 +1,7 @@
 resource "datadog_monitor" "low_email_traffic" {
   name    = "Low Email Traffic"
   type    = "query alert"
-  query   = "sum(last_4h):sum:platform.action.email.sent{env:prod}.as_count() < 1"
+  query   = "sum(last_4h):sum:platform.action.email.sent{env:prod}.as_count() < 5"
   message = <<-EOT
     Emails sent are below {{ threshold }} in the last 4 hours. The Helium platform or AWS SES service may need investigation.
   EOT
@@ -11,8 +11,8 @@ resource "datadog_monitor" "low_email_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 1
-    critical = 0
+    warning  = 10
+    critical = 5
   }
 
   tags = ["managed_by:terraform"]
@@ -31,8 +31,8 @@ resource "datadog_monitor" "token_api_low_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 5
-    critical = 0
+    warning  = 10
+    critical = 5
   }
 
   tags = ["managed_by:terraform"]
@@ -73,8 +73,8 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 5
-    critical = 0
+    warning  = 10
+    critical = 5
   }
 
   tags = ["managed_by:terraform"]
@@ -83,7 +83,7 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
 resource "datadog_monitor" "low_push_notification_traffic" {
   name    = "Low Push Notification Traffic"
   type    = "query alert"
-  query   = "sum(last_4h):sum:platform.action.push.sent{env:prod}.as_count() < 1"
+  query   = "sum(last_4h):sum:platform.action.push.sent{env:prod}.as_count() < 5"
   message = <<-EOT
     Push notifications sent are below {{ threshold }} in the last 4 hours. The Helium platform or Firebase service may need investigation.
   EOT
@@ -93,8 +93,8 @@ resource "datadog_monitor" "low_push_notification_traffic" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 1
-    critical = 0
+    warning  = 10
+    critical = 5
   }
 
   tags = ["managed_by:terraform"]
