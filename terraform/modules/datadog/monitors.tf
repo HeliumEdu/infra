@@ -1,40 +1,36 @@
-resource "datadog_monitor" "no_emails_sent" {
-  name    = "No Emails Sent Today"
+resource "datadog_monitor" "low_email_traffic" {
+  name    = "Low Email Traffic"
   type    = "query alert"
-  query   = "sum(last_1d):sum:platform.action.email.sent{env:prod}.as_count() < 1"
+  query   = "sum(last_4h):sum:platform.action.email.sent{env:prod}.as_count() < 1"
   message = <<-EOT
-    Daily emails have dropped below {{ threshold }}, which means even cluster tests aren't successfully triggering emails. The Helium platform and AWS SES service should be investigated.
-
-    Notify: @support@heliumedu.com
+    Emails sent are below {{ threshold }} in the last 4 hours. The Helium platform or AWS SES service may need investigation.
   EOT
 
   include_tags        = false
-  on_missing_data     = "show_no_data"
+  on_missing_data     = "default"
   require_full_window = false
 
   monitor_thresholds {
-    critical = 1
+    warning = 1
   }
 
   tags = ["managed_by:terraform"]
 }
 
-resource "datadog_monitor" "token_api_down" {
-  name    = "/token API (Login) May Be Down"
+resource "datadog_monitor" "token_api_low_traffic" {
+  name    = "Low Login Traffic (/token)"
   type    = "query alert"
-  query   = "sum(last_1d):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 10"
+  query   = "sum(last_4h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 5"
   message = <<-EOT
-    The API response 200 on /token is less than {{ threshold }}, meaning login may be down. This should be investigated.
-
-    Notify: @support@heliumedu.com
+    Successful logins on /token are below {{ threshold }} in the last 4 hours.
   EOT
 
   include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
+  on_missing_data     = "default"
   require_full_window = false
 
   monitor_thresholds {
-    critical = 10
+    warning = 5
   }
 
   tags = ["managed_by:terraform"]
@@ -51,53 +47,50 @@ resource "datadog_monitor" "feed_reindex_time_exceeded" {
   EOT
 
   include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
+  on_missing_data     = "default"
   require_full_window = false
 
   monitor_thresholds {
+    warning  = 120
     critical = 300
   }
 
   tags = ["managed_by:terraform"]
 }
 
-resource "datadog_monitor" "token_refresh_api_down" {
-  name    = "/token/refresh API (Active Sessions) May Be Down"
+resource "datadog_monitor" "token_refresh_api_low_traffic" {
+  name    = "Low Session Refresh Traffic (/token/refresh)"
   type    = "query alert"
   query   = "sum(last_4h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token.refresh}.as_count() < 5"
   message = <<-EOT
-    The API response 200 on /token/refresh is less than {{ threshold }}, meaning the site may be down. This should be investigated.
-
-    Notify: @support@heliumedu.com
+    Successful session refreshes on /token/refresh are below {{ threshold }} in the last 4 hours.
   EOT
 
   include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
+  on_missing_data     = "default"
   require_full_window = false
 
   monitor_thresholds {
-    critical = 5
+    warning = 5
   }
 
   tags = ["managed_by:terraform"]
 }
 
-resource "datadog_monitor" "no_push_notifications_sent" {
-  name    = "No Push Notifications Sent Today"
+resource "datadog_monitor" "low_push_notification_traffic" {
+  name    = "Low Push Notification Traffic"
   type    = "query alert"
-  query   = "sum(last_1d):sum:platform.action.push.sent{env:prod}.as_count() < 1"
+  query   = "sum(last_4h):sum:platform.action.push.sent{env:prod}.as_count() < 1"
   message = <<-EOT
-    Daily push notifications have dropped below {{ threshold }}, which means even cluster tests aren't successfully triggering pushes. The Helium platform and Firebase service should be investigated.
-
-    Notify: @support@heliumedu.com
+    Push notifications sent are below {{ threshold }} in the last 4 hours. The Helium platform or Firebase service may need investigation.
   EOT
 
   include_tags        = false
-  on_missing_data     = "show_no_data"
+  on_missing_data     = "default"
   require_full_window = false
 
   monitor_thresholds {
-    critical = 1
+    warning = 1
   }
 
   tags = ["managed_by:terraform"]
