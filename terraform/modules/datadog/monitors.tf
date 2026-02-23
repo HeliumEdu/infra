@@ -15,6 +15,8 @@ resource "datadog_monitor" "no_emails_sent" {
   monitor_thresholds {
     critical = 1
   }
+
+  tags = ["managed_by:terraform"]
 }
 
 resource "datadog_monitor" "no_texts_sent" {
@@ -34,6 +36,8 @@ resource "datadog_monitor" "no_texts_sent" {
   monitor_thresholds {
     critical = 1
   }
+
+  tags = ["managed_by:terraform"]
 }
 
 resource "datadog_monitor" "token_api_down" {
@@ -53,6 +57,8 @@ resource "datadog_monitor" "token_api_down" {
   monitor_thresholds {
     critical = 10
   }
+
+  tags = ["managed_by:terraform"]
 }
 
 resource "datadog_monitor" "feed_reindex_time_exceeded" {
@@ -72,6 +78,8 @@ resource "datadog_monitor" "feed_reindex_time_exceeded" {
   monitor_thresholds {
     critical = 300
   }
+
+  tags = ["managed_by:terraform"]
 }
 
 resource "datadog_monitor" "token_refresh_api_down" {
@@ -91,6 +99,8 @@ resource "datadog_monitor" "token_refresh_api_down" {
   monitor_thresholds {
     critical = 5
   }
+
+  tags = ["managed_by:terraform"]
 }
 
 resource "datadog_monitor" "no_push_notifications_sent" {
@@ -110,4 +120,6 @@ resource "datadog_monitor" "no_push_notifications_sent" {
   monitor_thresholds {
     critical = 1
   }
+
+  tags = ["managed_by:terraform"]
 }
