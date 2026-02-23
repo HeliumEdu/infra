@@ -1,3 +1,3 @@
 module "datadog" {
-  source = "../../modules/datadog"
+  source = "../../modules/global/datadog"
 }

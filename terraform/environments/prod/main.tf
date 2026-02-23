@@ -5,14 +5,14 @@ locals {
 }
 
 module "route53" {
-  source = "../../modules/route53"
+  source = "../../modules/environment/route53"
 
   environment        = var.environment
   environment_prefix = var.environment_prefix
 }
 
 module "certificatemanager" {
-  source = "../../modules/certificatemanager"
+  source = "../../modules/environment/certificatemanager"
 
   route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
@@ -25,7 +25,7 @@ module "certificatemanager" {
 }
 
 module "vpc" {
-  source = "../../modules/vpc"
+  source = "../../modules/environment/vpc"
 
   environment = var.environment
   aws_region  = var.aws_region
@@ -33,7 +33,7 @@ module "vpc" {
 }
 
 module "alb" {
-  source = "../../modules/alb"
+  source = "../../modules/environment/alb"
 
   environment                     = var.environment
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
@@ -45,7 +45,7 @@ module "alb" {
 }
 
 module "rds" {
-  source = "../../modules/rds"
+  source = "../../modules/environment/rds"
 
   environment   = var.environment
   subnet_ids    = module.vpc.subnet_ids
@@ -55,11 +55,11 @@ module "rds" {
 }
 
 module "ecr" {
-  source = "../../modules/ecr"
+  source = "../../modules/environment/ecr"
 }
 
 module "ecs" {
-  source = "../../modules/ecs"
+  source = "../../modules/environment/ecs"
 
   helium_version                   = var.helium_version
   default_arch                     = var.default_arch
@@ -78,7 +78,7 @@ module "ecs" {
 }
 
 module "elasticache" {
-  source = "../../modules/elasticache"
+  source = "../../modules/environment/elasticache"
 
   environment     = var.environment
   subnet_ids      = module.vpc.subnet_ids
@@ -88,7 +88,7 @@ module "elasticache" {
 }
 
 module "email" {
-  source = "../../modules/email"
+  source = "../../modules/environment/email"
 
   environment                     = var.environment
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
@@ -96,14 +96,14 @@ module "email" {
 }
 
 module "s3" {
-  source = "../../modules/s3"
+  source = "../../modules/environment/s3"
 
   aws_account_id = local.aws_account_id
   environment    = var.environment
 }
 
 module "cloudfront" {
-  source = "../../modules/cloudfront"
+  source = "../../modules/environment/cloudfront"
 
   environment                       = var.environment
   environment_prefix                = var.environment_prefix
@@ -120,7 +120,7 @@ module "cloudfront" {
 }
 
 module "ses" {
-  source = "../../modules/ses"
+  source = "../../modules/environment/ses"
 
   environment                     = var.environment
   aws_region                      = var.aws_region
@@ -132,7 +132,7 @@ module "ses" {
 }
 
 module "secretsmanager" {
-  source = "../../modules/secretsmanager"
+  source = "../../modules/environment/secretsmanager"
 
   environment                   = var.environment
   aws_account_id                = local.aws_account_id
@@ -160,7 +160,7 @@ module "secretsmanager" {
 }
 
 module "twilio" {
-  source = "../../modules/twilio"
+  source = "../../modules/environment/twilio"
 
   environment              = var.environment
   helium_area_code         = var.helium_area_code

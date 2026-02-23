@@ -5,7 +5,7 @@ locals {
 }
 
 module "route53" {
-  source = "../../modules/route53"
+  source = "../../modules/environment/route53"
 
   environment        = var.environment
   environment_prefix = var.environment_prefix
@@ -16,7 +16,7 @@ module "route53" {
 }
 
 module "certificatemanager" {
-  source = "../../modules/certificatemanager"
+  source = "../../modules/environment/certificatemanager"
 
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
@@ -29,14 +29,14 @@ module "certificatemanager" {
 }
 
 module "s3" {
-  source = "../../modules/s3/ci_bucket"
+  source = "../../modules/environment/s3/ci_bucket"
 
   aws_account_id = local.aws_account_id
   environment    = var.environment
 }
 
 module "ses" {
-  source = "../../modules/ses"
+  source = "../../modules/environment/ses"
 
   environment                     = var.environment
   aws_region                      = var.aws_region
@@ -48,7 +48,7 @@ module "ses" {
 }
 
 module "secretsmanager" {
-  source = "../../modules/secretsmanager/ci_creds"
+  source = "../../modules/environment/secretsmanager/ci_creds"
 
   environment               = var.environment
   smtp_email_user           = module.ses.smtp_username
@@ -58,7 +58,7 @@ module "secretsmanager" {
 }
 
 module "twilio" {
-  source = "../../modules/twilio"
+  source = "../../modules/environment/twilio"
 
   environment              = var.environment
   helium_twiml_handler_url = var.HELIUM_TWIML_HANDLER_URL
