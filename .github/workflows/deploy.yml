@@ -182,4 +182,4 @@ jobs:
           curl -s -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
             -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            -d "{\"event_type\":\"\`frontend-legacy\` triggered for \`${{ needs.determine-version.outputs.version }}\` to \`${{ inputs.environment }}\`\",\"client_payload\":{\"environment\":\"${{ inputs.environment }}\",\"project\":\"frontend-legacy\",\"version\":\"${{ inputs.version }}\"}}"
+            -d "{\"event_type\":\"\`frontend-legacy\` triggered for \`${{ inputs.version }}\` to \`${{ inputs.environment }}\`\",\"client_payload\":{\"environment\":\"${{ inputs.environment }}\",\"project\":\"frontend-legacy\",\"version\":\"${{ inputs.version }}\"}}"
