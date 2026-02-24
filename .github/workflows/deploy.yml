@@ -1,6 +1,6 @@
 name: "Deploy Legacy Frontend"
 
-run-name: "Deploy legacy frontend `${{ inputs.version }}`"
+run-name: "Deploy `frontend-legacy` `${{ inputs.version }}` to `${{ inputs.environment }}`"
 
 on:
   workflow_dispatch:
