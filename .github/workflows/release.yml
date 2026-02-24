@@ -1,6 +1,6 @@
 name: "Release Legacy Frontend"
 
-run-name: "Release `frontend-legacy` `${{ inputs.version }}`"
+run-name: "Release `${{ inputs.version }}`"
 
 on:
   workflow_dispatch:
