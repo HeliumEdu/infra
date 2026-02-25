@@ -2,6 +2,19 @@ resource "aws_s3_bucket" "heliumedu" {
   bucket = "heliumedu.${var.environment}"
 }
 
+resource "aws_s3_bucket_cors_configuration" "heliumedu" {
+  bucket = aws_s3_bucket.heliumedu.id
+
+  # Allow browser access for integration tests (bucket requires credentials anyway)
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD", "DELETE"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
 resource "aws_s3_bucket_lifecycle_configuration" "heliumedu_lifecycle" {
   bucket = aws_s3_bucket.heliumedu.id
 
