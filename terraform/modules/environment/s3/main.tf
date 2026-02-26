@@ -1,3 +1,32 @@
+// IAM user for platform S3 access (media, static files, etc.)
+resource "aws_iam_user" "s3_user" {
+  name = "helium-${var.environment}-s3-user"
+}
+
+resource "aws_iam_access_key" "s3_access_key" {
+  user = aws_iam_user.s3_user.name
+}
+
+data "aws_iam_policy_document" "helium_s3" {
+  statement {
+    resources = [
+      "arn:aws:s3:::heliumedu.${var.environment}.*",
+      "arn:aws:s3:::heliumedu.${var.environment}.*/**",
+    ]
+    actions = ["s3:*"]
+  }
+}
+
+resource "aws_iam_policy" "s3_access" {
+  name   = "helium-${var.environment}-s3-access"
+  policy = data.aws_iam_policy_document.helium_s3.json
+}
+
+resource "aws_iam_user_policy_attachment" "s3_access_attachment" {
+  user       = aws_iam_user.s3_user.name
+  policy_arn = aws_iam_policy.s3_access.arn
+}
+
 resource "aws_s3_bucket" "heliumedu_media" {
   bucket = "heliumedu.${var.environment}.media"
 }
