@@ -14,9 +14,11 @@ variable "smtp_email_password" {
 }
 
 variable "integration_s3_access_key_id" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "integration_s3_secret_access_key" {
-  type = string
+  type    = string
+  default = null
 }

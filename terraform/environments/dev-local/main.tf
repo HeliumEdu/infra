@@ -42,11 +42,9 @@ module "ses" {
 module "secretsmanager" {
   source = "../../modules/environment/secretsmanager/ci_creds"
 
-  environment                      = var.environment
-  smtp_email_user                  = module.ses.smtp_username
-  smtp_email_password              = module.ses.smtp_password
-  integration_s3_access_key_id     = var.AWS_INTEGRATION_S3_ACCESS_KEY_ID
-  integration_s3_secret_access_key = var.AWS_INTEGRATION_S3_SECRET_ACCESS_KEY
+  environment         = var.environment
+  smtp_email_user     = module.ses.smtp_username
+  smtp_email_password = module.ses.smtp_password
 }
 
 module "twilio" {
