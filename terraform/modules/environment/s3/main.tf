@@ -10,7 +10,8 @@ resource "aws_iam_access_key" "s3_access_key" {
 data "aws_iam_policy_document" "helium_s3" {
   statement {
     resources = [
-      "arn:aws:s3:::heliumedu.${var.environment}.*",
+      "arn:aws:s3:::heliumedu.${var.environment}**",
+      "arn:aws:s3:::heliumedu.${var.environment}/**",
       "arn:aws:s3:::heliumedu.${var.environment}.*/**",
     ]
     actions = ["s3:*"]
