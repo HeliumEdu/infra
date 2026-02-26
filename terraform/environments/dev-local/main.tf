@@ -7,10 +7,10 @@ locals {
 module "route53" {
   source = "../../modules/environment/route53"
 
-  environment        = var.environment
-  environment_prefix = var.environment_prefix
-  heliumedu_com_zone_id = var.heliumedu_com_zone_id
-  heliumedu_dev_zone_id = var.heliumedu_dev_zone_id
+  environment             = var.environment
+  environment_prefix      = var.environment_prefix
+  heliumedu_com_zone_id   = var.heliumedu_com_zone_id
+  heliumedu_dev_zone_id   = var.heliumedu_dev_zone_id
   heliumstudy_com_zone_id = var.heliumstudy_com_zone_id
   heliumstudy_dev_zone_id = var.heliumstudy_dev_zone_id
 }
@@ -18,10 +18,10 @@ module "route53" {
 module "certificatemanager" {
   source = "../../modules/environment/certificatemanager"
 
-  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
-  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
-  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
+  route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id     = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name   = module.route53.heliumedu_dev_zone_name
   route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
   route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
@@ -39,12 +39,20 @@ module "ses" {
   route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
+module "s3" {
+  source = "../../modules/environment/s3/integration_bucket"
+
+  aws_account_id = local.aws_account_id
+}
+
 module "secretsmanager" {
   source = "../../modules/environment/secretsmanager/ci_creds"
 
-  environment         = var.environment
-  smtp_email_user     = module.ses.smtp_username
-  smtp_email_password = module.ses.smtp_password
+  environment                      = var.environment
+  smtp_email_user                  = module.ses.smtp_username
+  smtp_email_password              = module.ses.smtp_password
+  integration_s3_access_key_id     = module.s3.access_key_id
+  integration_s3_secret_access_key = module.s3.secret_access_key
 }
 
 module "twilio" {

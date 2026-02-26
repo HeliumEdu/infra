@@ -95,13 +95,3 @@ variable "firebase_client_id" {
 variable "firebase_client_x509_cert_url" {
   type = string
 }
-
-variable "integration_s3_access_key_id" {
-  type    = string
-  default = null
-}
-
-variable "integration_s3_secret_access_key" {
-  type    = string
-  default = null
-}
