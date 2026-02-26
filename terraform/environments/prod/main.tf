@@ -124,7 +124,6 @@ module "ses" {
 
   environment                     = var.environment
   aws_region                      = var.aws_region
-  heliumedu_s3_bucket_name        = module.s3.heliumedu_s3_ci_bucket_name
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
@@ -156,7 +155,9 @@ module "secretsmanager" {
   firebase_private_key          = var.FIREBASE_PRIVATE_KEY
   firebase_client_email         = var.FIREBASE_CLIENT_EMAIL
   firebase_client_id            = var.FIREBASE_CLIENT_ID
-  firebase_client_x509_cert_url = var.FIREBASE_CLIENT_X509_CERT_URL
+  firebase_client_x509_cert_url    = var.FIREBASE_CLIENT_X509_CERT_URL
+  integration_s3_access_key_id     = module.s3.integration_s3_access_key_id
+  integration_s3_secret_access_key = module.s3.integration_s3_secret_access_key
 }
 
 module "twilio" {

@@ -40,7 +40,6 @@ module "ses" {
 
   environment                     = var.environment
   aws_region                      = var.aws_region
-  heliumedu_s3_bucket_name        = module.s3.heliumedu_s3_bucket_name
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id

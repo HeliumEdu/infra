@@ -8,9 +8,10 @@ variable "aws_region" {
   type        = string
 }
 
-variable "heliumedu_s3_bucket_name" {
-  description = "The S3 bucket to store CI emails"
+variable "integration_s3_bucket_name" {
+  description = "The shared integration S3 bucket for CI emails (all environments use this bucket)"
   type        = string
+  default     = "heliumedu-integration"
 }
 
 variable "route53_heliumedu_com_zone_id" {

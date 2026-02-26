@@ -49,5 +49,7 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
     PLATFORM_FIREBASE_CLIENT_EMAIL         = var.firebase_client_email
     PLATFORM_FIREBASE_CLIENT_ID            = var.firebase_client_id
     PLATFORM_FIREBASE_CLIENT_X509_CERT_URL = var.firebase_client_x509_cert_url
+    AWS_INTEGRATION_S3_ACCESS_KEY_ID       = var.integration_s3_access_key_id
+    AWS_INTEGRATION_S3_SECRET_ACCESS_KEY   = var.integration_s3_secret_access_key
   }))
 }

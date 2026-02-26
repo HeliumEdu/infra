@@ -161,8 +161,8 @@ resource "aws_ses_receipt_rule" "cluster_store_s3" {
   scan_enabled  = false
 
   s3_action {
-    bucket_name       = var.heliumedu_s3_bucket_name
-    object_key_prefix = "inbound.email/heliumedu-cluster"
+    bucket_name       = var.integration_s3_bucket_name
+    object_key_prefix = "${var.environment}/inbound.email/heliumedu-cluster"
     position          = 1
   }
 }
