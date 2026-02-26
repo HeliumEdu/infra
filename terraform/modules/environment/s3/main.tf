@@ -1,10 +1,3 @@
-module "ci_bucket" {
-  source = "./ci_bucket"
-
-  aws_account_id = var.aws_account_id
-  environment    = var.environment
-}
-
 resource "aws_s3_bucket" "heliumedu_media" {
   bucket = "heliumedu.${var.environment}.media"
 }

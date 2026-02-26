@@ -42,8 +42,8 @@ test-cluster-legacy:
 		[[ -z "${PLATFORM_TWILIO_ACCOUNT_SID}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_AUTH_TOKEN}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_SMS_FROM}" ]] || \
-		[[ -z "${CI_AWS_S3_ACCESS_KEY_ID}" ]] || \
-		[[ -z "${CI_AWS_S3_SECRET_ACCESS_KEY}" ]] || \
+		[[ -z "${AWS_INTEGRATION_S3_ACCESS_KEY_ID}" ]] || \
+		[[ -z "${AWS_INTEGRATION_S3_SECRET_ACCESS_KEY}" ]] || \
 		[[ -z "${CI_TWILIO_RECIPIENT_PHONE_NUMBER}" ]]; then \
   	  echo "Set all env vars required to run cluster tests end-to-end against a local Docker build: [\
 PLATFORM_EMAIL_HOST_USER, \
@@ -51,8 +51,8 @@ PLATFORM_EMAIL_HOST_PASSWORD, \
 PLATFORM_TWILIO_ACCOUNT_SID, \
 PLATFORM_TWILIO_AUTH_TOKEN, \
 PLATFORM_TWILIO_SMS_FROM, \
-CI_AWS_S3_ACCESS_KEY_ID, \
-CI_AWS_S3_SECRET_ACCESS_KEY, \
+AWS_INTEGRATION_S3_ACCESS_KEY_ID, \
+AWS_INTEGRATION_S3_SECRET_ACCESS_KEY, \
 CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
       exit 1; \
     fi

@@ -64,3 +64,11 @@ variable "HELIUM_TWIML_HANDLER_URL" {
 variable "CI_TWIML_HANDLER_URL" {
   description = "The URL for the CI TwiML Bin"
 }
+
+variable "AWS_INTEGRATION_S3_ACCESS_KEY_ID" {
+  description = "The AWS access key ID for the shared integration S3 bucket"
+}
+
+variable "AWS_INTEGRATION_S3_SECRET_ACCESS_KEY" {
+  description = "The AWS secret access key for the shared integration S3 bucket"
+}

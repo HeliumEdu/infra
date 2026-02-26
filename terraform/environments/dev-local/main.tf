@@ -28,13 +28,6 @@ module "certificatemanager" {
   route53_heliumstudy_dev_zone_name = module.route53.heliumstudy_dev_zone_name
 }
 
-module "s3" {
-  source = "../../modules/environment/s3/ci_bucket"
-
-  aws_account_id = local.aws_account_id
-  environment    = var.environment
-}
-
 module "ses" {
   source = "../../modules/environment/ses"
 
@@ -49,11 +42,11 @@ module "ses" {
 module "secretsmanager" {
   source = "../../modules/environment/secretsmanager/ci_creds"
 
-  environment               = var.environment
-  smtp_email_user           = module.ses.smtp_username
-  smtp_email_password       = module.ses.smtp_password
-  s3_user_access_key_id     = module.s3.s3_access_key_id
-  s3_user_secret_access_key = module.s3.s3_access_key_secret
+  environment                      = var.environment
+  smtp_email_user                  = module.ses.smtp_username
+  smtp_email_password              = module.ses.smtp_password
+  integration_s3_access_key_id     = var.AWS_INTEGRATION_S3_ACCESS_KEY_ID
+  integration_s3_secret_access_key = var.AWS_INTEGRATION_S3_SECRET_ACCESS_KEY
 }
 
 module "twilio" {

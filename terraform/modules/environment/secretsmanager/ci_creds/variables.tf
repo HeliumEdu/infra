@@ -13,10 +13,10 @@ variable "smtp_email_password" {
   type = string
 }
 
-variable "s3_user_access_key_id" {
+variable "integration_s3_access_key_id" {
   type = string
 }
 
-variable "s3_user_secret_access_key" {
+variable "integration_s3_secret_access_key" {
   type = string
 }
