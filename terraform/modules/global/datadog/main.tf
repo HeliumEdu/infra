@@ -112,20 +112,20 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token}.as_count()"
+            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token}.as_count()"
+              expression = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token}.as_count()"
               alias_name = "Frontend"
             }
           }
           request {
-            q            = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
             display_type = "bars"
             style { palette = "warm" }
             metadata {
-              expression = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+              expression = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
               alias_name = "Legacy Frontend"
             }
           }
