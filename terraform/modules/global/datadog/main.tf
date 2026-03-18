@@ -76,7 +76,7 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         query_value_definition {
-          title       = "Total Requests"
+          title       = "Total Requests (Web)"
           title_size  = "16"
           title_align = "left"
           autoscale   = true
@@ -91,7 +91,7 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         query_value_definition {
-          title       = "Total Mobile Requests"
+          title       = "Total Requests (App)"
           title_size  = "16"
           title_align = "left"
           autoscale   = true
