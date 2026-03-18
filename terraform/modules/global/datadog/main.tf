@@ -39,46 +39,6 @@ resource "datadog_dashboard" "helium_heads_up" {
       layout_type      = "ordered"
 
       widget {
-        query_value_definition {
-          title       = "Logins"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = false
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.action.user.login{$env, $staff, $authenticated, $version, $user_agent}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title     = "Account's Activated (non-Staff)"
-          autoscale = false
-          precision = 0
-          request {
-            q          = "default_zero(sum:platform.action.user.verified{$env,$version, $user_agent, staff:false}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Reminders Sent"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = false
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.action.email.sent{$env, $version}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
-        }
-      }
-      widget {
         timeseries_definition {
           title         = "Active Users"
           title_size    = "16"
@@ -116,7 +76,22 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         query_value_definition {
-          title       = "Total Mobile Requests (Mobile)"
+          title       = "Total Requests"
+          title_size  = "16"
+          title_align = "left"
+          autoscale   = true
+          text_align  = "center"
+          precision   = 0
+          request {
+            q          = "default_zero(avg:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count())"
+            aggregator = "sum"
+          }
+          timeseries_background { type = "bars" }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Total Mobile Requests"
           title_size  = "16"
           title_align = "left"
           autoscale   = true
@@ -130,12 +105,65 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
+        timeseries_definition {
+          title         = "Logins"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token}.as_count()"
+            display_type = "bars"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token}.as_count()"
+              alias_name = "Frontend"
+            }
+          }
+          request {
+            q            = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+            display_type = "bars"
+            style { palette = "warm" }
+            metadata {
+              expression = "sum:platform.request{$env, $staff, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+              alias_name = "Legacy Frontend"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title     = "Account's Activated (non-Staff)"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "default_zero(sum:platform.action.user.verified{$env,$version, $user_agent, staff:false}.as_count())"
+            aggregator = "sum"
+          }
+          timeseries_background { type = "bars" }
+        }
+      }
+      widget {
         query_value_definition {
           title     = "Account's Deleted (non-Staff)"
           autoscale = false
           precision = 0
           request {
             q          = "default_zero(sum:platform.task{$env,$version, $user_agent,staff:false,name:user.delete}.as_count())"
+            aggregator = "sum"
+          }
+          timeseries_background { type = "bars" }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Reminders Sent"
+          title_size  = "16"
+          title_align = "left"
+          autoscale   = false
+          precision   = 0
+          request {
+            q          = "default_zero(avg:platform.action.email.sent{$env, $version}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -175,21 +203,6 @@ resource "datadog_dashboard" "helium_heads_up" {
               alias_name = "Example Schedule"
             }
           }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Total Requests"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = true
-          text_align  = "center"
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
         }
       }
       widget {
