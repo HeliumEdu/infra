@@ -79,18 +79,39 @@ resource "datadog_dashboard" "helium_heads_up" {
         }
       }
       widget {
-        query_value_definition {
-          title       = "Total Mobile Requests (Browser)"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = true
-          text_align  = "center"
-          precision   = 0
+        timeseries_definition {
+          title         = "Active Users"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
           request {
-            q          = "default_zero(avg:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_browser_ios}.as_count() + avg:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_browser_android}.as_count())"
-            aggregator = "sum"
+            q            = "avg:platform.users.active{$env, window:7d}"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.active{$env, window:7d}"
+              alias_name = "7 days"
+            }
           }
-          timeseries_background { type = "bars" }
+          request {
+            q            = "avg:platform.users.active{$env, window:30d}"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.active{$env, window:30d}"
+              alias_name = "30 days"
+            }
+          }
+          request {
+            q            = "avg:platform.users.active{$env, window:180d}"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.active{$env, window:180d}"
+              alias_name = "6 months"
+            }
+          }
         }
       }
       widget {
