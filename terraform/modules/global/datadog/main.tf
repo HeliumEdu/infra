@@ -46,29 +46,29 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.active{$env, window:7d}"
+            q            = "avg:platform.users.active{$env, $staff, window:7d}"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.active{$env, window:7d}"
+              expression = "avg:platform.users.active{$env, $staff, window:7d}"
               alias_name = "7 days"
             }
           }
           request {
-            q            = "avg:platform.users.active{$env, window:30d}"
+            q            = "avg:platform.users.active{$env, $staff, window:30d}"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.active{$env, window:30d}"
+              expression = "avg:platform.users.active{$env, $staff, window:30d}"
               alias_name = "30 days"
             }
           }
           request {
-            q            = "avg:platform.users.active{$env, window:180d}"
+            q            = "avg:platform.users.active{$env, $staff, window:180d}"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.active{$env, window:180d}"
+              expression = "avg:platform.users.active{$env, $staff, window:180d}"
               alias_name = "6 months"
             }
           }
