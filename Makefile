@@ -1,4 +1,4 @@
-.PHONY: all install-reqs install build start test-cluster-legacy
+.PHONY: all install-reqs install build start validate test-cluster-legacy
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
@@ -21,6 +21,12 @@ install: install-reqs
 build: install
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
 	PLATFORM=$(PLATFORM) make -C projects/frontend build-docker
+
+validate:
+	@for env in dev dev-local global prod; do \
+		echo "Validating terraform/environments/$${env}..."; \
+		cd terraform/environments/$${env} && terraform init -backend=false && terraform validate && cd -; \
+	done
 
 start:
 	cd projects/platform && ./bin/runserver

@@ -31,10 +31,11 @@ jobs:
         with:
           python-version: "3.12"
           cache: 'pip'
-      - name: Install GitHub SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY_GITHUB }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS_GITHUB }}
       - name: Install dependencies
-        run: make install
+        run: make install-reqs
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Validate Terraform configurations
+        run: make validate
