@@ -640,7 +640,7 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "Unverified Users Purged"
+          title         = "User Purge Operations"
           show_legend   = true
           legend_layout = "auto"
           request {
@@ -649,7 +649,25 @@ resource "datadog_dashboard" "helium_heads_up" {
             style { palette = "blue" }
             metadata {
               expression = "sum:platform.task{$env, $version, name:user.unverified.purge}.as_count()"
-              alias_name = "Users Purged"
+              alias_name = "Unverified Purged"
+            }
+          }
+          request {
+            q            = "avg:platform.users.dormant.warnings_sent{$env}"
+            display_type = "bars"
+            style { palette = "orange" }
+            metadata {
+              expression = "avg:platform.users.dormant.warnings_sent{$env}"
+              alias_name = "Dormant Warnings Sent"
+            }
+          }
+          request {
+            q            = "avg:platform.users.dormant.deletions_queued{$env}"
+            display_type = "bars"
+            style { palette = "red" }
+            metadata {
+              expression = "avg:platform.users.dormant.deletions_queued{$env}"
+              alias_name = "Dormant Deletions Queued"
             }
           }
         }
