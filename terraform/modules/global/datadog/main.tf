@@ -163,7 +163,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale   = false
           precision   = 0
           request {
-            q          = "default_zero(avg:platform.action.email.sent{$env, $version}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count())"
+            q          = "default_zero(avg:platform.action.email.sent{$env, $version, type:reminder}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -603,11 +603,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.email.sent{$env, $version}.as_count()"
+            q            = "sum:platform.action.email.sent{$env, $version, type:reminder}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:platform.action.email.sent{$env, $version}.as_count()"
+              expression = "sum:platform.action.email.sent{$env, $version, type:reminder}.as_count()"
               alias_name = "Emails"
             }
           }
