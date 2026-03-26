@@ -58,6 +58,21 @@ resource "aws_iam_role_policy" "get_secret_policy" {
   policy = data.aws_iam_policy_document.get_secret_policy_document.json
 }
 
+data "aws_iam_policy_document" "ses_suppression_policy_document" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ses:DeleteSuppressedDestination"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "ses_suppression_policy" {
+  name = "helium-${var.environment}-ses-suppression-policy"
+  role = aws_iam_role.ecs_role.id
+
+  policy = data.aws_iam_policy_document.ses_suppression_policy_document.json
+}
+
 resource "aws_ecs_task_definition" "platform_resource_task" {
   family = "helium_platform_resource_${var.environment}"
   container_definitions = jsonencode([
