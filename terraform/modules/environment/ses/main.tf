@@ -145,6 +145,14 @@ resource "aws_route53_record" "heliumedu_dev_inbound_mx" {
   records = ["10 inbound-smtp.${var.aws_region}.amazonaws.com"]
 }
 
+resource "aws_sesv2_configuration_set" "helium" {
+  configuration_set_name = "helium-${var.environment}"
+
+  suppression_options {
+    suppressed_reasons = ["BOUNCE"]
+  }
+}
+
 resource "aws_ses_receipt_rule_set" "helium_rule_set" {
   rule_set_name = "helium-${var.environment}-rule-set"
 }
