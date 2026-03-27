@@ -35,7 +35,7 @@ jobs:
         run: make install-reqs
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
 
       - name: Validate Terraform configurations
         run: make validate
