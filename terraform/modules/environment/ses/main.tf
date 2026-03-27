@@ -149,12 +149,6 @@ resource "aws_sesv2_account_suppression_attributes" "helium" {
   count = var.environment == "prod" ? 1 : 0
 
   suppressed_reasons = ["BOUNCE"]
-
-  validation_options {
-    condition_threshold {
-      overall_confidence_threshold = "SES_MANAGED"
-    }
-  }
 }
 
 resource "aws_sesv2_configuration_set" "helium" {
