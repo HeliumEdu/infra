@@ -61,7 +61,7 @@ resource "aws_iam_role_policy" "get_secret_policy" {
 data "aws_iam_policy_document" "ses_suppression_policy_document" {
   statement {
     effect    = "Allow"
-    actions   = ["ses:DeleteSuppressedDestination"]
+    actions   = ["ses:DeleteSuppressedDestination", "ses:PutSuppressedDestination"]
     resources = ["*"]
   }
 }
