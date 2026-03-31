@@ -29,7 +29,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "integration_lifecycle" {
       prefix = ""
     }
     expiration {
-      days = 7
+      days = 1
     }
 
     status = "Enabled"
