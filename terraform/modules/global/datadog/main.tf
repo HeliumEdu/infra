@@ -738,6 +738,40 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
+          title       = "SES Bounce Rate (%)"
+          title_size  = "16"
+          title_align = "left"
+          show_legend = true
+          request {
+            q            = "avg:aws.ses.reputation.bounce_rate{*} * 100"
+            display_type = "line"
+            style { palette = "red" }
+            metadata {
+              expression = "avg:aws.ses.reputation.bounce_rate{*} * 100"
+              alias_name = "Bounce Rate %"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title       = "SES Complaint Rate (%)"
+          title_size  = "16"
+          title_align = "left"
+          show_legend = true
+          request {
+            q            = "avg:aws.ses.reputation.complaint_rate{*} * 100"
+            display_type = "line"
+            style { palette = "orange" }
+            metadata {
+              expression = "avg:aws.ses.reputation.complaint_rate{*} * 100"
+              alias_name = "Complaint Rate %"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
           title       = "ALB Healthy Targets"
           title_size  = "16"
           title_align = "left"
@@ -868,40 +902,6 @@ resource "datadog_dashboard" "helium_heads_up" {
             metadata {
               expression = "avg:aws.elasticache.freeable_memory{name:helium-$env.value}"
               alias_name = "Freeable Memory"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title       = "SES Bounce Rate (%)"
-          title_size  = "16"
-          title_align = "left"
-          show_legend = true
-          request {
-            q            = "avg:aws.ses.reputation.bounce_rate{*} * 100"
-            display_type = "line"
-            style { palette = "red" }
-            metadata {
-              expression = "avg:aws.ses.reputation.bounce_rate{*} * 100"
-              alias_name = "Bounce Rate %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title       = "SES Complaint Rate (%)"
-          title_size  = "16"
-          title_align = "left"
-          show_legend = true
-          request {
-            q            = "avg:aws.ses.reputation.complaint_rate{*} * 100"
-            display_type = "line"
-            style { palette = "orange" }
-            metadata {
-              expression = "avg:aws.ses.reputation.complaint_rate{*} * 100"
-              alias_name = "Complaint Rate %"
             }
           }
         }
