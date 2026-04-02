@@ -476,6 +476,54 @@ resource "datadog_monitor" "frontend_5xx_spike" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+resource "datadog_monitor" "ses_bounce_rate" {
+  name     = "SES Bounce Rate Elevated"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:aws.ses.reputation.bounce_rate{*} > 0.025"
+  message  = <<-EOT
+    SES account bounce rate has exceeded 2.5% over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
+
+    Investigate recent email sends for invalid addresses or unexpected bounce patterns.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+
+  monitor_thresholds {
+    critical = 0.025
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "ses_complaint_rate" {
+  name     = "SES Complaint Rate Elevated"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:aws.ses.reputation.complaint_rate{*} > 0.0005"
+  message  = <<-EOT
+    SES account complaint rate has exceeded 0.05% over the last 24 hours. AWS begins reviewing accounts at 0.1% and may suspend sending at 0.5%.
+
+    Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints — investigate for bugs or unexpected send volume instead.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+
+  monitor_thresholds {
+    critical = 0.0005
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
 resource "datadog_monitor" "rds_connection_config" {
   name     = "RDS Connection Configuration Wrong"
   type     = "query alert"
