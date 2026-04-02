@@ -479,7 +479,7 @@ resource "datadog_monitor" "frontend_5xx_spike" {
 resource "datadog_monitor" "ses_bounce_rate" {
   name     = "SES Bounce Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ses.reputation.bounce_rate{*} > 0.025"
+  query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.025"
   message  = <<-EOT
     SES account bounce rate has exceeded 2.5% over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
 
@@ -503,7 +503,7 @@ resource "datadog_monitor" "ses_bounce_rate" {
 resource "datadog_monitor" "ses_complaint_rate" {
   name     = "SES Complaint Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ses.reputation.complaint_rate{*} > 0.0005"
+  query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.0005"
   message  = <<-EOT
     SES account complaint rate has exceeded 0.05% over the last 24 hours. AWS begins reviewing accounts at 0.1% and may suspend sending at 0.5%.
 

@@ -743,11 +743,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.ses.reputation.bounce_rate{*} * 100"
+            q            = "avg:aws.ses.reputation_bounce_rate{*} * 100"
             display_type = "line"
             style { palette = "red" }
             metadata {
-              expression = "avg:aws.ses.reputation.bounce_rate{*} * 100"
+              expression = "avg:aws.ses.reputation_bounce_rate{*} * 100"
               alias_name = "Bounce Rate %"
             }
           }
@@ -760,11 +760,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.ses.reputation.complaint_rate{*} * 100"
+            q            = "avg:aws.ses.reputation_complaint_rate{*} * 100"
             display_type = "line"
             style { palette = "orange" }
             metadata {
-              expression = "avg:aws.ses.reputation.complaint_rate{*} * 100"
+              expression = "avg:aws.ses.reputation_complaint_rate{*} * 100"
               alias_name = "Complaint Rate %"
             }
           }
