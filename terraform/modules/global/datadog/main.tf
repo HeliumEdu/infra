@@ -46,12 +46,12 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $version, !user_agent:mobile_app_flutter}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count()"
-              alias_name = "All"
+              expression = "sum:platform.request{$env, $staff, $authenticated, $version, !user_agent:mobile_app_flutter}.as_count()"
+              alias_name = "Web"
             }
           }
           request {
