@@ -8,6 +8,16 @@ output "dashboard_id" {
   value       = datadog_dashboard.helium_heads_up.id
 }
 
+output "user_behavior_dashboard_url" {
+  description = "URL of the Helium User Behavior dashboard"
+  value       = "https://app.datadoghq.com${datadog_dashboard.helium_user_behavior.url}"
+}
+
+output "user_behavior_dashboard_id" {
+  description = "ID of the Helium User Behavior dashboard"
+  value       = datadog_dashboard.helium_user_behavior.id
+}
+
 output "monitor_ids" {
   description = "Map of monitor names to IDs"
   value = {

@@ -937,6 +937,461 @@ resource "datadog_dashboard" "helium_heads_up" {
   }
 }
 
+resource "datadog_dashboard" "helium_user_behavior" {
+  title       = "Helium User Behavior"
+  description = "Managed by Terraform"
+  layout_type = "ordered"
+  reflow_type = "auto"
+
+  template_variable {
+    name     = "env"
+    prefix   = "env"
+    defaults = ["prod"]
+  }
+  template_variable {
+    name     = "staff"
+    prefix   = "staff"
+    defaults = ["false"]
+  }
+  template_variable {
+    name     = "window"
+    prefix   = "window"
+    defaults = ["30d"]
+  }
+
+  # Engagement Overview Group
+  widget {
+    group_definition {
+      title            = "Engagement Overview"
+      background_color = "vivid_green"
+      show_title       = true
+      layout_type      = "ordered"
+
+      widget {
+        timeseries_definition {
+          title         = "Active Users"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.active{$env, $staff, window:7d}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.active{$env, $staff, window:7d}.fill(last)"
+              alias_name = "7 days"
+            }
+          }
+          request {
+            q            = "avg:platform.users.active{$env, $staff, window:30d}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.active{$env, $staff, window:30d}.fill(last)"
+              alias_name = "30 days"
+            }
+          }
+          request {
+            q            = "avg:platform.users.active{$env, $staff, window:180d}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.active{$env, $staff, window:180d}.fill(last)"
+              alias_name = "6 months"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Logins"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token}.as_count()"
+            display_type = "bars"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "sum:platform.request{$env, status_code:200, method:post, path:auth.token}.as_count()"
+              alias_name = "Frontend"
+            }
+          }
+          request {
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+            display_type = "bars"
+            style { palette = "warm" }
+            metadata {
+              expression = "sum:platform.request{$env, status_code:200, method:post, path:auth.token.legacy}.as_count()"
+              alias_name = "Legacy Frontend"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title     = "Accounts Activated (non-Staff)"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "default_zero(sum:platform.action.user.verified{$env, staff:false}.as_count())"
+            aggregator = "sum"
+          }
+          timeseries_background { type = "bars" }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Users with Active Courses"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.engagement.has_active_courses{$env, $staff}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.engagement.has_active_courses{$env, $staff}.fill(last)"
+              alias_name = "Has Active Courses"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Homework Completion Rate"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.engagement.homework_completion_rate{$env, $staff}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.engagement.homework_completion_rate{$env, $staff}.fill(last)"
+              alias_name = "Completion Rate"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Grade Entry Rate"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.engagement.grade_entry_rate{$env, $staff}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.engagement.grade_entry_rate{$env, $staff}.fill(last)"
+              alias_name = "Grade Entry Rate"
+            }
+          }
+        }
+      }
+    }
+  }
+
+  # Data Richness Group
+  widget {
+    group_definition {
+      title            = "Data Richness"
+      background_color = "vivid_blue"
+      show_title       = true
+      layout_type      = "ordered"
+
+      widget {
+        timeseries_definition {
+          title         = "Avg Homework per Course"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Homework / Course"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Courses per Group"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_courses_per_group{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_courses_per_group{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Courses / Group"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Events per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_events_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.data.avg_events_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Events / User"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg External Calendars per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_external_calendars_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.data.avg_external_calendars_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg External Calendars / User"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Notes per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "purple" }
+            metadata {
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Notes / User"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Reminders per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "orange" }
+            metadata {
+              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Reminders / User"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Graded Homework per Course"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_graded_homework_per_course{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.data.avg_graded_homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Graded Homework / Course"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Attachments per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "gray" }
+            metadata {
+              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Attachments / User"
+            }
+          }
+        }
+      }
+    }
+  }
+
+  # Feature Adoption Group
+  widget {
+    group_definition {
+      title            = "Feature Adoption"
+      background_color = "vivid_orange"
+      show_title       = true
+      layout_type      = "ordered"
+
+      widget {
+        timeseries_definition {
+          title         = "Grade Tracking"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.grade_tracking{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.adoption.grade_tracking{$env, $staff, $window}.fill(last)"
+              alias_name = "Grade Tracking"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "External Calendars"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.external_calendars{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.adoption.external_calendars{$env, $staff, $window}.fill(last)"
+              alias_name = "External Calendars"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Notebook"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.notebook{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "purple" }
+            metadata {
+              expression = "avg:platform.users.adoption.notebook{$env, $staff, $window}.fill(last)"
+              alias_name = "Notebook"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Materials"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.materials{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.adoption.materials{$env, $staff, $window}.fill(last)"
+              alias_name = "Materials"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Reminders"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.reminders{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "orange" }
+            metadata {
+              expression = "avg:platform.users.adoption.reminders{$env, $staff, $window}.fill(last)"
+              alias_name = "Reminders"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Attachments"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.attachments{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "gray" }
+            metadata {
+              expression = "avg:platform.users.adoption.attachments{$env, $staff, $window}.fill(last)"
+              alias_name = "Attachments"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Feeds"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.adoption.feeds{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "green" }
+            metadata {
+              expression = "avg:platform.users.adoption.feeds{$env, $staff, $window}.fill(last)"
+              alias_name = "Feeds"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 resource "datadog_monitor" "high_priority_queue_wait" {
   name    = "High Priority Task Queue Wait Time Elevated"
   type    = "query alert"
