@@ -1062,36 +1062,36 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Homework Completion Rate"
+          title         = "Avg Completions per User (14d rolling)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.engagement.homework_completion_rate{$env, $staff}.fill(last)"
+            q            = "avg:platform.users.engagement.avg_completions_per_user{$env, $staff}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.engagement.homework_completion_rate{$env, $staff}.fill(last)"
-              alias_name = "Completion Rate"
+              expression = "avg:platform.users.engagement.avg_completions_per_user{$env, $staff}.fill(last)"
+              alias_name = "Avg Completions / User"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Grade Entry Rate"
+          title         = "Avg Graded Homework per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.engagement.grade_entry_rate{$env, $staff}.fill(last)"
+            q            = "avg:platform.users.engagement.avg_graded_homework_per_user{$env, $staff}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.engagement.grade_entry_rate{$env, $staff}.fill(last)"
-              alias_name = "Grade Entry Rate"
+              expression = "avg:platform.users.engagement.avg_graded_homework_per_user{$env, $staff}.fill(last)"
+              alias_name = "Avg Graded Homework / User"
             }
           }
         }
@@ -1121,6 +1121,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             metadata {
               expression = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
               alias_name = "Avg Homework / Course"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Avg Homework per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_homework_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_homework_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Homework / User"
             }
           }
         }
