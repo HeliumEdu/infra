@@ -40,68 +40,29 @@ resource "datadog_dashboard" "helium_heads_up" {
 
       widget {
         timeseries_definition {
-          title         = "Active Users"
+          title         = "Total Requests"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.active{$env, $staff, window:7d}.fill(last)"
-            display_type = "line"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count()"
+            display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.active{$env, $staff, window:7d}.fill(last)"
-              alias_name = "7 days"
+              expression = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count()"
+              alias_name = "All"
             }
           }
           request {
-            q            = "avg:platform.users.active{$env, $staff, window:30d}.fill(last)"
-            display_type = "line"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_app_flutter}.as_count()"
+            display_type = "bars"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.active{$env, $staff, window:30d}.fill(last)"
-              alias_name = "30 days"
+              expression = "sum:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_app_flutter}.as_count()"
+              alias_name = "App"
             }
           }
-          request {
-            q            = "avg:platform.users.active{$env, $staff, window:180d}.fill(last)"
-            display_type = "line"
-            style { palette = "warm" }
-            metadata {
-              expression = "avg:platform.users.active{$env, $staff, window:180d}.fill(last)"
-              alias_name = "6 months"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Total Requests (Web)"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = true
-          text_align  = "center"
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.request{$env, $staff, $authenticated, $version, $user_agent}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Total Requests (App)"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = true
-          text_align  = "center"
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_app_flutter}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
         }
       }
       widget {
@@ -133,7 +94,7 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         query_value_definition {
-          title     = "Account's Activated (non-Staff)"
+          title     = "Accounts Activated (non-Staff)"
           autoscale = false
           precision = 0
           request {
@@ -145,25 +106,11 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         query_value_definition {
-          title     = "Account's Deleted (non-Staff)"
+          title     = "Accounts Deleted (non-Staff)"
           autoscale = false
           precision = 0
           request {
             q          = "default_zero(sum:platform.task{$env,$version, $user_agent,staff:false,name:user.delete}.as_count())"
-            aggregator = "sum"
-          }
-          timeseries_background { type = "bars" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Reminders Sent"
-          title_size  = "16"
-          title_align = "left"
-          autoscale   = false
-          precision   = 0
-          request {
-            q          = "default_zero(avg:platform.action.email.sent{$env, $version, type:reminder}.as_count() + avg:platform.action.push.sent{$env, $version}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
