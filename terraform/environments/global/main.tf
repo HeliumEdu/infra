@@ -1,8 +1,3 @@
-import {
-  to = module.datadog.datadog_integration_aws_account.helium
-  id = "562129510549:aws"
-}
-
 module "datadog" {
   source = "../../modules/global/datadog"
 
