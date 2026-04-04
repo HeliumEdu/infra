@@ -1,8 +1,3 @@
-import {
-  to = datadog_integration_aws_account.helium
-  id = "562129510549:aws"
-}
-
 resource "datadog_integration_aws_account" "helium" {
   aws_account_id = var.aws_account_id
   aws_partition  = "aws"
