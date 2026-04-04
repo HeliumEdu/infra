@@ -1,5 +1,6 @@
 resource "datadog_integration_aws_account" "helium" {
   aws_account_id = var.aws_account_id
+  aws_partition  = "aws"
 
   auth_config {
     aws_auth_config_role {
