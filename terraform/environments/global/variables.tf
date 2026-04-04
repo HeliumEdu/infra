@@ -9,3 +9,9 @@ variable "DD_APP_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "aws_account_id" {
+  description = "The AWS account ID where Helium infrastructure is deployed"
+  type        = string
+  sensitive   = true
+}

@@ -35,7 +35,7 @@ variable "region_azs" {
       suffix = "b"
       index  = "1"
     },
-    az2 = {
+    az3 = {
       suffix = "c"
       index  = "2"
     }
