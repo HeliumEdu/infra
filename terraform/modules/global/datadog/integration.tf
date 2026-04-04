@@ -32,4 +32,12 @@ resource "datadog_integration_aws_account" "helium" {
   resources_config {
     extended_collection = false
   }
+
+  logs_config {
+    lambda_forwarder {}
+  }
+
+  traces_config {
+    xray_services {}
+  }
 }
