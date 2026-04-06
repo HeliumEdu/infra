@@ -1207,7 +1207,11 @@ resource "datadog_dashboard" "helium_user_behavior" {
           request {
             q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "purple" line_type = "solid" line_width = "thick" }
+            style {
+              palette    = "purple"
+              line_type  = "solid"
+              line_width = "thick"
+            }
             metadata {
               expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
               alias_name = "Total"
@@ -1261,7 +1265,11 @@ resource "datadog_dashboard" "helium_user_behavior" {
           request {
             q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "orange" line_type = "solid" line_width = "thick" }
+            style {
+              palette    = "orange"
+              line_type  = "solid"
+              line_width = "thick"
+            }
             metadata {
               expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
               alias_name = "Total"
@@ -1324,7 +1332,11 @@ resource "datadog_dashboard" "helium_user_behavior" {
           request {
             q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "gray" line_type = "solid" line_width = "thick" }
+            style {
+              palette    = "gray"
+              line_type  = "solid"
+              line_width = "thick"
+            }
             metadata {
               expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
               alias_name = "Total"
