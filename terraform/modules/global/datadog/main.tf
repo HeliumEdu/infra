@@ -1371,6 +1371,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
+      widget {
+        timeseries_definition {
+          title         = "Avg Resources per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.users.data.avg_resources_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.data.avg_resources_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg Resources / User"
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1438,18 +1456,18 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Materials"
+          title         = "Resources"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.materials{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.resources{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.adoption.materials{$env, $staff, $window}.fill(last)"
-              alias_name = "Materials"
+              expression = "avg:platform.users.adoption.resources{$env, $staff, $window}.fill(last)"
+              alias_name = "Resources"
             }
           }
         }
