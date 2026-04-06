@@ -1205,12 +1205,48 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "purple" }
+            style { palette = "purple" line_type = "solid" line_width = "thick" }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Notes / User"
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Total"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Homework"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Event"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
+              alias_name = "Resource"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
+            display_type = "line"
+            style { palette = "gray" }
+            metadata {
+              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
+              alias_name = "Standalone"
             }
           }
         }
@@ -1223,12 +1259,39 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "orange" }
+            style { palette = "orange" line_type = "solid" line_width = "thick" }
             metadata {
-              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Reminders / User"
+              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Total"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Homework"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Event"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
+              alias_name = "Course"
             }
           }
         }
@@ -1259,12 +1322,39 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
-            style { palette = "gray" }
+            style { palette = "gray" line_type = "solid" line_width = "thick" }
             metadata {
-              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Attachments / User"
+              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Total"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Homework"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Event"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
+              alias_name = "Course"
             }
           }
         }
