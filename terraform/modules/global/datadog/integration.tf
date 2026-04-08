@@ -25,7 +25,7 @@ resource "datadog_integration_aws_account" "helium" {
         "AWS/ElastiCache",
         "AWS/RDS",
         "AWS/SES",
-        "Helium/Platform",
+        "Helium/prod",
       ]
     }
   }

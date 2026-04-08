@@ -509,11 +509,8 @@ resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
   log_group_name = aws_cloudwatch_log_group.platform.name
 
   metric_transformation {
-    name          = "CeleryTaskFailure"
-    namespace     = "Helium/Platform"
-    value      = "1"
-    dimensions = {
-      Environment = var.environment
-    }
+    name      = "CeleryTaskFailure"
+    namespace = "Helium/${var.environment}"
+    value     = "1"
   }
 }
