@@ -555,7 +555,7 @@ resource "datadog_monitor" "rds_connection_config" {
 resource "datadog_monitor" "celery_task_failures_cloudwatch" {
   name     = "Celery Task Exception Spike (CloudWatch)"
   type     = "query alert"
-  query    = "sum(last_1h):sum:aws.helium.platform.celery_task_failure{environment:prod}.as_count() > 3"
+  query    = "sum(last_1h):sum:aws.helium.prod.celery_task_failure{*}.as_count() > 3"
   message  = <<-EOT
     More than {{ threshold }} Celery task exceptions detected via CloudWatch logs in the last hour. Celery workers and task processing should be investigated.
 
