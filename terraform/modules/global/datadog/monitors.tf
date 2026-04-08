@@ -551,3 +551,25 @@ resource "datadog_monitor" "rds_connection_config" {
 
   tags = ["managed_by:terraform", "alert_type:config"]
 }
+
+resource "datadog_monitor" "celery_task_failures_cloudwatch" {
+  name     = "Celery Task Exception Spike (CloudWatch)"
+  type     = "query alert"
+  query    = "sum(last_1h):sum:aws.helium.platform.celery_task_failure{environment:prod}.as_count() > 3"
+  message  = <<-EOT
+    More than {{ threshold }} Celery task exceptions detected via CloudWatch logs in the last hour. Celery workers and task processing should be investigated.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+
+  monitor_thresholds {
+    critical = 3
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}

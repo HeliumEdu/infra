@@ -73,6 +73,11 @@ resource "aws_iam_role_policy" "ses_suppression_policy" {
   policy = data.aws_iam_policy_document.ses_suppression_policy_document.json
 }
 
+resource "aws_cloudwatch_log_group" "platform" {
+  name              = "/ecs/helium_platform_${var.environment}"
+  retention_in_days = 7
+}
+
 resource "aws_ecs_task_definition" "platform_resource_task" {
   family = "helium_platform_resource_${var.environment}"
   container_definitions = jsonencode([
@@ -98,11 +103,10 @@ resource "aws_ecs_task_definition" "platform_resource_task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          awslogs-group         = aws_cloudwatch_log_group.platform.name
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
         }
       }
     }
@@ -156,11 +160,10 @@ resource "aws_ecs_task_definition" "platform_api_service" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          awslogs-group         = aws_cloudwatch_log_group.platform.name
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
         }
       }
     },
@@ -186,11 +189,10 @@ resource "aws_ecs_task_definition" "platform_api_service" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          awslogs-group         = aws_cloudwatch_log_group.platform.name
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
         }
       }
     }
@@ -237,11 +239,10 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          awslogs-group         = aws_cloudwatch_log_group.platform.name
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
         }
       }
     },
@@ -267,11 +268,10 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/helium_platform_${var.environment}"
+          awslogs-group         = aws_cloudwatch_log_group.platform.name
           mode                  = "non-blocking"
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
-          awslogs-create-group  = "true"
         }
       }
     }
@@ -457,5 +457,64 @@ resource "aws_appautoscaling_policy" "platform_worker_memory" {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }
     target_value = 80.0
+  }
+}
+
+# CloudWatch Logs Insights saved queries
+
+resource "aws_cloudwatch_query_definition" "errors" {
+  name = "Helium ${var.environment}/Errors"
+
+  log_group_names = [aws_cloudwatch_log_group.platform.name]
+
+  query_string = <<-EOT
+    fields @timestamp, @logStream, @message
+    | filter @message like /ERROR/ or @message like /CRITICAL/
+    | sort @timestamp desc
+    | limit 200
+  EOT
+}
+
+resource "aws_cloudwatch_query_definition" "celery_task_failures" {
+  name = "Helium ${var.environment}/Celery Task Failures"
+
+  log_group_names = [aws_cloudwatch_log_group.platform.name]
+
+  query_string = <<-EOT
+    fields @timestamp, @logStream, @message
+    | filter @message like /Task raised exception/
+    | sort @timestamp desc
+    | limit 100
+  EOT
+}
+
+resource "aws_cloudwatch_query_definition" "push_notifications" {
+  name = "Helium ${var.environment}/Push Notifications"
+
+  log_group_names = [aws_cloudwatch_log_group.platform.name]
+
+  query_string = <<-EOT
+    fields @timestamp, @logStream, @message
+    | filter @message like /push notification/ or @message like /pushservice/ or @message like /action.push/
+    | sort @timestamp desc
+    | limit 100
+  EOT
+}
+
+# CloudWatch metric filter: emit a data point per Celery task exception so
+# DataDog can alert without relying solely on DogStatsD from the worker process.
+resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
+  name           = "helium-${var.environment}-celery-task-failures"
+  pattern        = "Task raised exception"
+  log_group_name = aws_cloudwatch_log_group.platform.name
+
+  metric_transformation {
+    name          = "CeleryTaskFailure"
+    namespace     = "Helium/Platform"
+    value         = "1"
+    default_value = "0"
+    dimensions    = {
+      Environment = var.environment
+    }
   }
 }
