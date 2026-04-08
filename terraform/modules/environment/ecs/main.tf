@@ -482,7 +482,7 @@ resource "aws_cloudwatch_query_definition" "celery_task_failures" {
 
   query_string = <<-EOT
     fields @timestamp, @logStream, @message
-    | filter @message like /Task raised exception/
+    | filter @message like /raised unexpected/
     | sort @timestamp desc
     | limit 100
   EOT
@@ -495,7 +495,7 @@ resource "aws_cloudwatch_query_definition" "push_notifications" {
 
   query_string = <<-EOT
     fields @timestamp, @logStream, @message
-    | filter @message like /push notification/ or @message like /pushservice/ or @message like /action.push/
+    | filter @message like /helium.common.services.pushservice/ or @message like /push notification/
     | sort @timestamp desc
     | limit 100
   EOT
@@ -505,7 +505,7 @@ resource "aws_cloudwatch_query_definition" "push_notifications" {
 # DataDog can alert without relying solely on DogStatsD from the worker process.
 resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
   name           = "helium-${var.environment}-celery-task-failures"
-  pattern        = "Task raised exception"
+  pattern        = "raised unexpected"
   log_group_name = aws_cloudwatch_log_group.platform.name
 
   metric_transformation {
