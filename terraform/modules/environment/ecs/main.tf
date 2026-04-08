@@ -502,7 +502,7 @@ resource "aws_cloudwatch_query_definition" "push_notifications" {
 }
 
 # CloudWatch metric filter: emit a data point per Celery task exception so
-# DataDog can alert without relying solely on DogStatsD from the worker process.
+# the CloudWatch alarm below can detect failure spikes.
 resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
   name           = "helium-${var.environment}-celery-task-failures"
   pattern        = "raised unexpected"
@@ -513,4 +513,38 @@ resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
     namespace = "Helium/${var.environment}"
     value     = "1"
   }
+}
+
+resource "aws_sns_topic" "cloudwatch_alarms" {
+  count = var.environment == "prod" ? 1 : 0
+
+  name = "helium-${var.environment}-cloudwatch-alarms"
+}
+
+resource "aws_sns_topic_subscription" "cloudwatch_alarms_email" {
+  count = var.environment == "prod" ? 1 : 0
+
+  topic_arn = aws_sns_topic.cloudwatch_alarms[0].arn
+  protocol  = "email"
+  endpoint  = "support@heliumedu.com"
+}
+
+resource "aws_cloudwatch_metric_alarm" "celery_task_failures" {
+  count = var.environment == "prod" ? 1 : 0
+
+  alarm_name        = "helium-${var.environment}-celery-task-failure-spike"
+  alarm_description = "More than 5 background task failures detected in the last hour. Celery workers and task processing should be investigated."
+
+  namespace   = "Helium/${var.environment}"
+  metric_name = "CeleryTaskFailure"
+  statistic   = "Sum"
+
+  period             = 3600
+  evaluation_periods = 1
+  threshold          = 5
+  comparison_operator = "GreaterThanThreshold"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]
 }
