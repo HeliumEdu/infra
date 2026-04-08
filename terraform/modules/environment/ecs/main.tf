@@ -495,7 +495,7 @@ resource "aws_cloudwatch_query_definition" "push_notifications" {
 
   query_string = <<-EOT
     fields @timestamp, @logStream, @message
-    | filter @message like /helium.common.services.pushservice/ or @message like /push notification/
+    | filter @message like /Sending pushes for reminder/ or @message like /push notification/ or @message like /helium.common.services.pushservice/
     | sort @timestamp desc
     | limit 100
   EOT
