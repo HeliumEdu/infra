@@ -75,7 +75,7 @@ resource "aws_iam_role_policy" "ses_suppression_policy" {
 
 resource "aws_cloudwatch_log_group" "platform" {
   name              = "/ecs/helium_platform_${var.environment}"
-  retention_in_days = 7
+  retention_in_days = 30
 }
 
 resource "aws_ecs_task_definition" "platform_resource_task" {
@@ -511,9 +511,8 @@ resource "aws_cloudwatch_log_metric_filter" "celery_task_failures" {
   metric_transformation {
     name          = "CeleryTaskFailure"
     namespace     = "Helium/Platform"
-    value         = "1"
-    default_value = "0"
-    dimensions    = {
+    value      = "1"
+    dimensions = {
       Environment = var.environment
     }
   }
