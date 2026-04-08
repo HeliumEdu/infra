@@ -475,7 +475,7 @@ resource "aws_cloudwatch_query_definition" "errors" {
   EOT
 }
 
-resource "aws_cloudwatch_query_definition" "celery_task_failures" {
+resource "aws_cloudwatch_query_definition" "celery_failures" {
   name = "Helium ${var.environment}/Celery Task Failures"
 
   log_group_names = [aws_cloudwatch_log_group.platform.name]
