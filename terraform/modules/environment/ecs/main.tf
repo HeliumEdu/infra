@@ -548,3 +548,54 @@ resource "aws_cloudwatch_metric_alarm" "celery_task_failures" {
   alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
   ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]
 }
+
+# Alarms when the worker ECS service has no running tasks. AWS/ECS stops
+# publishing CPUUtilization when there are no tasks, so treat_missing_data
+# = breaching is the detection mechanism; the threshold comparison acts as
+# a safety net for a near-zero but technically-present data point.
+resource "aws_cloudwatch_metric_alarm" "worker_tasks_down" {
+  count = var.environment == "prod" ? 1 : 0
+
+  alarm_name        = "helium-${var.environment}-worker-tasks-down"
+  alarm_description = "No ECS worker tasks have been running for 5+ minutes. Background task processing (reminders, purges, etc.) has stopped."
+
+  namespace   = "AWS/ECS"
+  metric_name = "CPUUtilization"
+  dimensions = {
+    ClusterName = aws_ecs_cluster.helium.name
+    ServiceName = aws_ecs_service.helium_platform_worker.name
+  }
+  statistic   = "Average"
+
+  period             = 300
+  evaluation_periods = 1
+  threshold          = 0.05
+  comparison_operator = "LessThanThreshold"
+  treat_missing_data  = "breaching"
+
+  alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "rds_low_storage" {
+  count = var.environment == "prod" ? 1 : 0
+
+  alarm_name        = "helium-${var.environment}-rds-low-storage"
+  alarm_description = "RDS free storage is below 2 GB. Expand allocated storage before the instance goes read-only."
+
+  namespace   = "AWS/RDS"
+  metric_name = "FreeStorageSpace"
+  dimensions = {
+    DBInstanceIdentifier = "helium-${var.environment}"
+  }
+  statistic   = "Average"
+
+  period             = 300
+  evaluation_periods = 3
+  threshold          = 2147483648
+  comparison_operator = "LessThanThreshold"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]
+}
