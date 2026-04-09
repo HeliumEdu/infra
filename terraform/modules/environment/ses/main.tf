@@ -145,6 +145,70 @@ resource "aws_route53_record" "heliumedu_dev_inbound_mx" {
   records = ["10 inbound-smtp.${var.aws_region}.amazonaws.com"]
 }
 
+data "aws_caller_identity" "current" {}
+
+# SNS topic for SES bounce/complaint events → platform webhook (prod only)
+resource "aws_sns_topic" "ses_reputation" {
+  count = var.environment == "prod" ? 1 : 0
+
+  name = "helium-${var.environment}-ses-reputation"
+}
+
+data "aws_iam_policy_document" "ses_sns_publish" {
+  count = var.environment == "prod" ? 1 : 0
+
+  statement {
+    sid     = "AllowSESPublish"
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ses.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.ses_reputation[0].arn]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+}
+
+resource "aws_sns_topic_policy" "ses_reputation" {
+  count = var.environment == "prod" ? 1 : 0
+
+  arn    = aws_sns_topic.ses_reputation[0].arn
+  policy = data.aws_iam_policy_document.ses_sns_publish[0].json
+}
+
+resource "aws_sesv2_configuration_set_event_destination" "ses_reputation" {
+  count = var.environment == "prod" ? 1 : 0
+
+  configuration_set_name = aws_sesv2_configuration_set.helium.configuration_set_name
+  event_destination_name = "helium-${var.environment}-ses-reputation-sns"
+
+  event_destination {
+    enabled = true
+
+    matching_event_types = ["BOUNCE", "COMPLAINT"]
+
+    sns_destination {
+      topic_arn = aws_sns_topic.ses_reputation[0].arn
+    }
+  }
+}
+
+resource "aws_sns_topic_subscription" "ses_reputation_webhook" {
+  count = var.environment == "prod" ? 1 : 0
+
+  topic_arn = aws_sns_topic.ses_reputation[0].arn
+  protocol  = "https"
+  endpoint  = "https://api.${var.route53_heliumedu_com_zone_name}/api/common/webhook/ses/"
+}
+
 resource "aws_sesv2_account_suppression_attributes" "helium" {
   count = var.environment == "prod" ? 1 : 0
 
