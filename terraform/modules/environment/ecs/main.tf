@@ -347,6 +347,8 @@ resource "aws_ecs_service" "helium_platform_api" {
     redeployment = plantimestamp()
   }
 
+  depends_on = [data.aws_ecs_task_execution.helium_platform_resource]
+
   lifecycle {
     ignore_changes = [desired_count]
   }
@@ -376,6 +378,8 @@ resource "aws_ecs_service" "helium_platform_worker" {
   triggers = {
     redeployment = plantimestamp()
   }
+
+  depends_on = [data.aws_ecs_task_execution.helium_platform_resource]
 
   lifecycle {
     ignore_changes = [desired_count]
