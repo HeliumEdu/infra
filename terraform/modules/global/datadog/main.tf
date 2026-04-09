@@ -126,6 +126,16 @@ resource "datadog_dashboard" "helium_heads_up" {
           }
         }
       }
+      widget {
+        toplist_definition {
+          title       = "Most Used Endpoints"
+          title_size  = "16"
+          title_align = "left"
+          request {
+            q = "sum:platform.request{$env, $user_agent, $authenticated, $version} by {path}.as_count()"
+          }
+        }
+      }
     }
   }
 
