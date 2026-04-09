@@ -546,7 +546,7 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "Notifications Sent"
+          title         = "Reminders Sent"
           show_legend   = true
           legend_layout = "auto"
           request {
@@ -565,6 +565,22 @@ resource "datadog_dashboard" "helium_heads_up" {
             metadata {
               expression = "sum:platform.action.push.sent{$env, $version}.as_count()"
               alias_name = "Push"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Emails Sent"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.action.email.sent{$env, $version, !type:reminder} by {type}.as_count()"
+            display_type = "bars"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "sum:platform.action.email.sent{$env, $version, !type:reminder} by {type}.as_count()"
+              alias_name = "Emails"
             }
           }
         }
@@ -1080,7 +1096,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Avg Graded Homework per User"
+          title         = "Avg Graded Assignments per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
@@ -1091,7 +1107,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "warm" }
             metadata {
               expression = "avg:platform.users.engagement.avg_graded_homework_per_user{$env, $staff}.fill(last)"
-              alias_name = "Avg Graded Homework / User"
+              alias_name = "Avg Graded Assignments / User"
             }
           }
         }
@@ -1109,7 +1125,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
 
       widget {
         timeseries_definition {
-          title         = "Avg Homework per Course"
+          title         = "Avg Assignments per Course"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
@@ -1120,14 +1136,14 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Homework / Course"
+              alias_name = "Avg Assignments / Course"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Homework per User"
+          title         = "Avg Assignments per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
@@ -1138,7 +1154,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.data.avg_homework_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Homework / User"
+              alias_name = "Avg Assignments / User"
             }
           }
         }
@@ -1223,7 +1239,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Homework"
+              alias_name = "Assignment"
             }
           }
           request {
@@ -1281,7 +1297,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Homework"
+              alias_name = "Assignment"
             }
           }
           request {
@@ -1306,7 +1322,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Avg Graded Homework per Course"
+          title         = "Avg Graded Assignments per Course"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
@@ -1317,7 +1333,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "warm" }
             metadata {
               expression = "avg:platform.users.data.avg_graded_homework_per_course{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Graded Homework / Course"
+              alias_name = "Avg Graded Assignments / Course"
             }
           }
         }
@@ -1348,7 +1364,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Homework"
+              alias_name = "Assignment"
             }
           }
           request {
