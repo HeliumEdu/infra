@@ -44,7 +44,7 @@ FOLDERS = [
 
 OUTPUT_DIR = Path(__file__).parent.parent / "support"
 
-FILE_HEADER = "<!-- Auto-synced from Freshdesk. Do not edit here — changes will be overwritten. To update this article, edit it at: {url} -->\n\n"
+FILE_HEADER = "<!-- Auto-synced from Freshdesk. Do not edit here — changes will be overwritten. To update this article, edit it in FreshDesk. -->\n\n"
 
 SESSION = requests.Session()
 SESSION.headers["User-Agent"] = "Mozilla/5.0 (compatible; heliumedu-docs-sync/1.0)"
@@ -68,7 +68,16 @@ def html_to_md(element):
     h = html2text.HTML2Text()
     h.body_width = 0
     h.ignore_images = True
-    return h.handle(str(element)).strip()
+    text = h.handle(str(element)).strip()
+    # Bold tags wrapping only whitespace/line breaks (e.g. <strong><br></strong>)
+    text = re.sub(r"\*\*\s*\n\s*\*\*", "", text)
+    # <hr> renders as "* * *" — normalize to standard markdown thematic break
+    text = re.sub(r"^\* \* \*$", "---", text, flags=re.MULTILINE)
+    # Lines containing only whitespace
+    text = re.sub(r"\n[ \t]+\n", "\n\n", text)
+    # Collapse 3+ consecutive newlines
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 def fetch_folder_article_links(folder_id):
@@ -92,18 +101,10 @@ def fetch_folder_article_links(folder_id):
 def fetch_article(url):
     soup = fetch_soup(url)
 
-    title_el = (
-        soup.select_one("h1.heading")
-        or soup.select_one("h1.article-title")
-        or soup.select_one("h1")
-    )
+    title_el = soup.select_one(".fw-page-title-wrapper h1") or soup.select_one("h1")
     title = title_el.get_text(strip=True) if title_el else "Untitled"
 
-    body_el = (
-        soup.select_one(".article-body")
-        or soup.select_one(".solution-article-summary")
-        or soup.select_one("article")
-    )
+    body_el = soup.select_one(".fw-content--single-article")
     if not body_el:
         logger.warning(f"No article body found at {url}")
         return title, ""
@@ -120,6 +121,7 @@ def sync():
             existing_files.update(p.resolve() for p in folder_dir.glob("*.md"))
 
     current_files = set()
+    written = 0
     errors = 0
 
     for folder_id, folder_slug in FOLDERS:
@@ -149,6 +151,7 @@ def sync():
             filepath.parent.mkdir(parents=True, exist_ok=True)
             filepath.write_text(FILE_HEADER.format(url=link["url"]) + f"# {title}\n\nSource: {link['url']}\n\n{body}\n")
             current_files.add(filepath.resolve())
+            written += 1
             logger.info(f"  Written: {filepath.relative_to(OUTPUT_DIR.parent)}")
 
         time.sleep(1)
@@ -164,8 +167,13 @@ def sync():
         if folder_dir.exists() and not any(folder_dir.iterdir()):
             folder_dir.rmdir()
 
+    logger.info(f"{written} article(s) saved, {errors} error(s).")
+
+    if written == 0:
+        logger.error("No articles were saved — Freshdesk page structure may have changed.")
+        sys.exit(1)
+
     if errors:
-        logger.warning(f"{errors} error(s) encountered during sync.")
         sys.exit(1)
 
 
