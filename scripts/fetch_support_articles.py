@@ -69,8 +69,12 @@ def html_to_md(element):
     h.body_width = 0
     h.ignore_images = True
     text = h.handle(str(element)).strip()
-    # Bold tags wrapping only whitespace/line breaks (e.g. <strong><br></strong>)
-    text = re.sub(r"\*\*\s*\n\s*\*\*", "", text)
+    # Bold tags wrapping content + trailing line break(s) — strip the break and re-close,
+    # or remove entirely if the content is empty (e.g. <strong><br></strong>)
+    def fix_bold_br(m):
+        inner = m.group(1).strip()
+        return f"**{inner}**" if inner else ""
+    text = re.sub(r"\*\*([^*]*?)\s*\n+\s*\*\*", fix_bold_br, text)
     # <hr> renders as "* * *" — normalize to standard markdown thematic break
     text = re.sub(r"^\* \* \*$", "---", text, flags=re.MULTILINE)
     # Lines containing only whitespace
