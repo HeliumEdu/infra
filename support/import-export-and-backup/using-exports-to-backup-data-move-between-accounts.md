@@ -11,8 +11,7 @@ Helium lets you export your data as a JSON file, which can be used to archive yo
 ## Exporting Your Data
 
   1. Open [**Settings → Import / Export**](https://app.heliumedu.com/settings)
-  2. Click **Export  
-**
+  2. Click **Export**
 
 ## Importing Data
 

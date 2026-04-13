@@ -12,8 +12,7 @@ Helium lets you add events like study sessions, concerts, appointments, and anyt
   2. Tap on a day or time slot, or tap the **+** button
   3. In the top-right corner of the form, tap the **Event** icon in the toggle (the right side of the two-icon toggle) to switch to Event mode
   4. Enter your event details
-  5. Tap **Save  
-**
+  5. Tap **Save**
 
 ## Related Articles
 

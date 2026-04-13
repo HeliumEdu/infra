@@ -19,7 +19,9 @@ The **Todos** view displays only Assignments—External Calendars will not appea
 
 ## 3\. The External Calendar Is Not Shown on the Planner
 
-Each external calendar has a **Show on calendar**toggle. If it's turned off, the calendar won't appear in the Planner.**Important:** If Helium encounters an error while loading an External Calendar (for example, an invalid or unreachable URL), it will automatically disable the calendar.
+Each external calendar has a **Show on calendar** toggle. If it's turned off, the calendar won't appear in the Planner.
+
+**Important:** If Helium encounters an error while loading an External Calendar (for example, an invalid or unreachable URL), it will automatically disable the calendar.
 
 ### How to Check
 
@@ -46,8 +48,7 @@ If the URL is invalid, Helium will disable the feed automatically the next time 
 Some services rotate or invalidate feed URLs after account changes (e.g., changing your password, switching accounts, or adjusting privacy settings). If the feed suddenly stopped working:
 
   * Re-copy the URL from Google or Apple Calendar (see [How to Sync Google, Apple, or Other Calendars in to Helium Using External Calendars](https://heliumedu.freshdesk.com/support/solutions/articles/159000418651))
-  * Update it in [**Settings → External Calendars**](https://app.heliumedu.com/settings)**  
-**
+  * Update it in [**Settings → External Calendars**](https://app.heliumedu.com/settings)
 
 ## 6\. The External Calendar Is Refreshing Slowly
 

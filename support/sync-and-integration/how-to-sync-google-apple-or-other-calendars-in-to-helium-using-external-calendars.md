@@ -18,8 +18,7 @@ Helium can display calendars from other services alongside your own schedule, as
   4. Paste your iCal/ICS **URL**
   5. Choose a **Color** for how events from this calendar will appear
   6. Toggle **Show on calendar** to control whether it displays on your Planner
-  7. Tap **Save  
-**
+  7. Tap **Save**
 
 ## Important Notes
 
@@ -45,7 +44,6 @@ In Helium Classic, External Calendars are found inside the Preferences page rath
   5. Paste your iCal/ICS URL
   6. Choose a color for display
   7. Check the **Enabled** checkbox
-  8. Click **Save  
-**
+  8. Click **Save**
 
  _Helium Classic will remain available through at least Summer 2026._

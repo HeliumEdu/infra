@@ -22,8 +22,7 @@ Helium backups contain nearly all of your account data, exported in JSON format.
   * **Attachments** — uploaded files are not included
   * **Private Feed URLs** — these are regenerated per-account
   * **User Preferences**
-  * **Login and Account Information  
-**
+  * **Login and Account Information**
 
 > **Note:** Backups store notes in a dedicated **notes** section. Older backups that used the legacy **comments** or **details** fields will be preserved and automatically converted to **Notes** when imported. Newer backups will not include these legacy fields, and thus if you import a new backup, thus newer backups will not import **comments** or **details** in to Helium Classic.
 

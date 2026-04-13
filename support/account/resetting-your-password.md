@@ -17,8 +17,7 @@ Source: https://heliumedu.freshdesk.com/support/solutions/articles/159000418642
   2. Enter your **Current password**
   3. Enter your **New password**
   4. Re-enter your new password in the **Confirm password** field
-  5. Tap **Save  
-**
+  5. Tap **Save**
 
 > **Note:** The Change Password option is only shown if your account was created with an email and password. If you signed up through a third-party provider (such as Google), password management is handled by that provider.
 

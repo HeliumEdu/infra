@@ -16,8 +16,7 @@ Before adding classes, you need at least one Class Group to hold them. Class Gro
      * **Title** — e.g., "Fall 2025" or "Spring 2026"
      * **From / To** — the start and end dates of the term
      * **Hide this group's classes and assignments from the Planner** — check this to temporarily hide the entire group from your calendar without deleting anything
-  4. Tap **Save  
-**
+  4. Tap **Save**
 
 ## Adding a Class
 

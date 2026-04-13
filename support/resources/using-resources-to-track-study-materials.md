@@ -12,8 +12,7 @@ The [**Resources**](https://app.heliumedu.com/resources) screen lets you track t
   2. Tap the **+** button to create a new group
   3. Enter a **Title** for the group (e.g., "Spring 2026 Materials", "Textbooks", "Links")
   4. Optionally check **Hide this group's resources from Planner** if you don't want them displayed on your Planner
-  5. Tap **Save  
-**
+  5. Tap **Save**
 
 ## Adding a Resource
 

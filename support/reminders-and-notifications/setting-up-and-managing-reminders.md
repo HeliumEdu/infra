@@ -15,8 +15,7 @@ Reminders let you receive an alert before an assignment is due or an event takes
      * **Email** — sends a reminder to your registered email address
      * **Push** — delivers a push notification to any device (including browsers, when supported) where you have the Helium app installed and notifications enabled; the reminder also appears in the **Notification Center** after it is sent
   5. Set the **Remind before** offset — choose a number and unit (Minutes, Hours, Days, or Weeks)
-  6. Tap **Save  
-**
+  6. Tap **Save**
 
 ## Setting a Default Reminder
 
