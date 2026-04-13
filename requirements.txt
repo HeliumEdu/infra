@@ -1,3 +1,5 @@
 heliumcli==1.6.38
 boto3==1.42.73
 requests==2.33.0
+beautifulsoup4==4.13.4
+html2text==2024.2.26

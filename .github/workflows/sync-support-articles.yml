@@ -1,0 +1,43 @@
+name: "Sync Support Articles"
+
+run-name: "Sync Support Articles"
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch support articles
+        run: python scripts/fetch_support_articles.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "GitHub Release Bot"
+          git config --global user.email "support@heliumedu.com"
+          git add -A support/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: sync Helium support articles from Freshdesk"
+            git push
+          fi

@@ -1,4 +1,4 @@
-.PHONY: all install-reqs install build start validate test-cluster-legacy
+.PHONY: all install-reqs install build start validate test-cluster-legacy fetch-support-articles
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
@@ -41,6 +41,9 @@ restart: stop start
 
 start-legacy:
 	cd projects/frontend-legacy && ./bin/runserver
+
+fetch-support-articles: install-reqs
+	$(PYTHON_BIN) scripts/fetch_support_articles.py
 
 test-cluster-legacy:
 	@if [[ -z "${PLATFORM_EMAIL_HOST_USER}" ]] || \
