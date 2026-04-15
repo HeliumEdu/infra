@@ -152,6 +152,7 @@ module "secretsmanager" {
   s3_user_secret_access_key     = module.s3.s3_access_key_secret
   smtp_email_user               = module.ses.smtp_username
   smtp_email_password           = module.ses.smtp_password
+  ci_app_host                   = module.cloudfront.ci_frontend_app_cloudfront_domain_name
   twilio_account_sid            = var.TWILIO_ACCOUNT_SID
   twilio_auth_token             = var.TWILIO_AUTH_TOKEN
   twilio_phone_number           = module.twilio.helium_phone_number
