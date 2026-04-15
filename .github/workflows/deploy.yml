@@ -126,7 +126,7 @@ jobs:
         run: make install
 
       - name: Run CI tests against release build
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           timeout_minutes: 15
           retry_wait_seconds: 15
