@@ -28,3 +28,11 @@ output "heliumedu_s3_frontend_app_website_endpoint" {
 output "heliumedu_s3_alb_logs_bucket_name" {
   value = aws_s3_bucket.helium_alb_logs.bucket
 }
+
+output "heliumedu_ci_s3_frontend_app_bucket_name" {
+  value = length(aws_s3_bucket.heliumedu_ci_frontend_app_static) > 0 ? aws_s3_bucket.heliumedu_ci_frontend_app_static[0].bucket : null
+}
+
+output "heliumedu_ci_s3_frontend_app_website_endpoint" {
+  value = length(aws_s3_bucket_website_configuration.heliumedu_ci_frontend_app) > 0 ? aws_s3_bucket_website_configuration.heliumedu_ci_frontend_app[0].website_endpoint : null
+}
