@@ -15,3 +15,15 @@ variable "aws_account_id" {
   type        = string
   sensitive   = true
 }
+
+variable "dev_env_enabled" {
+  description = "Mirror of the dev workspace's env_enabled. When true, a run failure notification is created for the dev workspace."
+  type        = bool
+  default     = false
+}
+
+variable "TERRAFORM_API_TOKEN" {
+  description = "HCP Terraform team token used to manage workspace notification configurations"
+  type        = string
+  sensitive   = true
+}
