@@ -16,5 +16,5 @@ variable "workspaces" {
 variable "triggers" {
   description = "HCP Terraform run events that will trigger a notification"
   type        = list(string)
-  default     = ["run:errored", "run:needs_attention"]
+  default     = ["run:errored"]
 }
