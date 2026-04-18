@@ -303,15 +303,48 @@ resource "aws_ecs_cluster_capacity_providers" "helium" {
   capacity_providers = ["FARGATE"]
 }
 
-data "aws_ecs_task_execution" "helium_platform_resource" {
-  cluster         = aws_ecs_cluster.helium.id
-  task_definition = aws_ecs_task_definition.platform_resource_task.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+resource "terraform_data" "helium_platform_resource" {
+  triggers_replace = [
+    aws_ecs_task_definition.platform_resource_task.revision
+  ]
 
-  network_configuration {
-    subnets          = [for id in var.subnet_ids : id]
-    assign_public_ip = true
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-euo", "pipefail", "-c"]
+    command     = <<-SCRIPT
+      CLUSTER="${aws_ecs_cluster.helium.id}"
+      TASK_DEF="${aws_ecs_task_definition.platform_resource_task.arn}"
+      SUBNETS="${join(",", var.subnet_ids)}"
+
+      TASK_ARN=$(aws ecs run-task \
+        --cluster "$CLUSTER" \
+        --task-definition "$TASK_DEF" \
+        --launch-type FARGATE \
+        --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS],assignPublicIp=ENABLED}" \
+        --query 'tasks[0].taskArn' \
+        --output text)
+
+      echo "Launched resource task: $TASK_ARN"
+
+      aws ecs wait tasks-stopped --cluster "$CLUSTER" --tasks "$TASK_ARN"
+
+      EXIT_CODE=$(aws ecs describe-tasks \
+        --cluster "$CLUSTER" \
+        --tasks "$TASK_ARN" \
+        --query 'tasks[0].containers[0].exitCode' \
+        --output text)
+
+      echo "Resource task exited with code: $EXIT_CODE"
+
+      if [ "$EXIT_CODE" != "0" ]; then
+        STOP_REASON=$(aws ecs describe-tasks \
+          --cluster "$CLUSTER" \
+          --tasks "$TASK_ARN" \
+          --query 'tasks[0].stoppedReason' \
+          --output text)
+        echo "ERROR: Resource task failed — $STOP_REASON"
+        exit 1
+      fi
+    SCRIPT
   }
 }
 
@@ -347,7 +380,7 @@ resource "aws_ecs_service" "helium_platform_api" {
     redeployment = plantimestamp()
   }
 
-  depends_on = [data.aws_ecs_task_execution.helium_platform_resource]
+  depends_on = [terraform_data.helium_platform_resource]
 
   lifecycle {
     ignore_changes = [desired_count]
@@ -379,7 +412,7 @@ resource "aws_ecs_service" "helium_platform_worker" {
     redeployment = plantimestamp()
   }
 
-  depends_on = [data.aws_ecs_task_execution.helium_platform_resource]
+  depends_on = [terraform_data.helium_platform_resource]
 
   lifecycle {
     ignore_changes = [desired_count]
