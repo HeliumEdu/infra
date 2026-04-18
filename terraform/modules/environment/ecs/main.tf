@@ -311,6 +311,7 @@ resource "terraform_data" "helium_platform_resource" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-euo", "pipefail", "-c"]
     command     = <<-SCRIPT
+      export AWS_DEFAULT_REGION="${var.aws_region}"
       CLUSTER="${aws_ecs_cluster.helium.id}"
       TASK_DEF="${aws_ecs_task_definition.platform_resource_task.arn}"
       SUBNETS="${join(",", var.subnet_ids)}"
