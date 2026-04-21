@@ -27,7 +27,6 @@ jobs:
       FORCE_COLOR: 1
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
-      GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -37,6 +36,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.HELIUM_BOT_APP_ID }}
+          private-key: ${{ secrets.HELIUM_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
       - name: Set up Python "3.12"
         uses: actions/setup-python@v6
@@ -62,6 +68,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Build frontend-legacy
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: TAG_VERSION=${{ inputs.version }} helium-cli build-release ${{ inputs.version }} --projects frontend-legacy
       - name: Publish frontend-legacy artifacts
         run: TAG_VERSION=${{ inputs.version }} make -C projects/frontend-legacy publish

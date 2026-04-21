@@ -73,6 +73,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.HELIUM_BOT_APP_ID }}
+          private-key: ${{ secrets.HELIUM_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
 
       - name: Set up Python "3.12"
@@ -96,7 +103,7 @@ jobs:
       - name: Get latest platform release version
         id: platform_version
         env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           VERSION=$(gh api repos/HeliumEdu/platform/tags --jq '[.[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))][0].name')
 
@@ -155,6 +162,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.HELIUM_BOT_APP_ID }}
+          private-key: ${{ secrets.HELIUM_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
 
       - name: Set up Python "3.12"
@@ -180,6 +194,6 @@ jobs:
       - name: Trigger cluster-tests run
         run: |
           curl -s -X POST https://api.github.com/repos/HeliumEdu/cluster-tests/dispatches \
-            -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+            -H "Authorization: token ${{ steps.app-token.outputs.token }}" \
             -H "Accept: application/vnd.github+json" \
             -d "{\"event_type\":\"\`frontend-legacy\` triggered for \`${{ inputs.version }}\` to \`${{ inputs.environment }}\`\",\"client_payload\":{\"environment\":\"${{ inputs.environment }}\",\"project\":\"frontend-legacy\",\"version\":\"${{ inputs.version }}\"}}"
