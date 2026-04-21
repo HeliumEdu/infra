@@ -1,7 +1,7 @@
 module "datadog" {
   source = "../../modules/global/datadog"
 
-  aws_account_id = var.aws_account_id
+  aws_account_id = var.AWS_ACCOUNT_ID
 }
 
 data "tfe_organization_membership" "notification_recipient" {
