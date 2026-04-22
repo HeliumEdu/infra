@@ -43,7 +43,7 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
       PLATFORM_DB_PASSWORD                   = var.db_password
       PLATFORM_SECRET_KEY                    = random_password.platform_secret.result
       PROJECT_DATADOG_API_KEY                = var.datadog_api_key
-      PLATFORM_SENTRY_DSN                    = var.platform_sentry_dsn
+      PLATFORM_SENTRY_DSN                    = var.sentry_dsn
       PLATFORM_FIREBASE_PROJECT_ID           = var.firebase_project_id
       PLATFORM_FIREBASE_PRIVATE_KEY_ID       = var.firebase_private_key_id
       PLATFORM_FIREBASE_PRIVATE_KEY          = var.firebase_private_key

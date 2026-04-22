@@ -68,7 +68,7 @@ variable "datadog_api_key" {
   type = string
 }
 
-variable "platform_sentry_dsn" {
+variable "sentry_dsn" {
   type = string
 }
 

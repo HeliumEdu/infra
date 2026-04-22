@@ -142,7 +142,7 @@ variable "DD_API_KEY" {
   description = "The DataDog API key"
 }
 
-variable "PLATFORM_SENTRY_DSN" {
+variable "SENTRY_DSN" {
   description = "The Sentry DSN for error tracking"
 }
 

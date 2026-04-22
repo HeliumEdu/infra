@@ -147,7 +147,7 @@ module "secretsmanager" {
   db_host                       = module.rds.db_host
   db_user                       = module.rds.db_username
   db_password                   = module.rds.db_password
-  platform_sentry_dsn           = var.PLATFORM_SENTRY_DSN
+  sentry_dsn                    = var.SENTRY_DSN
   s3_user_access_key_id         = module.s3.s3_access_key_id
   s3_user_secret_access_key     = module.s3.s3_access_key_secret
   smtp_email_user               = module.ses.smtp_username

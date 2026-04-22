@@ -44,7 +44,7 @@ The following Terraform Workspace variables must be defined:
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
   - `DD_API_KEY` (the DataDog API key, leave blank to disable)
-  - `PLATFORM_SENTRY_DSN` (leave blank to disable)
+  - `SENTRY_DSN` (the Platform Sentry DSN, leave blank to disable)
   - `TWILIO_ACCOUNT_SID` (optional if Twilio module is removed)
   - `TWILIO_AUTH_TOKEN` (optional if Twilio module is removed)
   - `HELIUM_TWIML_HANDLER_URL` (optional if Twilio module is removed)
