@@ -96,6 +96,14 @@ variable "firebase_client_x509_cert_url" {
   type = string
 }
 
+variable "ga4_measurement_id" {
+  type = string
+}
+
+variable "ga4_api_secret" {
+  type = string
+}
+
 variable "ci_app_host" {
   description = "Full HTTPS URL of the CI preview CloudFront distribution; omitted from secrets when null"
   type        = string

@@ -169,3 +169,11 @@ variable "FIREBASE_CLIENT_ID" {
 variable "FIREBASE_CLIENT_X509_CERT_URL" {
   description = "The Firebase client cert URL"
 }
+
+variable "GA4_MEASUREMENT_ID" {
+  description = "The GA4 Measurement ID (G-XXXXXXXXXX) for the backend Measurement Protocol client"
+}
+
+variable "GA4_API_SECRET" {
+  description = "The GA4 Measurement Protocol API secret for the backend analytics client"
+}

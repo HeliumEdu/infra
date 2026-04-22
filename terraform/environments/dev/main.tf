@@ -167,6 +167,8 @@ module "secretsmanager" {
   firebase_client_email         = var.FIREBASE_CLIENT_EMAIL
   firebase_client_id            = var.FIREBASE_CLIENT_ID
   firebase_client_x509_cert_url = var.FIREBASE_CLIENT_X509_CERT_URL
+  ga4_measurement_id            = var.GA4_MEASUREMENT_ID
+  ga4_api_secret                = var.GA4_API_SECRET
 }
 
 module "twilio" {
