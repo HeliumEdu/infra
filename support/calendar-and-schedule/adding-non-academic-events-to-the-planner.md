@@ -32,4 +32,4 @@ In Helium Classic, the toggle to switch between Assignment and Event works diffe
   3. When the "Add Assignment" dialog appears, click the **book icon** in the upper-right corner to switch it to the "Add Event" dialog
   4. Enter your event details and click **Save**
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

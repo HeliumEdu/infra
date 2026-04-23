@@ -47,4 +47,4 @@ The same troubleshooting steps apply in Helium Classic. The key navigation diffe
   * Active filters are indicated by blue dropdown indicators on the calendar
   * [**Classes**](https://www.heliumedu.com/planner/classes) is found under the Planner menu
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

@@ -39,4 +39,4 @@ In Helium Classic, account deletion is found in a different location:
   3. Select the **Delete Account** button
   4. Enter your password and confirm deletion
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

@@ -34,4 +34,4 @@ In [Helium Classic Grades](https://www.heliumedu.com/planner/grades), the graph 
   2. Select a class from the **dropdown menu** to narrow the graph to that class, or leave it on the full term view
   3. Check the corresponding box to enable **Auto-adjust to graded range**
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

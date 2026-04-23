@@ -41,7 +41,7 @@ You can reschedule assignments and events by dragging them to a different time s
   * On **touch** devices, drag-and-drop is enabled by default (though only supported in **Week** and **Day** views). If you find it interferes with your preferred experience, you can turn it off in [**Settings → Preferences**](https://app.heliumedu.com/settings) by disabling **Drag-and-drop on touch devices**
     * Adjusting time by dragging the top or bottom edge is not supported on **touch** devices
 
-> **Note:** On touch devices, drag-and-drop does is not supported in **Month** view. Tapping the top or bottom edge and dragging to resize an item is also not supported on touch devices.
+> **Note:** On touch devices (including tablets), drag-and-drop is not supported in **Month** view. Tapping the top or bottom edge and dragging to resize an item is also not supported on touch devices.
 
 ## Related Articles
 
@@ -53,4 +53,4 @@ You can reschedule assignments and events by dragging them to a different time s
 
 The same views are available in Helium Classic. To change your default view, navigate to [**Account → Settings → Preferences**](https://www.heliumedu.com/settings/#tab-preferences), select your preferred option from the **Default view** dropdown, and click **Save**.
 
-_Helium Classic will remain available through at least Summer 2026._
+__Helium Classic will remain available until July 31, 2026.__

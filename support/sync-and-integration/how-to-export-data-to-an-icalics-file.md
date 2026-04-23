@@ -31,4 +31,4 @@ In Helium Classic, each feed URL is directly clickable to trigger a download:
   4. Click any of the provided URLs (Assignments, Class Schedule, or Events) to download the `.ics` file directly
   5. Optionally select **Disable** afterward if continuous syncing isn't needed
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

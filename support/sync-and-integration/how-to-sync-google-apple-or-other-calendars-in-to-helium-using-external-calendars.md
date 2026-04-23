@@ -46,4 +46,4 @@ In Helium Classic, External Calendars are found inside the Preferences page rath
   7. Check the **Enabled** checkbox
   8. Click **Save**
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

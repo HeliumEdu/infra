@@ -72,4 +72,4 @@ In Helium Classic, classes work the same way conceptually. The key navigation di
   * The category weight field is labeled **Weight** (not "Weight (%)")
   * Class Groups are labeled by term and work identically
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

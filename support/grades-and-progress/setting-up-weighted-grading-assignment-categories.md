@@ -32,4 +32,4 @@ In Helium Classic, the steps are similar but the navigation differs:
   3. Add a **Weight** for each category, matching the weights provided in your syllabus
   4. All **Weight** values should add up to 100%
 
-_Helium Classic will remain available through at least Summer 2026._
+__Helium Classic will remain available until July 31, 2026.__

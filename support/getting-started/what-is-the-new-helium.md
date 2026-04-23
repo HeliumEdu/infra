@@ -6,7 +6,7 @@ Source: https://heliumedu.freshdesk.com/support/solutions/articles/159000427014
 
 We've completely rebuilt Helium from the ground up—sleek, modern, fast, and built to last. The new Helium includes a redesigned web app plus **brand new native iOS and Android apps** , all sharing a consistent experience.
 
-**Helium Classic will remain available through at least Summer 2026** , giving you plenty of time to transition at your own pace. Your data syncs seamlessly between both versions, so you can use whichever works best for you.
+**Helium Classic will remain available until July 31, 2026** , giving you plenty of time to transition at your own pace. Your data syncs seamlessly between both versions, so you can use whichever works best for you.
 
 ## What's New in Helium
 

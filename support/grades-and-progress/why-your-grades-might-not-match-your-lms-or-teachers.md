@@ -51,4 +51,4 @@ The same steps apply in Helium Classic. The key navigation differences are:
   * [**Classes**](https://www.heliumedu.com/planner/classes) is found under the Planner menu; the category weight field is labeled **Weight** (not "Weight (%)")
   * Assignments can be reviewed on the [**Calendar**](https://www.heliumedu.com/planner/calendar)
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

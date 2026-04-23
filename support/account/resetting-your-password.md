@@ -38,4 +38,4 @@ In Helium Classic, the password reset option works the same way, but in a differ
 
   * **Forgot your password:** Click [**Forgot your Password?**](https://www.heliumedu.com/forgot) on the login page
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

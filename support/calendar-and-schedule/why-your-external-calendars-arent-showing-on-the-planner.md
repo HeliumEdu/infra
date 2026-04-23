@@ -64,4 +64,4 @@ The same troubleshooting steps apply in Helium Classic. The key navigation diffe
   * External Calendars are also managed within [**Account → Settings → Preferences**](https://www.heliumedu.com/settings/#tab-preferences), under the External Calendars section
   * The toggle to show/hide an external calendar is the **Enabled** checkbox (rather than the "Show on calendar" toggle in the new Helium)
 
-_Helium Classic will remain available through at least Summer 2026._
+__Helium Classic will remain available until July 31, 2026.__

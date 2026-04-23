@@ -47,4 +47,4 @@ The result will tell you one of the following:
 
 The grade calculator is not available in Helium Classic.
 
-_Helium Classic will remain available through at least Summer 2026._
+__Helium Classic will remain available until July 31, 2026.__

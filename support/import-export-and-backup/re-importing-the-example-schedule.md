@@ -38,4 +38,4 @@ In Helium Classic, the steps are similar:
 
 To remove the example schedule, navigate to the **Calendar** and click **Delete Example Schedule** in the **Welcome to Helium** dialog. This dialog appears each time you land on the Calendar page until you clear the example data.
 
-_Helium Classic will remain available through at least Summer 2026. Changes made in either version sync to both._
+__Helium Classic will remain available until July 31, 2026.__

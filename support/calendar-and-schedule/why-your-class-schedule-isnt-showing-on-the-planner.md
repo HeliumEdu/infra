@@ -44,4 +44,4 @@ The same troubleshooting steps apply in Helium Classic. The key navigation diffe
   * [**Classes**](https://www.heliumedu.com/planner/classes) is found under the Planner menu
   * To add a schedule: click on the class → click **Schedule** → select days and times → click **Save**
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

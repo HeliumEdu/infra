@@ -30,4 +30,4 @@ The [**Resources**](https://app.heliumedu.com/resources) screen lets you track t
 
 In Helium Classic, Resources are called **Materials** and are accessible from the Planner menu at [**Planner → Materials**](https://www.heliumedu.com/planner/materials). The concept is the same—materials are organized into Material Groups and can be associated with classes. The field labels and navigation differ slightly, but the same information can be tracked.
 
-_Helium Classic will remain available through at least Summer 2026._
+_Helium Classic will remain available until July 31, 2026._

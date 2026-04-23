@@ -46,4 +46,4 @@ In Helium Classic, the navigation and interface differ slightly:
   4. Helium displays individual feed URLs for Assignments, Class Schedule, and Events
   5. Copy any of the URLs and paste them into your external calendar application
 
- _Helium Classic will remain available through at least Summer 2026._
+ __Helium Classic will remain available until July 31, 2026.__

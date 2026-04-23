@@ -41,4 +41,4 @@ In Helium Classic, access Import/Export via **Account → Settings → Import/Ex
 
 The process is the same — click **Export** to download or select a file and click **Import** to restore.
 
-_Helium Classic will remain available through at least Summer 2026. Changes made in either version sync to both._
+__Helium Classic will remain available until July 31, 2026.__
