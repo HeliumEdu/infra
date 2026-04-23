@@ -46,22 +46,9 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $version, !user_agent:mobile_app_flutter}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent} by {client}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
-            metadata {
-              expression = "sum:platform.request{$env, $staff, $authenticated, $version, !user_agent:mobile_app_flutter}.as_count()"
-              alias_name = "Web"
-            }
-          }
-          request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_app_flutter}.as_count()"
-            display_type = "bars"
-            style { palette = "cool" }
-            metadata {
-              expression = "sum:platform.request{$env, $staff, $authenticated, $version, user_agent:mobile_app_flutter}.as_count()"
-              alias_name = "App"
-            }
           }
         }
       }
@@ -73,22 +60,9 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token}.as_count()"
+            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token OR path:auth.token.legacy} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
-            metadata {
-              expression = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token}.as_count()"
-              alias_name = "Frontend"
-            }
-          }
-          request {
-            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
-            display_type = "bars"
-            style { palette = "warm" }
-            metadata {
-              expression = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token.legacy}.as_count()"
-              alias_name = "Legacy Frontend"
-            }
           }
         }
       }
@@ -404,31 +378,9 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $version, path:importexport.import}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $version, path:importexport.*} by {path}.as_count()"
             display_type = "bars"
-            style { palette = "blue" }
-            metadata {
-              expression = "sum:platform.request{$env, $staff, $version, path:importexport.import}.as_count()"
-              alias_name = "File Import"
-            }
-          }
-          request {
-            q            = "sum:platform.request{$env, $staff, $version, path:importexport.export}.as_count()"
-            display_type = "bars"
-            style { palette = "green" }
-            metadata {
-              expression = "sum:platform.request{$env, $staff, $version, path:importexport.export}.as_count()"
-              alias_name = "Export"
-            }
-          }
-          request {
-            q            = "sum:platform.request{$env, $staff, $version, path:importexport.import.exampleschedule}.as_count()"
-            display_type = "bars"
-            style { palette = "purple" }
-            metadata {
-              expression = "sum:platform.request{$env, $staff, $version, path:importexport.import.exampleschedule}.as_count()"
-              alias_name = "Example Schedule"
-            }
+            style { palette = "dog_classic" }
           }
         }
       }
@@ -568,22 +520,9 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.email.sent{$env, $version, type:reminder}.as_count()"
+            q            = "sum:platform.action.reminder.sent{$env, $version} by {channel}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
-            metadata {
-              expression = "sum:platform.action.email.sent{$env, $version, type:reminder}.as_count()"
-              alias_name = "Emails"
-            }
-          }
-          request {
-            q            = "sum:platform.action.push.sent{$env, $version}.as_count()"
-            display_type = "bars"
-            style { palette = "purple" }
-            metadata {
-              expression = "sum:platform.action.push.sent{$env, $version}.as_count()"
-              alias_name = "Push"
-            }
           }
         }
       }
@@ -621,35 +560,29 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "User Purge Operations"
+          title         = "Dangling User Purge"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.task{$env, $version, name:user.unverified.purge}.as_count()"
+            q            = "sum:platform.task{$env, $version, name:user.dangling.purge}.as_count()"
             display_type = "bars"
             style { palette = "blue" }
             metadata {
-              expression = "sum:platform.task{$env, $version, name:user.unverified.purge}.as_count()"
-              alias_name = "Unverified Purged"
+              expression = "sum:platform.task{$env, $version, name:user.dangling.purge}.as_count()"
+              alias_name = "Dangling Purged"
             }
           }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Dormant User Operations"
+          show_legend   = true
+          legend_layout = "auto"
           request {
-            q            = "avg:platform.users.dormant.warnings_sent{$env}"
+            q            = "avg:platform.users.dormant.operations{$env} by {operation}"
             display_type = "bars"
-            style { palette = "orange" }
-            metadata {
-              expression = "avg:platform.users.dormant.warnings_sent{$env}"
-              alias_name = "Dormant Warnings Sent"
-            }
-          }
-          request {
-            q            = "avg:platform.users.dormant.deletions_queued{$env}"
-            display_type = "bars"
-            style { palette = "red" }
-            metadata {
-              expression = "avg:platform.users.dormant.deletions_queued{$env}"
-              alias_name = "Dormant Deletions Queued"
-            }
+            style { palette = "dog_classic" }
           }
         }
       }
@@ -1045,22 +978,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token}.as_count()"
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token OR path:auth.token.legacy} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
-            metadata {
-              expression = "sum:platform.request{$env, status_code:200, method:post, path:auth.token}.as_count()"
-              alias_name = "Frontend"
-            }
-          }
-          request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token.legacy}.as_count()"
-            display_type = "bars"
-            style { palette = "warm" }
-            metadata {
-              expression = "sum:platform.request{$env, status_code:200, method:post, path:auth.token.legacy}.as_count()"
-              alias_name = "Legacy Frontend"
-            }
           }
         }
       }
