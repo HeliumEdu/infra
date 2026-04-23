@@ -128,17 +128,17 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "User Setup Duration (s)"
+          title         = "User Setup Duration (ms)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.user.setup.total_duration{$env, $version}"
+            q            = "avg:platform.user.setup.total_duration.avg{$env, $version}"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.user.setup.total_duration{$env, $version}"
+              expression = "avg:platform.user.setup.total_duration.avg{$env, $version}"
               alias_name = "Setup Duration"
             }
           }
