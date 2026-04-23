@@ -60,7 +60,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token OR path:auth.token.legacy} by {path}.as_count()"
+            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token*} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
