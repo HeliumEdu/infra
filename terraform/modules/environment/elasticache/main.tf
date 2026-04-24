@@ -10,5 +10,6 @@ resource "aws_elasticache_cluster" "helium" {
   num_cache_nodes    = var.num_cache_nodes
   engine_version     = "7.1"
   security_group_ids = [var.elasticache_sg]
-  subnet_group_name  = aws_elasticache_subnet_group.helium.name
+  subnet_group_name      = aws_elasticache_subnet_group.helium.name
+  maintenance_window     = "sat:09:00-sat:09:30"
 }
