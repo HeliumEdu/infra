@@ -38,7 +38,7 @@ variable "region_azs" {
 
 variable "default_arch" {
   description = "The target arch of container builds"
-  default     = "X86_64"
+  default     = "ARM64"
 }
 
 variable "platform_host_count" {
