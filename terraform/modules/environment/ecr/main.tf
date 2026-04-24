@@ -8,7 +8,7 @@ resource "aws_ecrpublic_repository" "repository_helium_frontend" {
 
   catalog_data {
     operating_systems = ["Linux"]
-    architectures     = ["x86-64"]
+    architectures     = ["x86-64", "ARM 64"]
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Images for the frontend-legacy containers."
     about_text        = local.about_text
@@ -47,7 +47,7 @@ resource "aws_ecrpublic_repository" "repository_helium_frontend_web" {
 
   catalog_data {
     operating_systems = ["Linux"]
-    architectures     = ["x86-64"]
+    architectures     = ["x86-64", "ARM 64"]
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Images for the frontend web containers."
     about_text        = local.about_text
@@ -65,7 +65,7 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_resource" {
 
   catalog_data {
     operating_systems = ["Linux"]
-    architectures     = ["x86-64"]
+    architectures     = ["x86-64", "ARM 64"]
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Images for the platform's resource containers (short-lived data provisioning)."
     about_text        = local.about_text
@@ -104,7 +104,7 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_api" {
 
   catalog_data {
     operating_systems = ["Linux"]
-    architectures     = ["x86-64"]
+    architectures     = ["x86-64", "ARM 64"]
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Images for the platform's API containers."
     about_text        = local.about_text
@@ -143,7 +143,7 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_worker" {
 
   catalog_data {
     operating_systems = ["Linux"]
-    architectures     = ["x86-64"]
+    architectures     = ["x86-64", "ARM 64"]
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Image's for the platform's Worker containers."
     about_text        = local.about_text
