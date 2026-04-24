@@ -30,5 +30,5 @@ resource "aws_db_instance" "helium" {
   vpc_security_group_ids     = [var.mysql_sg]
   db_subnet_group_name       = aws_db_subnet_group.helium.name
   multi_az                   = var.multi_az
-  maintenance_window         = "sat:06:00-sat:06:30"
+  maintenance_window         = "sat:06:00-sat:07:00"
 }
