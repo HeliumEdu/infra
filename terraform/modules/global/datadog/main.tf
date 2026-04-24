@@ -586,6 +586,18 @@ resource "datadog_dashboard" "helium_heads_up" {
           }
         }
       }
+      widget {
+        timeseries_definition {
+          title         = "Task Sync Fallbacks (Broker Unavailable)"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.task.sync_fallback{$env} by {name}.as_count()"
+            display_type = "bars"
+            style { palette = "red" }
+          }
+        }
+      }
     }
   }
 
