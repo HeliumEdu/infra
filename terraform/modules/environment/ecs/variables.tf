@@ -21,7 +21,13 @@ variable "platform_host_min" {
 variable "platform_host_max" {
   description = "Maximum number of platform API hosts for autoscaling"
   type        = number
-  default     = 4
+  default     = 2
+}
+
+variable "celery_concurrency" {
+  description = "Number of concurrent Celery worker processes per task"
+  type        = number
+  default     = 2
 }
 
 variable "platform_worker_count" {

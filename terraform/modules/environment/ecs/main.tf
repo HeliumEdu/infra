@@ -234,6 +234,10 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
         {
           name  = "TZ"
           value = "UTC"
+        },
+        {
+          name  = "CELERY_CONCURRENCY"
+          value = tostring(var.celery_concurrency)
         }
       ]
       logConfiguration = {

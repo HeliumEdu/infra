@@ -364,13 +364,13 @@ resource "datadog_monitor" "api_slow_responses" {
 resource "datadog_monitor" "api_capacity_config" {
   name     = "API Capacity Configuration Wrong"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.applicationelb.active_connection_count{name:helium-prod} / avg:aws.ecs.service.running{clustername:helium_prod, servicename:*api*} > 12"
+  query    = "avg(last_1d):avg:aws.applicationelb.active_connection_count{name:helium-prod} / avg:aws.ecs.service.running{clustername:helium_prod, servicename:*api*} > 18"
   message  = <<-EOT
     Average connections per API task has been above {{ threshold }} for the last 24 hours.
 
-    With 18 concurrent connections per task (3 workers × 6 threads), sustained high utilization means your capacity configuration needs adjustment:
+    With 24 concurrent connections per task (3 workers × 8 threads), sustained high utilization means your capacity configuration needs adjustment:
     - Increase platform_host_min for more baseline capacity
-    - Increase Gunicorn workers/threads per task
+    - Increase Gunicorn workers/threads per task (via GUNICORN_WORKERS / GUNICORN_THREADS env vars)
     - Increase task CPU/memory to support more workers
 
     Notify: @support@heliumedu.com
@@ -382,8 +382,8 @@ resource "datadog_monitor" "api_capacity_config" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 10
-    critical = 12
+    warning  = 14
+    critical = 18
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
@@ -527,14 +527,14 @@ resource "datadog_monitor" "ses_complaint_rate" {
 resource "datadog_monitor" "rds_connection_config" {
   name     = "RDS Connection Configuration Wrong"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.rds.database_connections{name:helium-prod} > 100"
+  query    = "avg(last_1d):avg:aws.rds.database_connections{name:helium-prod} > 55"
   message  = <<-EOT
-    RDS connections have averaged above {{ threshold }} for the last 24 hours (max ~150 for db.t4g.small).
+    RDS connections have averaged above {{ threshold }} for the last 24 hours (max ~66 for db.t4g.micro).
 
     Sustained high connection count indicates configuration changes needed:
-    - Add connection pooling (PgBouncer or Django CONN_MAX_AGE)
+    - Reduce Gunicorn workers/threads or Celery concurrency
     - Check for connection leaks in application code
-    - Consider upgrading RDS instance size
+    - Consider upgrading RDS instance size (and updating this monitor's thresholds)
 
     Notify: @support@heliumedu.com
   EOT
@@ -545,8 +545,8 @@ resource "datadog_monitor" "rds_connection_config" {
   require_full_window = false
 
   monitor_thresholds {
-    warning  = 80
-    critical = 100
+    warning  = 45
+    critical = 55
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
