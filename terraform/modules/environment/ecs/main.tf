@@ -73,6 +73,10 @@ resource "aws_iam_role_policy" "ses_suppression_policy" {
   policy = data.aws_iam_policy_document.ses_suppression_policy_document.json
 }
 
+locals {
+  arch_tag = var.default_arch == "ARM64" ? "arm64" : "amd64"
+}
+
 resource "aws_cloudwatch_log_group" "platform" {
   name              = "/ecs/helium_platform_${var.environment}"
   retention_in_days = 30
@@ -83,7 +87,7 @@ resource "aws_ecs_task_definition" "platform_resource_task" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_resource"
-      image     = "${var.platform_resource_repository_uri}:amd64-${var.helium_version}"
+      image     = "${var.platform_resource_repository_uri}:${local.arch_tag}-${var.helium_version}"
       cpu       = 0
       essential = true
       environment = [
@@ -133,7 +137,7 @@ resource "aws_ecs_task_definition" "platform_api_service" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_api"
-      image     = "${var.platform_api_repository_uri}:amd64-${var.helium_version}"
+      image     = "${var.platform_api_repository_uri}:${local.arch_tag}-${var.helium_version}"
       cpu       = 0
       essential = true
       portMappings = [
@@ -219,7 +223,7 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
   container_definitions = jsonencode([
     {
       name      = "helium_platform_worker"
-      image     = "${var.platform_worker_repository_uri}:amd64-${var.helium_version}"
+      image     = "${var.platform_worker_repository_uri}:${local.arch_tag}-${var.helium_version}"
       cpu       = 0
       essential = true
       environment = [
