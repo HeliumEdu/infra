@@ -1,6 +1,6 @@
-name: "Prune ECR Images"
+name: "Prune AWS Artifacts"
 
-run-name: "Prune ECR Images"
+run-name: "Prune AWS Artifacts"
 
 on:
   schedule:
@@ -12,15 +12,15 @@ permissions:
   issues: none
   pull-requests: none
 
-jobs:
-  prune:
-    name: Prune (${{ matrix.repository }})
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: us-east-1
+  KEEP_COUNT: 20
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: us-east-1
-      KEEP_COUNT: 20
+jobs:
+  prune-ecr:
+    name: Prune ECR (${{ matrix.repository }})
 
     runs-on: ubuntu-latest
 
@@ -75,3 +75,52 @@ jobs:
                 --repository-name "$REPOSITORY" \
                 --image-ids "$batch"
             done
+
+  prune-s3:
+    name: Prune S3 (frontend-web)
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prune old build artifacts
+        run: |
+          PREFIX="helium/frontend-web/"
+
+          VERSIONS=$(aws s3api list-objects-v2 \
+            --bucket heliumedu \
+            --prefix "$PREFIX" \
+            --delimiter "/" \
+            --query 'CommonPrefixes[].Prefix' \
+            --output json)
+
+          TOTAL=$(echo "$VERSIONS" | jq length)
+          echo "Total versions in s3://heliumedu/${PREFIX}: $TOTAL"
+
+          if [ "$TOTAL" -le "$KEEP_COUNT" ]; then
+            echo "Within retention limit ($KEEP_COUNT), nothing to prune."
+            exit 0
+          fi
+
+          SORTED=$(echo "$VERSIONS" | jq -r '.[]' | while IFS= read -r prefix; do
+            LATEST=$(aws s3api list-objects-v2 \
+              --bucket heliumedu \
+              --prefix "$prefix" \
+              --query 'sort_by(Contents, &LastModified) | [-1].LastModified' \
+              --output text)
+            echo "$LATEST $prefix"
+          done | sort -r)
+
+          TO_DELETE=$(echo "$SORTED" | tail -n +$((KEEP_COUNT + 1)) | awk '{print $2}')
+
+          if [ -z "$TO_DELETE" ]; then
+            echo "No versions eligible for pruning."
+            exit 0
+          fi
+
+          DELETE_COUNT=$(echo "$TO_DELETE" | wc -l | tr -d ' ')
+          echo "Pruning $DELETE_COUNT versions:"
+
+          echo "$TO_DELETE" | while IFS= read -r prefix; do
+            echo "  Deleting s3://heliumedu/${prefix}"
+            aws s3 rm "s3://heliumedu/${prefix}" --recursive
+          done
