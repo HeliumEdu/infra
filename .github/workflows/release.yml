@@ -19,6 +19,9 @@ permissions:
   issues: none
   pull-requests: none
 
+concurrency:
+  group: helium-infra-release
+
 jobs:
   release:
     name: Release Legacy Frontend

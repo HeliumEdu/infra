@@ -10,6 +10,9 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: helium-sync-support-articles
+
 jobs:
   sync:
     name: Sync

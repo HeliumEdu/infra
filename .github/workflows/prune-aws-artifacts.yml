@@ -18,6 +18,9 @@ env:
   AWS_DEFAULT_REGION: us-east-1
   KEEP_COUNT: 20
 
+concurrency:
+  group: helium-prune-aws-artifacts
+
 jobs:
   prune-ecr:
     name: Prune ECR (${{ matrix.repository }})
