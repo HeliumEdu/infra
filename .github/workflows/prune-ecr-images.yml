@@ -1,0 +1,77 @@
+name: "Prune ECR Images"
+
+run-name: "Prune ECR Images"
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: none
+  pull-requests: none
+
+jobs:
+  prune:
+    name: Prune (${{ matrix.repository }})
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+      KEEP_COUNT: 20
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        repository:
+          - helium/frontend-web
+          - helium/platform-resource
+          - helium/platform-api
+          - helium/platform-worker
+
+    steps:
+      - name: Prune old images
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+        run: |
+          IMAGES=$(aws ecr-public describe-images \
+            --repository-name "$REPOSITORY" \
+            --query 'imageDetails | sort_by(@, &imagePushedAt) | reverse(@)' \
+            --output json)
+
+          TOTAL=$(echo "$IMAGES" | jq length)
+          echo "Total images in $REPOSITORY: $TOTAL"
+
+          if [ "$TOTAL" -le "$KEEP_COUNT" ]; then
+            echo "Within retention limit ($KEEP_COUNT), nothing to prune."
+            exit 0
+          fi
+
+          DIGESTS=$(echo "$IMAGES" | jq -r --argjson keep "$KEEP_COUNT" '
+            .[($keep):] |
+            map(select((.imageTags // []) | all(endswith("-latest") | not))) |
+            .[].imageDigest')
+
+          if [ -z "$DIGESTS" ]; then
+            echo "No images eligible for pruning (remaining images have latest tags)."
+            exit 0
+          fi
+
+          DELETE_COUNT=$(echo "$DIGESTS" | wc -l | tr -d ' ')
+          echo "Pruning $DELETE_COUNT images from $REPOSITORY:"
+          echo "$IMAGES" | jq -r --argjson keep "$KEEP_COUNT" '
+            .[($keep):] |
+            map(select((.imageTags // []) | all(endswith("-latest") | not))) |
+            .[] | "  \(.imageTags // ["<untagged>"] | join(", ")) (pushed \(.imagePushedAt))"'
+
+          echo "$DIGESTS" | jq -R '{"imageDigest": .}' | jq -s -c \
+            'range(0; length; 100) as $i | .[$i:$i+100]' | \
+            while IFS= read -r batch; do
+              aws ecr-public batch-delete-image \
+                --repository-name "$REPOSITORY" \
+                --image-ids "$batch"
+            done

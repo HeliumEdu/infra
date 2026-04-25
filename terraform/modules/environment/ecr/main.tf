@@ -21,27 +21,6 @@ resource "aws_ecrpublic_repository" "repository_helium_frontend" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "frontend_untagged_expiration_policy" {
-  repository = aws_ecrpublic_repository.repository_helium_frontend.id
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1,
-        description  = "Expire untagged images",
-        selection = {
-          tagStatus   = "untagged",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
-          countNumber = 1
-        },
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
-}
-
 resource "aws_ecrpublic_repository" "repository_helium_frontend_web" {
   repository_name = "helium/frontend-web"
 
@@ -78,27 +57,6 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_resource" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "resource_untagged_expiration_policy" {
-  repository = aws_ecrpublic_repository.repository_helium_platform_resource.id
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1,
-        description  = "Expire untagged images",
-        selection = {
-          tagStatus   = "untagged",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
-          countNumber = 1
-        },
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
-}
-
 resource "aws_ecrpublic_repository" "repository_helium_platform_api" {
   repository_name = "helium/platform-api"
 
@@ -117,27 +75,6 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_api" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "api_untagged_expiration_policy" {
-  repository = aws_ecrpublic_repository.repository_helium_platform_api.id
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1,
-        description  = "Expire untagged images",
-        selection = {
-          tagStatus   = "untagged",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
-          countNumber = 1
-        },
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
-}
-
 resource "aws_ecrpublic_repository" "repository_helium_platform_worker" {
   repository_name = "helium/platform-worker"
 
@@ -154,25 +91,4 @@ resource "aws_ecrpublic_repository" "repository_helium_platform_worker" {
     Environment = "N/A"
     Service     = "HeliumEdu"
   }
-}
-
-resource "aws_ecr_lifecycle_policy" "worker_untagged_expiration_policy" {
-  repository = aws_ecrpublic_repository.repository_helium_platform_worker.id
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1,
-        description  = "Expire untagged images",
-        selection = {
-          tagStatus   = "untagged",
-          countType   = "sinceImagePushed",
-          countUnit   = "days",
-          countNumber = 1
-        },
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
 }
