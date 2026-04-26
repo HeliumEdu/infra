@@ -997,15 +997,21 @@ resource "datadog_dashboard" "helium_user_behavior" {
         }
       }
       widget {
-        query_value_definition {
-          title     = "Accounts Activated (non-Staff)"
-          autoscale = false
-          precision = 0
+        timeseries_definition {
+          title         = "User Time in Onboarding (mins)"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
           request {
-            q          = "default_zero(sum:platform.action.user.verified{$env, staff:false}.as_count())"
-            aggregator = "sum"
+            q            = "avg:platform.onboarding.duration{$env, $staff} / 60"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.onboarding.duration{$env, $staff} / 60"
+              alias_name = "Avg Onboarding Duration"
+            }
           }
-          timeseries_background { type = "bars" }
         }
       }
       widget {
