@@ -103,24 +103,14 @@ jobs:
 
       - name: Get latest platform release version
         id: platform_version
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          VERSION=$(gh api repos/HeliumEdu/platform/tags --jq '[.[] | select(.name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))][0].name')
-
-          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "Error: No version tags found in HeliumEdu/platform"
-            exit 1
-          fi
-
-          TAG="${VERSION#v}"
-
-          echo "Using latest platform version: ${VERSION} (tag: ${TAG})"
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+        uses: HeliumEdu/.github/actions/determine-version@main
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repo: platform
 
       - name: Set container environment variables
         env:
-          PLATFORM_TAG: ${{ steps.platform_version.outputs.tag }}
+          PLATFORM_TAG: ${{ steps.platform_version.outputs.version }}
           FRONTEND_TAG: ${{ inputs.version }}
           FRONTEND_LEGACY_VERSION: ${{ inputs.version }}
         run: |
