@@ -173,7 +173,7 @@ resource "aws_ecs_task_definition" "platform_api_service" {
     },
     {
       name      = "datadog-statsd"
-      image     = "datadog/dogstatsd:latest"
+      image     = "datadog/dogstatsd:7.78.2"
       cpu       = 0
       essential = false
       environment = [
@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
     },
     {
       name      = "datadog-statsd"
-      image     = "datadog/dogstatsd:latest"
+      image     = "datadog/dogstatsd:7.78.2"
       cpu       = 0
       essential = false
       environment = [
