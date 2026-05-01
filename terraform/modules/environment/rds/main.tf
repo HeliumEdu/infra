@@ -18,7 +18,7 @@ resource "aws_db_instance" "helium" {
   allocated_storage          = 20
   db_name                    = "platform_${var.environment}"
   engine                     = "mysql"
-  engine_version             = "8.0"
+  engine_version             = "9.7.0"
   instance_class             = var.instance_size
   username                   = random_string.username.result
   password                   = random_password.password.result
