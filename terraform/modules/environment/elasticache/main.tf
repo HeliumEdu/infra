@@ -7,7 +7,7 @@ resource "aws_elasticache_replication_group" "helium" {
   replication_group_id = "helium-${var.environment}"
   description          = "Helium ${var.environment} cache"
   engine               = "valkey"
-  engine_version       = "7.2"
+  engine_version       = "8.1"
   node_type            = var.instance_size
   num_cache_clusters   = var.num_cache_nodes
   port                 = 6379
