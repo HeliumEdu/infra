@@ -5,7 +5,7 @@ resource "aws_elasticache_subnet_group" "helium" {
 
 resource "aws_elasticache_cluster" "helium" {
   cluster_id         = "helium-${var.environment}"
-  engine             = "redis"
+  engine             = "valkey"
   node_type          = var.instance_size
   num_cache_nodes    = var.num_cache_nodes
   engine_version     = "7.2"
