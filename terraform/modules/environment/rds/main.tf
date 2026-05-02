@@ -14,22 +14,23 @@ resource "aws_db_subnet_group" "helium" {
 }
 
 resource "aws_db_instance" "helium" {
-  identifier                 = "helium-${var.environment}"
-  allocated_storage          = 20
-  db_name                    = "platform_${var.environment}"
-  engine                     = "mysql"
-  engine_version             = "8.4"
-  instance_class             = var.instance_size
-  username                   = random_string.username.result
-  password                   = random_password.password.result
-  storage_encrypted          = true
-  skip_final_snapshot        = true
-  auto_minor_version_upgrade = true
-  deletion_protection        = true
-  backup_retention_period    = 7
-  vpc_security_group_ids     = [var.mysql_sg]
-  db_subnet_group_name       = aws_db_subnet_group.helium.name
-  multi_az                   = var.multi_az
-  backup_window              = "05:00-05:30"
-  maintenance_window         = "sat:06:00-sat:07:00"
+  identifier                  = "helium-${var.environment}"
+  allocated_storage           = 20
+  db_name                     = "platform_${var.environment}"
+  engine                      = "mysql"
+  engine_version              = "8.4"
+  instance_class              = var.instance_size
+  username                    = random_string.username.result
+  password                    = random_password.password.result
+  storage_encrypted           = true
+  skip_final_snapshot         = true
+  auto_minor_version_upgrade  = true
+  allow_major_version_upgrade = true
+  deletion_protection         = true
+  backup_retention_period     = 7
+  vpc_security_group_ids      = [var.mysql_sg]
+  db_subnet_group_name        = aws_db_subnet_group.helium.name
+  multi_az                    = var.multi_az
+  backup_window               = "05:00-05:30"
+  maintenance_window          = "sat:06:00-sat:07:00"
 }
