@@ -102,18 +102,18 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "User Setup Duration (ms)"
+          title         = "User Setup Duration (ms, 1d rolling avg)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.user.setup.total_duration.avg{$env, $version}"
+            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env, $version}, 86400, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.user.setup.total_duration.avg{$env, $version}"
-              alias_name = "Setup Duration"
+              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env, $version}, 86400, 'avg')"
+              alias_name = "Setup Duration (1d rolling avg)"
             }
           }
         }
@@ -998,18 +998,18 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "User Time in Onboarding (mins)"
+          title         = "User Time in Onboarding (mins, 7d rolling avg)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.onboarding.duration{$env, $staff} / 60"
+            q            = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.onboarding.duration{$env, $staff} / 60"
-              alias_name = "Avg Onboarding Duration"
+              expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
+              alias_name = "Avg Onboarding Duration (7d rolling avg)"
             }
           }
         }
