@@ -783,16 +783,16 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title       = "Redis Connections"
+          title       = "Valkey Connections"
           title_size  = "16"
           title_align = "left"
           show_legend = true
           request {
-            q            = "sum:aws.elasticache.curr_connections{name:helium-$env.value}"
+            q            = "sum:aws.elasticache.curr_connections{replication_group:helium-$env.value}"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:aws.elasticache.curr_connections{name:helium-$env.value}"
+              expression = "sum:aws.elasticache.curr_connections{replication_group:helium-$env.value}"
               alias_name = "Connections"
             }
           }
@@ -800,16 +800,16 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title       = "Redis CPU Utilization (%)"
+          title       = "Valkey CPU Utilization (%)"
           title_size  = "16"
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.elasticache.cpuutilization{name:helium-$env.value}"
+            q            = "avg:aws.elasticache.cpuutilization{replication_group:helium-$env.value}"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:aws.elasticache.cpuutilization{name:helium-$env.value}"
+              expression = "avg:aws.elasticache.cpuutilization{replication_group:helium-$env.value}"
               alias_name = "CPU %"
             }
           }
@@ -817,16 +817,16 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title       = "Redis Available RAM (bytes)"
+          title       = "Valkey Available RAM (bytes)"
           title_size  = "16"
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.elasticache.freeable_memory{name:helium-$env.value}"
+            q            = "avg:aws.elasticache.freeable_memory{replication_group:helium-$env.value}"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:aws.elasticache.freeable_memory{name:helium-$env.value}"
+              expression = "avg:aws.elasticache.freeable_memory{replication_group:helium-$env.value}"
               alias_name = "Freeable Memory"
             }
           }
@@ -888,25 +888,25 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title       = "Redis Network Throughput (bytes/s)"
+          title       = "Valkey Network Throughput (bytes/s)"
           title_size  = "16"
           title_align = "left"
           show_legend = true
           request {
-            q            = "sum:aws.elasticache.network_bytes_in{name:helium-$env.value}.as_rate()"
+            q            = "sum:aws.elasticache.network_bytes_in{replication_group:helium-$env.value}.as_rate()"
             display_type = "line"
             style { palette = "purple" }
             metadata {
-              expression = "sum:aws.elasticache.network_bytes_in{name:helium-$env.value}.as_rate()"
+              expression = "sum:aws.elasticache.network_bytes_in{replication_group:helium-$env.value}.as_rate()"
               alias_name = "Bytes In"
             }
           }
           request {
-            q            = "avg:aws.elasticache.network_bytes_out{name:helium-$env.value}.as_rate()"
+            q            = "avg:aws.elasticache.network_bytes_out{replication_group:helium-$env.value}.as_rate()"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:aws.elasticache.network_bytes_out{name:helium-$env.value}.as_rate()"
+              expression = "avg:aws.elasticache.network_bytes_out{replication_group:helium-$env.value}.as_rate()"
               alias_name = "Bytes Out"
             }
           }
