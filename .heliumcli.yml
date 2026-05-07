@@ -9,10 +9,10 @@ hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && s
 projects:
 - platform
 - frontend
+- www
 - cluster-tests
 - frontend-legacy
 releaseProjects:
-- platform
 - cluster-tests
 - frontend-legacy
 projectsRelativeDir: projects
