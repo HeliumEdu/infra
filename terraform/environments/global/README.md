@@ -1,12 +1,14 @@
 ## The `global` Workspace
 
-This workspace sets up services that apply across all staging and production environments, for instance monitoring.
+This workspace sets up resources that have no environment counterpart - either shared across all environments (monitoring, notifications) or singular in nature (the marketing site).
 
-- [DataDog](https://www.datadoghq.com/) - (optional, infrastructure monitoring)
+- [DataDog](https://www.datadoghq.com/) - infrastructure monitoring (optional)
+- HCP Terraform run-failure notifications across `prod`, `dev`, and `dev-local`
+- Marketing site (`landing.heliumedu.com`) - S3, CloudFront, ACM, Route 53. Source: [HeliumEdu/www](https://github.com/HeliumEdu/www)
 
 ### Initializing a Terraform Workspace
 
-This workspace should be initialized alongside (at least) a `prod`-like workspace. See [the README for under `prod`](https://github.com/HeliumEdu/infra/tree/main/terraform/environments/prod#readme) for instructions on setting up Terraform environments.
+This workspace should be initialized alongside (at least) a `prod`-like workspace. See [the README under `prod`](https://github.com/HeliumEdu/infra/tree/main/terraform/environments/prod#readme) for instructions on setting up Terraform environments.
 
 The following Terraform Workspace variables must be defined:
 
