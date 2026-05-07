@@ -181,3 +181,11 @@ resource "aws_route53_record" "landing" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_route53_record" "google_site_verification" {
+  zone_id = data.aws_route53_zone.heliumedu_com.zone_id
+  name    = data.aws_route53_zone.heliumedu_com.name
+  type    = "TXT"
+  ttl     = 300
+  records = ["google-site-verification=p6FCLhAIbpVFDJ5LCFy945kkaLOqLhzrVBdn8e4lhwk"]
+}
