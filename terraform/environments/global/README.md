@@ -13,6 +13,8 @@ This workspace should be initialized alongside (at least) a `prod`-like workspac
 The following Terraform Workspace variables must be defined:
 
   - `AWS_ACCOUNT_ID`
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
   - `DD_API_KEY` (the DataDog API key, leave blank to disable)
   - `DD_APP_KEY` (the DataDog Application key with permissions for Dashboards and Monitors, leave blank if disabled)
   - `TERRAFORM_API_TOKEN` (team-level, needs permissions to approve runs)
