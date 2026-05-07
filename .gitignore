@@ -6,4 +6,8 @@
 *.swp
 .env
 .DS_Store
-*.terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
