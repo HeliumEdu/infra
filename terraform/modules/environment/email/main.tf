@@ -17,7 +17,10 @@ resource "aws_route53_record" "heliumedu_com_spf" {
   name    = var.route53_heliumedu_com_zone_name
   type    = "TXT"
   ttl     = "3600"
-  records = ["v=spf1 include:spf.privateemail.com ~all"]
+  records = [
+    "v=spf1 include:spf.privateemail.com ~all",
+    "google-site-verification=p6FCLhAIbpVFDJ5LCFy945kkaLOqLhzrVBdn8e4lhwk",
+  ]
 }
 
 resource "aws_route53_record" "heliumedu_com_dkim" {
