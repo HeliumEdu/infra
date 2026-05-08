@@ -92,6 +92,7 @@ variable "DD_API_KEY" {
 
 variable "SENTRY_DSN" {
   description = "The Sentry DSN for error tracking"
+  default     = null
 }
 
 variable "FIREBASE_PROJECT_ID" {
@@ -120,8 +121,10 @@ variable "FIREBASE_CLIENT_X509_CERT_URL" {
 
 variable "GA4_MEASUREMENT_ID" {
   description = "The GA4 Measurement ID (G-XXXXXXXXXX) for the backend Measurement Protocol client"
+  default     = null
 }
 
 variable "GA4_API_SECRET" {
   description = "The GA4 Measurement Protocol API secret for the backend analytics client"
+  default     = null
 }

@@ -57,7 +57,8 @@ variable "datadog_api_key" {
 }
 
 variable "sentry_dsn" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "firebase_project_id" {
@@ -85,11 +86,13 @@ variable "firebase_client_x509_cert_url" {
 }
 
 variable "ga4_measurement_id" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "ga4_api_secret" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "ci_app_host" {

@@ -40,16 +40,16 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
       PLATFORM_DB_PASSWORD                   = var.db_password
       PLATFORM_SECRET_KEY                    = random_password.platform_secret.result
       PROJECT_DATADOG_API_KEY                = var.datadog_api_key
-      PLATFORM_SENTRY_DSN                    = var.sentry_dsn
       PLATFORM_FIREBASE_PROJECT_ID           = var.firebase_project_id
       PLATFORM_FIREBASE_PRIVATE_KEY_ID       = var.firebase_private_key_id
       PLATFORM_FIREBASE_PRIVATE_KEY          = var.firebase_private_key
       PLATFORM_FIREBASE_CLIENT_EMAIL         = var.firebase_client_email
       PLATFORM_FIREBASE_CLIENT_ID            = var.firebase_client_id
       PLATFORM_FIREBASE_CLIENT_X509_CERT_URL = var.firebase_client_x509_cert_url
-      PLATFORM_GA4_MEASUREMENT_ID            = var.ga4_measurement_id
-      PLATFORM_GA4_API_SECRET                = var.ga4_api_secret
     },
-    var.ci_app_host != null ? { PROJECT_CI_APP_HOST = "https://${var.ci_app_host}" } : {}
+    var.ci_app_host != null ? { PROJECT_CI_APP_HOST = "https://${var.ci_app_host}" } : {},
+    var.sentry_dsn != null ? { PLATFORM_SENTRY_DSN = var.sentry_dsn } : {},
+    var.ga4_measurement_id != null ? { PLATFORM_GA4_MEASUREMENT_ID = var.ga4_measurement_id } : {},
+    var.ga4_api_secret != null ? { PLATFORM_GA4_API_SECRET = var.ga4_api_secret } : {},
   ))
 }
