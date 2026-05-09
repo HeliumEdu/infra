@@ -2,6 +2,27 @@ function handler(event) {
     var request = event.request;
     var uri = request.uri;
 
+    // SEO files (sitemap, robots) used to be served by the legacy frontend at
+    // www.heliumedu.com. They now live on landing.heliumedu.com — redirect so
+    // crawlers and external links don't 404 during the legacy-shutdown window.
+    var seoRedirects = {
+        '/sitemap.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
+        '/sitemap-index.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
+        '/sitemap-0.xml': 'https://landing.heliumedu.com/sitemap-0.xml',
+        '/robots.txt': 'https://landing.heliumedu.com/robots.txt'
+    };
+    if (seoRedirects[uri] !== undefined) {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                'location': {
+                    'value': seoRedirects[uri]
+                }
+            }
+        };
+    }
+
     var normalized = uri;
     if (normalized.length > 1 && normalized.endsWith('/')) {
         normalized = normalized.slice(0, -1);
@@ -16,8 +37,7 @@ function handler(event) {
         '/about': '/about',
         '/terms': '/terms',
         '/privacy': '/privacy',
-        '/press': '/',
-        '/docs': '/'
+        '/press': '/about'
     };
     if (landingPath[normalized] !== undefined) {
         return {
@@ -31,7 +51,7 @@ function handler(event) {
         };
     }
 
-    if (normalized === '/support' || normalized === '/contact') {
+    if (normalized === '/support' || normalized === '/contact' || normalized === '/docs') {
         return {
             statusCode: 301,
             statusDescription: 'Moved Permanently',
