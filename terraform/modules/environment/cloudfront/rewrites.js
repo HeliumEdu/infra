@@ -6,7 +6,7 @@ function handler(event) {
     // www.heliumedu.com. They now live on landing.heliumedu.com — redirect so
     // crawlers and external links don't 404 during the legacy-shutdown window.
     var seoRedirects = {
-        '/sitemap.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
+        '/sitemap.xml': 'https://landing.heliumedu.com/sitemap.xml',
         '/sitemap-index.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
         '/sitemap-0.xml': 'https://landing.heliumedu.com/sitemap-0.xml',
         '/robots.txt': 'https://landing.heliumedu.com/robots.txt'
