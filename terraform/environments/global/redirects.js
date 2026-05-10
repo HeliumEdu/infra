@@ -15,5 +15,18 @@ function handler(event) {
         };
     }
 
+    // Strip `.html` from any legacy frontend URLs still indexed by crawlers.
+    // Static-path redirects live in the marketing site's astro.config.ts; this
+    // handles arbitrary `*.html` paths that Astro can't enumerate.
+    if (uri.endsWith('.html')) {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                location: { value: uri.slice(0, -5) }
+            }
+        };
+    }
+
     return request;
 }
