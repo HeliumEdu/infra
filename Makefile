@@ -2,7 +2,7 @@
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-HELIUMCLI_PROJECTS ?= '["platform", "frontend", "cluster-tests", "frontend-legacy"]'
+HELIUMCLI_PROJECTS ?= '["platform", "frontend", "www", "cluster-tests", "frontend-legacy"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
