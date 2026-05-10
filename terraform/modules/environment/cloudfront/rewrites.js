@@ -2,22 +2,28 @@ function handler(event) {
     var request = event.request;
     var uri = request.uri;
 
-    // SEO files (sitemap, robots) used to be served by the legacy frontend at
-    // www.heliumedu.com. They now live on landing.heliumedu.com — redirect so
-    // crawlers and external links don't 404 during the legacy-shutdown window.
-    var seoRedirects = {
+    // Shared static assets (SEO, favicon, app association files) used to be
+    // served by the legacy frontend at www.heliumedu.com. They now live on
+    // landing.heliumedu.com (the new marketing site) — redirect so crawlers,
+    // browsers, and the iOS/Android apps don't 404 during the legacy-shutdown
+    // window. After the Aug 1 cutover (when www becomes the marketing site
+    // directly), this whole function is deleted in phase 1.
+    var sharedAssetRedirects = {
         '/sitemap.xml': 'https://landing.heliumedu.com/sitemap.xml',
         '/sitemap-index.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
         '/sitemap-0.xml': 'https://landing.heliumedu.com/sitemap-0.xml',
-        '/robots.txt': 'https://landing.heliumedu.com/robots.txt'
+        '/robots.txt': 'https://landing.heliumedu.com/robots.txt',
+        '/favicon.ico': 'https://landing.heliumedu.com/favicon.ico',
+        '/.well-known/apple-app-site-association': 'https://landing.heliumedu.com/.well-known/apple-app-site-association',
+        '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json'
     };
-    if (seoRedirects[uri] !== undefined) {
+    if (sharedAssetRedirects[uri] !== undefined) {
         return {
             statusCode: 301,
             statusDescription: 'Moved Permanently',
             headers: {
                 'location': {
-                    'value': seoRedirects[uri]
+                    'value': sharedAssetRedirects[uri]
                 }
             }
         };
