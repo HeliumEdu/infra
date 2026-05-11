@@ -2,12 +2,13 @@ function handler(event) {
     var request = event.request;
     var uri = request.uri;
 
-    // Shared static assets (SEO, favicon, app association files) used to be
-    // served by the legacy frontend at www.heliumedu.com. They now live on
-    // landing.heliumedu.com (the new marketing site) — redirect so crawlers,
-    // browsers, and the iOS/Android apps don't 404 during the legacy-shutdown
-    // window. After the Aug 1 cutover (when www becomes the marketing site
-    // directly), this whole function is deleted in phase 1.
+    // Shared static assets (SEO, favicon, social card, app association files)
+    // used to be served by the legacy frontend at www.heliumedu.com. They now
+    // live on landing.heliumedu.com (the new marketing site) — redirect so
+    // crawlers, browsers, social platforms, and the iOS/Android apps don't
+    // 404 during the legacy-shutdown window. After the Aug 1 cutover (when
+    // www becomes the marketing site directly), this whole function is
+    // deleted in phase 1.
     var sharedAssetRedirects = {
         '/sitemap.xml': 'https://landing.heliumedu.com/sitemap.xml',
         '/sitemap-index.xml': 'https://landing.heliumedu.com/sitemap-index.xml',
@@ -15,6 +16,7 @@ function handler(event) {
         '/robots.txt': 'https://landing.heliumedu.com/robots.txt',
         '/favicon.ico': 'https://landing.heliumedu.com/favicon.ico',
         '/favicon.png': 'https://landing.heliumedu.com/favicon.png',
+        '/og-default.png': 'https://landing.heliumedu.com/og-default.png',
         '/.well-known/apple-app-site-association': 'https://landing.heliumedu.com/.well-known/apple-app-site-association',
         '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json'
     };
