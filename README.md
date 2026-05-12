@@ -1,4 +1,8 @@
-<p align="center"><img src="https://www.heliumedu.com/assets/img/logo_full_blue.png" /></p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/HeliumEdu/www/main/src/assets/img/helium-logo.png" alt="Helium" width="300" />
+  <br />
+  <img src="https://raw.githubusercontent.com/HeliumEdu/www/main/src/assets/img/og-default.png" alt="Helium - Student Planner" width="800" />
+</p>
 
 ![Python Versions](https://img.shields.io/badge/python-%203.12%20-blue)
 [![Build](https://img.shields.io/github/actions/workflow/status/HeliumEdu/infra/build.yml)](https://github.com/HeliumEdu/infra/actions/workflows/build.yml)
