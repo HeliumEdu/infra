@@ -16,7 +16,7 @@ function handler(event) {
         '/robots.txt': 'https://landing.heliumedu.com/robots.txt',
         '/favicon.ico': 'https://landing.heliumedu.com/favicon.ico',
         '/favicon.png': 'https://landing.heliumedu.com/favicon.png',
-        '/og-default.png': 'https://landing.heliumedu.com/og-default.png',
+        '/img/og-default.png': 'https://landing.heliumedu.com/img/og-default.png',
         '/.well-known/apple-app-site-association': 'https://landing.heliumedu.com/.well-known/apple-app-site-association',
         '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json'
     };
