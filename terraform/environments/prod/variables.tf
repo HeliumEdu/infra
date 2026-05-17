@@ -76,16 +76,6 @@ variable "request_timeout_seconds" {
   default     = 60
 }
 
-variable "helium_area_code" {
-  description = "The area code for the Helium phone number"
-  default     = "650"
-}
-
-variable "ci_area_code" {
-  description = "The area code for the CI phone number"
-  default     = "650"
-}
-
 ### Variables defined below this point must have their defaults defined in the Terraform Workspace
 
 variable "AWS_ACCESS_KEY_ID" {
@@ -94,22 +84,6 @@ variable "AWS_ACCESS_KEY_ID" {
 
 variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
-}
-
-variable "TWILIO_ACCOUNT_SID" {
-  description = "The Twilio account SID"
-}
-
-variable "TWILIO_AUTH_TOKEN" {
-  description = "The Twilio auth token"
-}
-
-variable "HELIUM_TWIML_HANDLER_URL" {
-  description = "The URL for the Helium TwiML Bin"
-}
-
-variable "CI_TWIML_HANDLER_URL" {
-  description = "The URL for the CI TwiML Bin"
 }
 
 variable "DD_API_KEY" {
