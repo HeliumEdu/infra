@@ -63,13 +63,44 @@ function handler(event) {
         };
     }
 
-    if (normalized === '/support' || normalized === '/contact' || normalized === '/docs') {
+    // Bridge: all /support* paths on legacy www → landing (where the new portal
+    // actually lives until the Aug 1 cutover). Target MUST be landing here, not
+    // www.heliumedu.com/support — pointing back at the same host would loop.
+    if (normalized === '/support' || normalized.startsWith('/support/')) {
         return {
             statusCode: 301,
             statusDescription: 'Moved Permanently',
             headers: {
                 'location': {
-                    'value': 'https://support.heliumedu.com'
+                    'value': 'https://landing.heliumedu.com' + normalized
+                }
+            }
+        };
+    }
+
+    // /contact points at the canonical www.heliumedu.com/support URL.
+    // During the legacy period, the bridge rule above catches the follow-up
+    // request and forwards to landing. At cutover, this becomes a single 301
+    // to the live www marketing site without any further edits.
+    if (normalized === '/contact') {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                'location': {
+                    'value': 'https://www.heliumedu.com/support'
+                }
+            }
+        };
+    }
+
+    if (normalized === '/docs') {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                'location': {
+                    'value': 'https://api.heliumedu.com/docs'
                 }
             }
         };
