@@ -73,6 +73,11 @@ variable "sentry_dsn" {
   default = null
 }
 
+variable "jsm_api_token" {
+  type    = string
+  default = null
+}
+
 variable "firebase_project_id" {
   type = string
 }

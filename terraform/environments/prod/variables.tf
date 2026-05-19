@@ -121,6 +121,11 @@ variable "SENTRY_DSN" {
   default     = null
 }
 
+variable "JSM_API_TOKEN" {
+  description = "The JSM API token for support ticket submission"
+  default     = null
+}
+
 variable "FIREBASE_PROJECT_ID" {
   description = "The Firebase project ID"
 }
