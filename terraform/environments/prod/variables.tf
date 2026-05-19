@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "2.2.22"
+  default     = "2.2.31"
 }
 
 variable "environment" {
@@ -92,6 +92,11 @@ variable "DD_API_KEY" {
 
 variable "SENTRY_DSN" {
   description = "The Sentry DSN for error tracking"
+  default     = null
+}
+
+variable "JSM_API_TOKEN" {
+  description = "The JSM API token for support ticket submission"
   default     = null
 }
 
