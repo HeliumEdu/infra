@@ -78,17 +78,18 @@ function handler(event) {
         };
     }
 
-    // /contact points at the canonical www.heliumedu.com/support URL.
-    // During the legacy period, the bridge rule above catches the follow-up
-    // request and forwards to landing. At cutover, this becomes a single 301
-    // to the live www marketing site without any further edits.
+    // /contact points at the canonical www.heliumedu.com/support/submit URL
+    // (the branded ticket form). During the legacy period, the bridge rule
+    // above catches the follow-up request and forwards to landing. At cutover,
+    // this becomes a single 301 to the live www marketing site without any
+    // further edits.
     if (normalized === '/contact') {
         return {
             statusCode: 301,
             statusDescription: 'Moved Permanently',
             headers: {
                 'location': {
-                    'value': 'https://www.heliumedu.com/support'
+                    'value': 'https://www.heliumedu.com/support/submit'
                 }
             }
         };
