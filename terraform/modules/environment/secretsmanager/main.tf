@@ -49,6 +49,7 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
     },
     var.ci_app_host != null ? { PROJECT_CI_APP_HOST = "https://${var.ci_app_host}" } : {},
     var.sentry_dsn != null ? { PLATFORM_SENTRY_DSN = var.sentry_dsn } : {},
+    var.jsm_api_token != null ? { PLATFORM_JSM_API_TOKEN = var.jsm_api_token } : {},
     var.ga4_measurement_id != null ? { PLATFORM_GA4_MEASUREMENT_ID = var.ga4_measurement_id } : {},
     var.ga4_api_secret != null ? { PLATFORM_GA4_API_SECRET = var.ga4_api_secret } : {},
   ))

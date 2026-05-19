@@ -85,9 +85,20 @@ resource "aws_s3_bucket" "support_redirect_bucket" {
 resource "aws_s3_bucket_website_configuration" "support_redirect_bucket" {
   bucket = aws_s3_bucket.support_redirect_bucket.bucket
 
-  redirect_all_requests_to {
-    host_name = "heliumedu.freshdesk.com"
-    protocol  = "https"
+  index_document {
+    suffix = "index.html"
+  }
+
+  routing_rule {
+    condition {
+      key_prefix_equals = ""
+    }
+    redirect {
+      host_name          = "www.${var.route53_heliumedu_com_zone_name}"
+      protocol           = "https"
+      replace_key_with   = "support"
+      http_redirect_code = "301"
+    }
   }
 }
 

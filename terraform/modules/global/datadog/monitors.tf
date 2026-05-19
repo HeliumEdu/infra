@@ -418,10 +418,10 @@ resource "datadog_monitor" "redis_needs_upgrade" {
 }
 
 resource "datadog_monitor" "api_5xx_alb_child" {
-  name    = "API 5xx Error Spike - ALB (child)"
-  type    = "query alert"
-  query   = "sum(last_5m):(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod}.as_count() + sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod}.as_count()) > 5"
-  message = "ALB 5xx child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
+  name     = "API 5xx Error Spike - ALB (child)"
+  type     = "query alert"
+  query    = "sum(last_5m):(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod}.as_count() + sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod}.as_count()) > 5"
+  message  = "ALB 5xx child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
   include_tags        = false
@@ -437,10 +437,10 @@ resource "datadog_monitor" "api_5xx_alb_child" {
 }
 
 resource "datadog_monitor" "api_5xx_spike" {
-  name    = "API 5xx Error Spike"
-  type    = "composite"
-  query   = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id}"
-  message = <<-EOT
+  name     = "API 5xx Error Spike"
+  type     = "composite"
+  query    = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id}"
+  message  = <<-EOT
     API 5xx error spike detected. Investigate:
     - App-level 500s: the platform may be experiencing errors (check Sentry)
     - ALB ELB 5xx: ALB-generated errors (502/503/504) — ECS targets may be unhealthy or unreachable
@@ -454,10 +454,10 @@ resource "datadog_monitor" "api_5xx_spike" {
 }
 
 resource "datadog_monitor" "frontend_5xx_spike" {
-  name    = "Frontend 5xx Error Rate Elevated"
-  type    = "query alert"
-  query   = "avg(last_5m):sum:aws.cloudfront.5xx_error_rate{environment:prod}.weighted() > 5"
-  message = <<-EOT
+  name     = "Frontend 5xx Error Rate Elevated"
+  type     = "query alert"
+  query    = "avg(last_5m):sum:aws.cloudfront.5xx_error_rate{environment:prod}.weighted() > 5"
+  message  = <<-EOT
     CloudFront 5xx error rate has exceeded {{ threshold }}% in the last 5 minutes. The frontend S3 origin may be unavailable or misconfigured.
 
     Notify: @support@heliumedu.com
@@ -519,6 +519,29 @@ resource "datadog_monitor" "ses_complaint_rate" {
 
   monitor_thresholds {
     critical = 0.0005
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "support_contact_abuse" {
+  name     = "Support Contact Abuse Escalation"
+  type     = "query alert"
+  query    = "sum(last_1d):default_zero(sum:platform.action.support_contact.honeypot{env:prod}.as_count()) + default_zero(sum:platform.action.support_contact.throttled{env:prod}.as_count()) > 25"
+  message  = <<-EOT
+    Support contact honeypot and throttle signals have exceeded {{ threshold }} combined over the last 24 hours. Review submission sources and tighten controls if needed.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+
+  monitor_thresholds {
+    warning  = 10
+    critical = 25
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
