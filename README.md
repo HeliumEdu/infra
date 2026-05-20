@@ -4,15 +4,29 @@
   <img src="https://raw.githubusercontent.com/HeliumEdu/www/main/src/assets/img/og-default.png" alt="Helium - Student Planner" width="800" />
 </p>
 
+---
+
+[**Helium**](https://www.heliumedu.com) is a free, color-coded online student planner for classes, homework, grades, and notes — the academic calendar built for the way you actually study.
+
+<p align="center">
+  <a href="https://apps.apple.com/us/app/helium-student-planner/id6758323154"><img src="https://raw.githubusercontent.com/HeliumEdu/www/main/src/assets/img/ios-badge.png" alt="Download on the App Store" height="50" /></a>
+  &nbsp;
+  <a href="https://play.google.com/store/apps/details?id=com.heliumedu.heliumapp"><img src="https://raw.githubusercontent.com/HeliumEdu/www/main/src/assets/img/play-badge.png" alt="Get it on Google Play" height="50" /></a>
+</p>
+
+<p align="center">
+  <a href="https://www.patreon.com/alexdlaird/membership"><img src="https://raw.githubusercontent.com/HeliumEdu/www/main/public/img/support-patreon.png" alt="Support on Patreon" height="30" /></a>
+</p>
+
+---
+
+# Helium Infrastructure
+
 ![Python Versions](https://img.shields.io/badge/python-%203.12%20-blue)
 [![Build](https://img.shields.io/github/actions/workflow/status/HeliumEdu/infra/build.yml)](https://github.com/HeliumEdu/infra/actions/workflows/build.yml)
 ![GitHub License](https://img.shields.io/github/license/heliumedu/infra)
 
-# Helium Infrastructure
-
-The infrastructure for [Helium](https://www.heliumedu.com/).
-
-Released container images are published to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
+The deployment infrastructure for Helium - Student Planner, including Terraform, Docker orchestration for local development, and the build pipeline that publishes container images to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
 
 ## Prerequisites
 
