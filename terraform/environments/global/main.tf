@@ -114,13 +114,6 @@ resource "aws_acm_certificate_validation" "marketing" {
   validation_record_fqdns = [for record in aws_route53_record.marketing_cert_validation : record.fqdn]
 }
 
-resource "aws_cloudfront_function" "marketing_redirects" {
-  name    = "marketing-redirects"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/redirects.js")
-}
-
 resource "aws_cloudfront_distribution" "marketing" {
   enabled             = true
   aliases             = ["www.heliumedu.com"]
@@ -156,11 +149,6 @@ resource "aws_cloudfront_distribution" "marketing" {
     default_ttl            = 3600
     min_ttl                = 0
     max_ttl                = 86400
-
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.marketing_redirects.arn
-    }
   }
 
   custom_error_response {
