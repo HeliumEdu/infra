@@ -1072,6 +1072,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
   }
 
   # Data Richness Group
+  # Per-user metrics are DataDog distributions: avg = mean, p95 = niche power-user signal.
+  # A wide gap between avg and p95 indicates concentration in a small set of heavy users -
+  # paired with low adoption %, that is the "niche feature, keep" cell of the deprecation matrix.
   widget {
     group_definition {
       title            = "Data Richness"
@@ -1081,103 +1084,163 @@ resource "datadog_dashboard" "helium_user_behavior" {
 
       widget {
         timeseries_definition {
-          title         = "Avg Assignments per Class"
+          title         = "Assignments per Class"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.homework_per_course{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_homework_per_course{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Assignments / Class"
+              expression = "avg:platform.users.data.homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.homework_per_course{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "dog_classic"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Assignments per User"
+          title         = "Assignments per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_homework_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.homework_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_homework_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Assignments / User"
+              expression = "avg:platform.users.data.homework_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.homework_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "dog_classic"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.homework_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Classes per Group"
+          title         = "Classes per Group"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_courses_per_group{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.courses_per_group{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_courses_per_group{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Classes / Group"
+              expression = "avg:platform.users.data.courses_per_group{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.courses_per_group{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "dog_classic"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.courses_per_group{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Events per User"
+          title         = "Events per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_events_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.events_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.data.avg_events_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Events / User"
+              expression = "avg:platform.users.data.events_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.events_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "cool"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.events_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg External Calendars per User"
+          title         = "External Calendars per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_external_calendars_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.external_calendars_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.data.avg_external_calendars_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg External Calendars / User"
+              expression = "avg:platform.users.data.external_calendars_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.external_calendars_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "cool"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.external_calendars_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Notes per User"
+          title         = "Notes per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
             style {
               palette    = "purple"
@@ -1185,57 +1248,69 @@ resource "datadog_dashboard" "helium_user_behavior" {
               line_width = "thick"
             }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
-              alias_name = "Total"
+              expression = "avg:platform.users.data.notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Avg (Total)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            q            = "p95:platform.users.data.notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "purple"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "p95 (Total)"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Assignment"
+              expression = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Avg (Assignment)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
-              alias_name = "Event"
+              expression = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Avg (Event)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
+            q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
-              alias_name = "Resource"
+              expression = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:resource}.fill(last)"
+              alias_name = "Avg (Resource)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
+            q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
             display_type = "line"
             style { palette = "gray" }
             metadata {
-              expression = "avg:platform.users.data.avg_notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
-              alias_name = "Standalone"
+              expression = "avg:platform.users.data.notes_per_user{$env, $staff, $window, entity:standalone}.fill(last)"
+              alias_name = "Avg (Standalone)"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Reminders per User"
+          title         = "Reminders per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            q            = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
             style {
               palette    = "orange"
@@ -1243,66 +1318,90 @@ resource "datadog_dashboard" "helium_user_behavior" {
               line_width = "thick"
             }
             metadata {
-              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
-              alias_name = "Total"
+              expression = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Avg (Total)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            q            = "p95:platform.users.data.reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "orange"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "p95 (Total)"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Assignment"
+              expression = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Avg (Assignment)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            q            = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
-              alias_name = "Event"
+              expression = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Avg (Event)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
+            q            = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.data.avg_reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
-              alias_name = "Class"
+              expression = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, entity:course}.fill(last)"
+              alias_name = "Avg (Class)"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Graded Assignments per Class"
+          title         = "Graded Assignments per Class"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_graded_homework_per_course{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.graded_homework_per_course{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.data.avg_graded_homework_per_course{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Graded Assignments / Class"
+              expression = "avg:platform.users.data.graded_homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.graded_homework_per_course{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "warm"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.graded_homework_per_course{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Attachments per User"
+          title         = "Attachments per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            q            = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
             style {
               palette    = "gray"
@@ -1310,53 +1409,77 @@ resource "datadog_dashboard" "helium_user_behavior" {
               line_width = "thick"
             }
             metadata {
-              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
-              alias_name = "Total"
+              expression = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "Avg (Total)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+            q            = "p95:platform.users.data.attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "gray"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
+              alias_name = "p95 (Total)"
+            }
+          }
+          request {
+            q            = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
-              alias_name = "Assignment"
+              expression = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:homework}.fill(last)"
+              alias_name = "Avg (Assignment)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
+            q            = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
-              alias_name = "Event"
+              expression = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:event}.fill(last)"
+              alias_name = "Avg (Event)"
             }
           }
           request {
-            q            = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
+            q            = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.data.avg_attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
-              alias_name = "Class"
+              expression = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, entity:course}.fill(last)"
+              alias_name = "Avg (Class)"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Resources per User"
+          title         = "Resources per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.data.avg_resources_per_user{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.data.avg_resources_per_user{$env, $staff, $window}.fill(last)"
-              alias_name = "Avg Resources / User"
+              expression = "avg:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "warm"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
@@ -1365,9 +1488,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
   }
 
   # Feature Adoption Group
+  # Each metric is the percentage of active users (in the selected window) with at least
+  # one of the feature. Read alongside the Data Richness p95 lines: low % with high p95
+  # signals a niche power-user feature; low % with low p95 signals a deprecation candidate.
   widget {
     group_definition {
-      title            = "Feature Adoption"
+      title            = "Feature Adoption (% of Active Users)"
       background_color = "vivid_orange"
       show_title       = true
       layout_type      = "ordered"
@@ -1380,12 +1506,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.grade_tracking{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.adoption.grade_tracking{$env, $staff, $window}.fill(last)"
-              alias_name = "Grade Tracking"
+              expression = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Grade Tracking %"
             }
           }
         }
@@ -1398,12 +1524,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.external_calendars{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.adoption.external_calendars{$env, $staff, $window}.fill(last)"
-              alias_name = "External Calendars"
+              expression = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "External Calendars %"
             }
           }
         }
@@ -1416,12 +1542,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.notebook{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "purple" }
             metadata {
-              expression = "avg:platform.users.adoption.notebook{$env, $staff, $window}.fill(last)"
-              alias_name = "Notebook"
+              expression = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Notebook %"
             }
           }
         }
@@ -1434,12 +1560,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.resources{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.adoption.resources{$env, $staff, $window}.fill(last)"
-              alias_name = "Resources"
+              expression = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Resources %"
             }
           }
         }
@@ -1452,12 +1578,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.reminders{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "orange" }
             metadata {
-              expression = "avg:platform.users.adoption.reminders{$env, $staff, $window}.fill(last)"
-              alias_name = "Reminders"
+              expression = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Reminders %"
             }
           }
         }
@@ -1470,12 +1596,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.attachments{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "gray" }
             metadata {
-              expression = "avg:platform.users.adoption.attachments{$env, $staff, $window}.fill(last)"
-              alias_name = "Attachments"
+              expression = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Attachments %"
             }
           }
         }
@@ -1488,12 +1614,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.adoption.feeds{$env, $staff, $window}.fill(last)"
+            q            = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             display_type = "line"
             style { palette = "green" }
             metadata {
-              expression = "avg:platform.users.adoption.feeds{$env, $staff, $window}.fill(last)"
-              alias_name = "Feeds"
+              expression = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Feeds %"
             }
           }
         }
