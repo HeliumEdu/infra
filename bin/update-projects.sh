@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Clone or update each Helium subproject under projects/, then run
-# `make install` in it. Replaces `helium-cli update-projects`.
+# `make install` in it.
 
 set -euo pipefail
 
