@@ -938,6 +938,212 @@ resource "datadog_dashboard" "helium_user_behavior" {
     defaults = ["30d"]
   }
 
+  widget {
+    group_definition {
+      title            = "Feature Health (Adoption %)"
+      background_color = "vivid_purple"
+      show_title       = true
+      layout_type      = "ordered"
+
+      widget {
+        query_value_definition {
+          title       = "Grade Tracking"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "External Calendars"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Notebook"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Resources"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Reminders"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Attachments"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Feeds"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+    }
+  }
+
   # Engagement Overview Group
   widget {
     group_definition {
@@ -1016,54 +1222,78 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Users with Active Classes"
+          title         = "Users with Active Classes (%)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.engagement.has_active_courses{$env, $staff}.fill(last)"
+            q            = "avg:platform.users.engagement.has_active_courses.pct{$env, $staff}.fill(last)"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "avg:platform.users.engagement.has_active_courses{$env, $staff}.fill(last)"
-              alias_name = "Has Active Classes"
+              expression = "avg:platform.users.engagement.has_active_courses.pct{$env, $staff}.fill(last)"
+              alias_name = "Has Active Classes %"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Completions per User (14d rolling)"
+          title         = "Completions per User (14d rolling)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.engagement.avg_completions_per_user{$env, $staff}.fill(last)"
+            q            = "avg:platform.users.engagement.completions_per_user{$env, $staff}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
-              expression = "avg:platform.users.engagement.avg_completions_per_user{$env, $staff}.fill(last)"
-              alias_name = "Avg Completions / User"
+              expression = "avg:platform.users.engagement.completions_per_user{$env, $staff}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.engagement.completions_per_user{$env, $staff}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "cool"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.engagement.completions_per_user{$env, $staff}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
       }
       widget {
         timeseries_definition {
-          title         = "Avg Graded Assignments per User"
+          title         = "Graded Assignments per User"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.users.engagement.avg_graded_homework_per_user{$env, $staff}.fill(last)"
+            q            = "avg:platform.users.engagement.graded_homework_per_user{$env, $staff}.fill(last)"
             display_type = "line"
             style { palette = "warm" }
             metadata {
-              expression = "avg:platform.users.engagement.avg_graded_homework_per_user{$env, $staff}.fill(last)"
-              alias_name = "Avg Graded Assignments / User"
+              expression = "avg:platform.users.engagement.graded_homework_per_user{$env, $staff}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.engagement.graded_homework_per_user{$env, $staff}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "warm"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.engagement.graded_homework_per_user{$env, $staff}.fill(last)"
+              alias_name = "p95"
             }
           }
         }
@@ -1071,10 +1301,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
     }
   }
 
-  # Data Richness Group
-  # Per-user metrics are DataDog distributions: avg = mean, p95 = niche power-user signal.
-  # A wide gap between avg and p95 indicates concentration in a small set of heavy users -
-  # paired with low adoption %, that is the "niche feature, keep" cell of the deprecation matrix.
   widget {
     group_definition {
       title            = "Data Richness"
@@ -1487,10 +1713,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
     }
   }
 
-  # Feature Adoption Group
-  # Each metric is the percentage of active users (in the selected window) with at least
-  # one of the feature. Read alongside the Data Richness p95 lines: low % with high p95
-  # signals a niche power-user feature; low % with low p95 signals a deprecation candidate.
   widget {
     group_definition {
       title            = "Feature Adoption (% of Active Users)"
