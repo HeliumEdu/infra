@@ -1508,7 +1508,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
 
   widget {
     group_definition {
-      title            = "Feature Health (Adoption %)"
+      title            = "Feature Adoption (% of Active Users)"
       background_color = "vivid_purple"
       show_title       = true
       layout_type      = "ordered"
@@ -1521,7 +1521,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1538,6 +1538,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1549,7 +1552,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1566,6 +1569,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1577,7 +1583,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1594,6 +1600,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1605,7 +1614,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1622,6 +1631,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1633,7 +1645,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1650,6 +1662,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1661,7 +1676,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1678,6 +1693,9 @@ resource "datadog_dashboard" "helium_user_behavior" {
               value      = 25
               palette    = "white_on_green"
             }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
@@ -1689,7 +1707,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}"
+            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator = "<"
@@ -1707,141 +1725,8 @@ resource "datadog_dashboard" "helium_user_behavior" {
               palette    = "white_on_green"
             }
           }
-        }
-      }
-    }
-  }
-
-  widget {
-    group_definition {
-      title            = "Feature Adoption (% of Active Users)"
-      background_color = "vivid_orange"
-      show_title       = true
-      layout_type      = "ordered"
-
-      widget {
-        timeseries_definition {
-          title         = "Grade Tracking"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Grade Tracking %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "External Calendars"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "cool" }
-            metadata {
-              expression = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "External Calendars %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Notebook"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "purple" }
-            metadata {
-              expression = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Notebook %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Resources"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "warm" }
-            metadata {
-              expression = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Resources %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Reminders"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "orange" }
-            metadata {
-              expression = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Reminders %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Attachments"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "gray" }
-            metadata {
-              expression = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Attachments %"
-            }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Feeds"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "green" }
-            metadata {
-              expression = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Feeds %"
-            }
+          timeseries_background {
+            type = "area"
           }
         }
       }
