@@ -1109,6 +1109,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.homework_per_course{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1139,6 +1140,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.homework_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1169,6 +1171,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.courses_per_group{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1199,6 +1202,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.events_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1229,6 +1233,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.external_calendars_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1259,6 +1264,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.notes_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
@@ -1329,6 +1335,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.reminders_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
@@ -1390,6 +1397,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.graded_homework_per_course{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1420,6 +1428,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.attachments_per_user{$env, $staff, $window, !entity:*}.fill(last)"
             display_type = "line"
@@ -1481,6 +1490,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          live_span     = "1mo"
           request {
             q            = "avg:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
             display_type = "line"
@@ -1521,6 +1531,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1552,6 +1563,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1583,6 +1595,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1614,6 +1627,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1645,6 +1659,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1676,6 +1691,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1707,6 +1723,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
+          live_span   = "1mo"
           request {
             q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
