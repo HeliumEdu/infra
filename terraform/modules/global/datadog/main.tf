@@ -940,213 +940,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
 
   widget {
     group_definition {
-      title            = "Feature Health (Adoption %)"
-      background_color = "vivid_purple"
-      show_title       = true
-      layout_type      = "ordered"
-
-      widget {
-        query_value_definition {
-          title       = "Grade Tracking"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "External Calendars"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Notebook"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Resources"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Reminders"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Attachments"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Feeds"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          request {
-            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-        }
-      }
-    }
-  }
-
-  # Engagement Overview Group
-  widget {
-    group_definition {
       title            = "Engagement Overview"
       background_color = "vivid_green"
       show_title       = true
@@ -1706,6 +1499,212 @@ resource "datadog_dashboard" "helium_user_behavior" {
             metadata {
               expression = "p95:platform.users.data.resources_per_user{$env, $staff, $window}.fill(last)"
               alias_name = "p95"
+            }
+          }
+        }
+      }
+    }
+  }
+
+  widget {
+    group_definition {
+      title            = "Feature Health (Adoption %)"
+      background_color = "vivid_purple"
+      show_title       = true
+      layout_type      = "ordered"
+
+      widget {
+        query_value_definition {
+          title       = "Grade Tracking"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "External Calendars"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Notebook"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Resources"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Reminders"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Attachments"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Feeds"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
             }
           }
         }
