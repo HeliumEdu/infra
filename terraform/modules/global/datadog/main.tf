@@ -933,9 +933,10 @@ resource "datadog_dashboard" "helium_user_behavior" {
     defaults = ["false"]
   }
   template_variable {
-    name     = "window"
-    prefix   = "window"
-    defaults = ["30d"]
+    name             = "window"
+    prefix           = "window"
+    defaults         = ["30d"]
+    available_values = ["1d", "7d", "30d", "90d", "180d"]
   }
 
   widget {
