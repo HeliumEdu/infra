@@ -1,3 +1,9 @@
+variable "env_enabled" {
+  description = "Set to false to disable this environment (plans will fail fast)"
+  type        = bool
+  default     = false
+}
+
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
   default     = "latest"
@@ -29,7 +35,7 @@ variable "region_azs" {
       suffix = "b"
       index  = "1"
     },
-    az2 = {
+    az3 = {
       suffix = "c"
       index  = "2"
     }
@@ -42,7 +48,12 @@ variable "default_arch" {
 }
 
 variable "platform_host_count" {
-  description = "The number of platform hosts desired in the cluster"
+  description = "The number of platform API hosts desired in the cluster"
+  default     = 1
+}
+
+variable "platform_worker_count" {
+  description = "The number of platform worker hosts desired in the cluster"
   default     = 1
 }
 
@@ -64,6 +75,11 @@ variable "num_cache_nodes" {
 variable "cache_instance_size" {
   description = "Instance size for cache"
   default     = "cache.t4g.micro"
+}
+
+variable "request_timeout_seconds" {
+  description = "Max request duration in seconds. Used for Gunicorn timeout, ALB deregistration delay, and ECS health check grace period."
+  default     = 60
 }
 
 variable "helium_area_code" {
@@ -126,8 +142,14 @@ variable "DD_API_KEY" {
   description = "The DataDog API key"
 }
 
-variable "PLATFORM_SENTRY_DSN" {
+variable "SENTRY_DSN" {
   description = "The Sentry DSN for error tracking"
+  default     = null
+}
+
+variable "JSM_API_TOKEN" {
+  description = "The JSM API token for support ticket submission"
+  default     = null
 }
 
 variable "FIREBASE_PROJECT_ID" {
@@ -152,4 +174,14 @@ variable "FIREBASE_CLIENT_ID" {
 
 variable "FIREBASE_CLIENT_X509_CERT_URL" {
   description = "The Firebase client cert URL"
+}
+
+variable "GA4_MEASUREMENT_ID" {
+  description = "The GA4 Measurement ID (G-XXXXXXXXXX) for the backend Measurement Protocol client"
+  default     = null
+}
+
+variable "GA4_API_SECRET" {
+  description = "The GA4 Measurement Protocol API secret for the backend analytics client"
+  default     = null
 }

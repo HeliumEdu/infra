@@ -29,10 +29,9 @@ ENVIRONMENT_PREFIX = f'{ENVIRONMENT}.' if 'prod' not in ENVIRONMENT else ''
 BASE_URL = f'https://www.{ENVIRONMENT_PREFIX}heliumedu.com'
 
 if not VERSION or not ENVIRONMENT or not TERRAFORM_API_TOKEN or not FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN or \
-        not os.environ.get("AWS_ACCOUNT_ID") or not os.environ.get("AWS_ACCESS_KEY_ID") or not os.environ.get(
-    "AWS_SECRET_ACCESS_KEY"):
+        not os.environ.get("AWS_ACCESS_KEY_ID") or not os.environ.get("AWS_SECRET_ACCESS_KEY"):
     print(
-        "ERROR: Set all required env vars: VERSION, ENVIRONMENT, TERRAFORM_API_TOKEN, FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN, AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY.")
+        "ERROR: Set all required env vars: VERSION, ENVIRONMENT, TERRAFORM_API_TOKEN, FRONTEND_ROLLBAR_SERVER_ITEM_ACCESS_TOKEN, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY.")
     sys.exit(1)
 
 INFO_URI = "https://{}.heliumedu.com/info".format("api" if ENVIRONMENT == "prod" else f"api.{ENVIRONMENT}")
@@ -171,8 +170,6 @@ resp = requests.post(f"https://app.terraform.io/api/v2/runs/{heliumcli_run['id']
 # Release frontend code from artifact S3 bucket to live
 #####################################################################
 
-# TODO: migrate this deployment code in to `heliumcli`, then it can be removed from infra and frontend
-
 s3 = boto3.resource('s3')
 source_bucket_name = "heliumedu"
 source_bucket = s3.Bucket(source_bucket_name)
@@ -203,9 +200,9 @@ def upload_source_map(minified_url, source_map_key):
 
 # Copy assets first, so that new versioned bundles exist before pages are updated
 
-assets_source_prefix = f"helium/frontend/{VERSION}/assets"
+assets_source_prefix = f"helium/frontend-legacy/{VERSION}/assets"
 assets_dest_prefix = "assets/"
-print(f"Copying frontend resources from {source_bucket_name}{assets_source_prefix} to {dest_bucket_name} ...")
+print(f"Copying frontend-legacy resources from {source_bucket_name}{assets_source_prefix} to {dest_bucket_name} ...")
 for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
     new_key = f"{assets_dest_prefix}" + obj.key[len(assets_source_prefix):].lstrip("/")
 
@@ -223,8 +220,8 @@ for obj in source_bucket.objects.filter(Prefix=assets_source_prefix):
         new_key_url = f"{BASE_URL}/{new_key}"
         upload_source_map(new_key_url.removesuffix(".map"), obj.key)
 
-source_prefix = f"helium/frontend/{VERSION}"
-print(f"Copying frontend resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
+source_prefix = f"helium/frontend-legacy/{VERSION}"
+print(f"Copying frontend-legacy resources from {source_bucket_name}{source_prefix} to {dest_bucket_name} ...")
 for obj in source_bucket.objects.filter(Prefix=source_prefix):
     # Skip assets, as we've already moved them in to place
     if obj.key.startswith(assets_source_prefix):
@@ -238,7 +235,7 @@ for obj in source_bucket.objects.filter(Prefix=source_prefix):
     dest_bucket.Object(new_key).copy_from(CopySource=copy_source)
     print(f"--> '{obj.key}' to '{new_key}'")
 
-print(f"... {VERSION} of the frontend is now live in {ENVIRONMENT}.")
+print(f"... {VERSION} of the frontend-legacy is now live in {ENVIRONMENT}.")
 
 #####################################################################
 # Wait for the Terraform apply to be live

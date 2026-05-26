@@ -6,5 +6,8 @@
 *.swp
 .env
 .DS_Store
-*.terraform
-*.lock.hcl
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json

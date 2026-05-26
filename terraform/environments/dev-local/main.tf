@@ -5,60 +5,58 @@ locals {
 }
 
 module "route53" {
-  source = "../../modules/route53"
+  source = "../../modules/environment/route53"
 
-  environment        = var.environment
-  environment_prefix = var.environment_prefix
-  heliumedu_com_zone_id = var.heliumedu_com_zone_id
-  heliumedu_dev_zone_id = var.heliumedu_dev_zone_id
+  environment             = var.environment
+  environment_prefix      = var.environment_prefix
+  heliumedu_com_zone_id   = var.heliumedu_com_zone_id
+  heliumedu_dev_zone_id   = var.heliumedu_dev_zone_id
   heliumstudy_com_zone_id = var.heliumstudy_com_zone_id
   heliumstudy_dev_zone_id = var.heliumstudy_dev_zone_id
 }
 
 module "certificatemanager" {
-  source = "../../modules/certificatemanager"
+  source = "../../modules/environment/certificatemanager"
 
-  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
-  route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
-  route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
-  route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
+  route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
+  route53_heliumedu_dev_zone_id     = module.route53.heliumedu_dev_zone_id
+  route53_heliumedu_dev_zone_name   = module.route53.heliumedu_dev_zone_name
   route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
   route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
   route53_heliumstudy_dev_zone_name = module.route53.heliumstudy_dev_zone_name
 }
 
-module "s3" {
-  source = "../../modules/s3/ci_bucket"
-
-  aws_account_id = local.aws_account_id
-  environment    = var.environment
-}
-
 module "ses" {
-  source = "../../modules/ses"
+  source = "../../modules/environment/ses"
 
   environment                     = var.environment
   aws_region                      = var.aws_region
-  heliumedu_s3_bucket_name        = module.s3.heliumedu_s3_bucket_name
   route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   route53_heliumedu_dev_zone_id   = module.route53.heliumedu_dev_zone_id
   route53_heliumedu_dev_zone_name = module.route53.heliumedu_dev_zone_name
 }
 
-module "secretsmanager" {
-  source = "../../modules/secretsmanager/ci_creds"
+module "s3" {
+  source = "../../modules/environment/s3/integration_bucket"
 
-  environment               = var.environment
-  smtp_email_user           = module.ses.smtp_username
-  smtp_email_password       = module.ses.smtp_password
-  s3_user_access_key_id     = module.s3.s3_access_key_id
-  s3_user_secret_access_key = module.s3.s3_access_key_secret
+  aws_account_id = local.aws_account_id
+}
+
+module "secretsmanager" {
+  source = "../../modules/environment/secretsmanager/ci_creds"
+
+  environment                      = var.environment
+  smtp_email_user                  = module.ses.smtp_username
+  smtp_email_password              = module.ses.smtp_password
+  integration_s3_access_key_id     = module.s3.access_key_id
+  integration_s3_secret_access_key = module.s3.secret_access_key
 }
 
 module "twilio" {
-  source = "../../modules/twilio"
+  source = "../../modules/environment/twilio"
 
   environment              = var.environment
   helium_twiml_handler_url = var.HELIUM_TWIML_HANDLER_URL

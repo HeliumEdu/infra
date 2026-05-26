@@ -1,11 +1,12 @@
-.PHONY: all install-reqs install build start test-cluster publish
+.PHONY: all install-reqs install build start validate test-cluster-legacy fetch-support-articles
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-HELIUMCLI_PROJECTS ?= '["platform", "frontend", "cluster-tests", "frontend-legacy"]'
+HELIUMCLI_PROJECTS ?= '["platform", "frontend", "www", "cluster-tests", "frontend-legacy"]'
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
+PROJECT_APP_LEGACY_HOST ?= http://localhost:3000
 
 all: install start
 
@@ -19,26 +20,39 @@ install: install-reqs
 
 build: install
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
-	PLATFORM=$(PLATFORM) make -C projects/frontend build-web
+	PLATFORM=$(PLATFORM) make -C projects/frontend build-docker
+
+validate:
+	@for env in dev dev-local global prod; do \
+		echo "Validating terraform/environments/$${env}..."; \
+		cd terraform/environments/$${env} && terraform init -backend=false && terraform validate && cd -; \
+	done
 
 start:
 	cd projects/platform && ./bin/runserver
-	# TODO: clean this up to be Dockerized
-	cd projects/frontend && make run
+	cd projects/frontend && ./bin/runserver
 
 stop:
 	make -C projects/platform stop-docker
+	make -C projects/frontend stop-docker
+	make -C projects/frontend-legacy stop-docker
 
 restart: stop start
 
-test-cluster:
+start-legacy:
+	cd projects/frontend-legacy && ./bin/runserver
+
+fetch-support-articles: install-reqs
+	$(PYTHON_BIN) scripts/fetch_support_articles.py
+
+test-cluster-legacy:
 	@if [[ -z "${PLATFORM_EMAIL_HOST_USER}" ]] || \
 		[[ -z "${PLATFORM_EMAIL_HOST_PASSWORD}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_ACCOUNT_SID}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_AUTH_TOKEN}" ]] || \
 		[[ -z "${PLATFORM_TWILIO_SMS_FROM}" ]] || \
-		[[ -z "${CI_AWS_S3_ACCESS_KEY_ID}" ]] || \
-		[[ -z "${CI_AWS_S3_SECRET_ACCESS_KEY}" ]] || \
+		[[ -z "${AWS_INTEGRATION_S3_ACCESS_KEY_ID}" ]] || \
+		[[ -z "${AWS_INTEGRATION_S3_SECRET_ACCESS_KEY}" ]] || \
 		[[ -z "${CI_TWILIO_RECIPIENT_PHONE_NUMBER}" ]]; then \
   	  echo "Set all env vars required to run cluster tests end-to-end against a local Docker build: [\
 PLATFORM_EMAIL_HOST_USER, \
@@ -46,8 +60,8 @@ PLATFORM_EMAIL_HOST_PASSWORD, \
 PLATFORM_TWILIO_ACCOUNT_SID, \
 PLATFORM_TWILIO_AUTH_TOKEN, \
 PLATFORM_TWILIO_SMS_FROM, \
-CI_AWS_S3_ACCESS_KEY_ID, \
-CI_AWS_S3_SECRET_ACCESS_KEY, \
+AWS_INTEGRATION_S3_ACCESS_KEY_ID, \
+AWS_INTEGRATION_S3_SECRET_ACCESS_KEY, \
 CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
       exit 1; \
     fi
@@ -58,10 +72,7 @@ CI_TWILIO_RECIPIENT_PHONE_NUMBER]"; \
 	make -C projects/frontend-legacy run-docker
 
 	ENVIRONMENT=dev-local \
-	PROJECT_APP_HOST=http://localhost:3000 \
+	PROJECT_APP_HOST=$(PROJECT_APP_LEGACY_HOST) \
     PROJECT_API_HOST=http://localhost:8000 \
     AWS_REGION=$(DEV_LOCAL_AWS_REGION) \
     make -C projects/cluster-tests test
-
-publish:
-	TAG_VERSION=$(TAG_VERSION) make -C projects/frontend-legacy publish
