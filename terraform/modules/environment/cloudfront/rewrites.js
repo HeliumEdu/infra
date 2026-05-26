@@ -20,6 +20,7 @@ function handler(event) {
         '/img/helium-logo.png': 'https://landing.heliumedu.com/img/helium-logo.png',
         '/img/helium-logo-square.png': 'https://landing.heliumedu.com/img/helium-logo-square.png',
         '/img/support-patreon.svg': 'https://landing.heliumedu.com/img/support-patreon.svg',
+        '/img/support-patreon.png': 'https://landing.heliumedu.com/img/support-patreon.png',
         '/.well-known/apple-app-site-association': 'https://landing.heliumedu.com/.well-known/apple-app-site-association',
         '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json'
     };
