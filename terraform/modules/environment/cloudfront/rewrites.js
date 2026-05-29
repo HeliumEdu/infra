@@ -22,8 +22,7 @@ function handler(event) {
         '/img/support-patreon.svg': 'https://landing.heliumedu.com/img/support-patreon.svg',
         '/img/support-patreon.png': 'https://landing.heliumedu.com/img/support-patreon.png',
         '/.well-known/apple-app-site-association': 'https://landing.heliumedu.com/.well-known/apple-app-site-association',
-        '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json',
-        '/.well-known/microsoft-identity-association.json': 'https://landing.heliumedu.com/.well-known/microsoft-identity-association.json'
+        '/.well-known/assetlinks.json': 'https://landing.heliumedu.com/.well-known/assetlinks.json'
     };
     if (sharedAssetRedirects[uri] !== undefined) {
         return {
