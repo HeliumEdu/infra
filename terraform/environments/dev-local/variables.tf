@@ -43,18 +43,22 @@ variable "heliumstudy_dev_zone_id" {
 
 variable "AWS_ACCESS_KEY_ID" {
   description = "The AWS access key ID"
+  sensitive   = true
 }
 
 variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
+  sensitive   = true
 }
 
 variable "TWILIO_ACCOUNT_SID" {
   description = "The Twilio account SID"
+  sensitive   = true
 }
 
 variable "TWILIO_AUTH_TOKEN" {
   description = "The Twilio auth token"
+  sensitive   = true
 }
 
 variable "HELIUM_TWIML_HANDLER_URL" {

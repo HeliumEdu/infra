@@ -90,18 +90,22 @@ variable "ci_area_code" {
 
 variable "AWS_ACCESS_KEY_ID" {
   description = "The AWS access key ID"
+  sensitive   = true
 }
 
 variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
+  sensitive   = true
 }
 
 variable "TWILIO_ACCOUNT_SID" {
   description = "The Twilio account SID"
+  sensitive   = true
 }
 
 variable "TWILIO_AUTH_TOKEN" {
   description = "The Twilio auth token"
+  sensitive   = true
 }
 
 variable "HELIUM_TWIML_HANDLER_URL" {
@@ -114,48 +118,59 @@ variable "CI_TWIML_HANDLER_URL" {
 
 variable "DD_API_KEY" {
   description = "The DataDog API key"
+  sensitive   = true
 }
 
 variable "SENTRY_DSN" {
   description = "The Sentry DSN for error tracking"
   default     = null
+  sensitive   = true
 }
 
 variable "JSM_API_TOKEN" {
   description = "The JSM API token for support ticket submission"
   default     = null
+  sensitive   = true
 }
 
 variable "FIREBASE_PROJECT_ID" {
   description = "The Firebase project ID"
+  sensitive   = true
 }
 
 variable "FIREBASE_PRIVATE_KEY_ID" {
   description = "The Firebase private key ID"
+  sensitive   = true
 }
 
 variable "FIREBASE_PRIVATE_KEY" {
   description = "The Firebase private key"
+  sensitive   = true
 }
 
 variable "FIREBASE_CLIENT_EMAIL" {
   description = "The Firebase client email"
+  sensitive   = true
 }
 
 variable "FIREBASE_CLIENT_ID" {
   description = "The Firebase client ID"
+  sensitive   = true
 }
 
 variable "FIREBASE_CLIENT_X509_CERT_URL" {
   description = "The Firebase client cert URL"
+  sensitive   = true
 }
 
 variable "GA4_MEASUREMENT_ID" {
   description = "The GA4 Measurement ID (G-XXXXXXXXXX) for the backend Measurement Protocol client"
   default     = null
+  sensitive   = true
 }
 
 variable "GA4_API_SECRET" {
   description = "The GA4 Measurement Protocol API secret for the backend analytics client"
   default     = null
+  sensitive   = true
 }

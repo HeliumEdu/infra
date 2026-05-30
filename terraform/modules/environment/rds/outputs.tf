@@ -3,7 +3,8 @@ output "db_username" {
 }
 
 output "db_password" {
-  value = random_password.password.result
+  value     = random_password.password.result
+  sensitive = true
 }
 
 output "db_host" {
