@@ -50,7 +50,7 @@ function handler(event) {
         '/about': '/about',
         '/terms': '/terms',
         '/privacy': '/privacy',
-        '/press': '/about'
+        '/press': '/press'
     };
     if (landingPath[normalized] !== undefined) {
         return {
