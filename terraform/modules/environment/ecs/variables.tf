@@ -94,12 +94,6 @@ variable "platform_target_group" {
   type        = string
 }
 
-variable "datadog_api_key" {
-  description = "DataDog API key for DogStatsD sidecar"
-  type        = string
-  sensitive   = true
-}
-
 variable "request_timeout_seconds" {
   description = "Max request duration in seconds. Health check grace period is derived as 2x this value."
   type        = number

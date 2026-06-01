@@ -33,9 +33,11 @@ variable "heliumstudy_dev_zone_id" {
 
 variable "AWS_ACCESS_KEY_ID" {
   description = "The AWS access key ID"
+  sensitive   = true
 }
 
 variable "AWS_SECRET_ACCESS_KEY" {
   description = "The AWS secret access key"
+  sensitive   = true
 }
 
