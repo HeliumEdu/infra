@@ -178,16 +178,18 @@ resource "aws_ecs_task_definition" "platform_api_service" {
       essential = false
       environment = [
         {
-          name  = "DD_API_KEY"
-          value = var.datadog_api_key
-        },
-        {
           name  = "DD_SITE"
           value = "datadoghq.com"
         },
         {
           name  = "DD_ENV"
           value = var.environment
+        }
+      ]
+      secrets = [
+        {
+          name      = "DD_API_KEY"
+          valueFrom = "arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:${var.environment}/helium:PROJECT_DATADOG_API_KEY::"
         }
       ]
       logConfiguration = {
@@ -261,16 +263,18 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
       essential = false
       environment = [
         {
-          name  = "DD_API_KEY"
-          value = var.datadog_api_key
-        },
-        {
           name  = "DD_SITE"
           value = "datadoghq.com"
         },
         {
           name  = "DD_ENV"
           value = var.environment
+        }
+      ]
+      secrets = [
+        {
+          name      = "DD_API_KEY"
+          valueFrom = "arn:aws:secretsmanager:${var.aws_region}:${var.aws_account_id}:secret:${var.environment}/helium:PROJECT_DATADOG_API_KEY::"
         }
       ]
       logConfiguration = {
