@@ -1,7 +1,3 @@
-output "frontend_repository_uri" {
-  value = aws_ecrpublic_repository.repository_helium_frontend.repository_uri
-}
-
 output "frontend_web_repository_uri" {
   value = aws_ecrpublic_repository.repository_helium_frontend_web.repository_uri
 }
