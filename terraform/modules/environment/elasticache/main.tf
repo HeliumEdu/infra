@@ -3,6 +3,11 @@ resource "aws_elasticache_subnet_group" "helium" {
   subnet_ids = [for id in var.subnet_ids : id]
 }
 
+resource "random_password" "auth_token" {
+  length  = 64
+  special = false
+}
+
 resource "aws_elasticache_replication_group" "helium" {
   replication_group_id = "helium-${var.environment}"
   description          = "Helium ${var.environment} cache"
@@ -15,6 +20,10 @@ resource "aws_elasticache_replication_group" "helium" {
 
   security_group_ids = [var.elasticache_sg]
   subnet_group_name  = aws_elasticache_subnet_group.helium.name
+
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+  auth_token                 = random_password.auth_token.result
 
   maintenance_window         = "sat:09:00-sat:10:00"
   auto_minor_version_upgrade = true
