@@ -90,9 +90,6 @@ resource "aws_s3_bucket_website_configuration" "support_redirect_bucket" {
   }
 
   routing_rule {
-    condition {
-      key_prefix_equals = ""
-    }
     redirect {
       host_name          = "www.${var.route53_heliumedu_com_zone_name}"
       protocol           = "https"

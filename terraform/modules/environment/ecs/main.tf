@@ -589,9 +589,9 @@ resource "aws_cloudwatch_metric_alarm" "celery_task_failures" {
   metric_name = "CeleryTaskFailure"
   statistic   = "Sum"
 
-  period             = 3600
-  evaluation_periods = 1
-  threshold          = 5
+  period              = 3600
+  evaluation_periods  = 1
+  threshold           = 5
   comparison_operator = "GreaterThanThreshold"
   treat_missing_data  = "notBreaching"
 
@@ -615,11 +615,11 @@ resource "aws_cloudwatch_metric_alarm" "worker_tasks_down" {
     ClusterName = aws_ecs_cluster.helium.name
     ServiceName = aws_ecs_service.helium_platform_worker.name
   }
-  statistic   = "Average"
+  statistic = "Average"
 
-  period             = 300
-  evaluation_periods = 1
-  threshold          = 0.05
+  period              = 300
+  evaluation_periods  = 1
+  threshold           = 0.05
   comparison_operator = "LessThanThreshold"
   treat_missing_data  = "breaching"
 
@@ -638,11 +638,11 @@ resource "aws_cloudwatch_metric_alarm" "rds_low_storage" {
   dimensions = {
     DBInstanceIdentifier = "helium-${var.environment}"
   }
-  statistic   = "Average"
+  statistic = "Average"
 
-  period             = 300
-  evaluation_periods = 3
-  threshold          = 2147483648
+  period              = 300
+  evaluation_periods  = 3
+  threshold           = 2147483648
   comparison_operator = "LessThanThreshold"
   treat_missing_data  = "notBreaching"
 

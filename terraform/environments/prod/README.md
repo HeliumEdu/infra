@@ -14,7 +14,7 @@ To initialize a Terraform Workspace for the first time, execute:
 terraform init
 ```
 
-Once the Workspace is initialized in Terraform, its settings can be configured in [the Terraform UI](https://app.terraform.io/app). Change the Terraform Working Directory to the relative path in this repo (ex. for `prod`, it needs to be `/terraform/environments/prod`).
+Once the Workspace is initialized in Terraform, its settings can be configured in [the Terraform UI](https://app.terraform.io/app). Change the Terraform Working Directory to the relative path in this repo (e.g. for `prod`, it needs to be `/terraform/environments/prod`).
 
 The following Terraform Workspace variables must be defined:
 
