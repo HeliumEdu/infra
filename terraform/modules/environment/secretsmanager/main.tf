@@ -37,7 +37,7 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
       PLATFORM_TWILIO_SMS_FROM               = var.twilio_phone_number
       PLATFORM_AWS_S3_ACCESS_KEY_ID          = var.s3_user_access_key_id
       PLATFORM_AWS_S3_SECRET_ACCESS_KEY      = var.s3_user_secret_access_key
-      PLATFORM_REDIS_HOST                    = "redis://${var.redis_host}"
+      PLATFORM_REDIS_HOST                    = "rediss://:${var.redis_auth_token}@${var.redis_host}:6379?ssl_cert_reqs=required"
       PLATFORM_DB_HOST                       = var.db_host
       PLATFORM_DB_USER                       = var.db_user
       PLATFORM_DB_PASSWORD                   = var.db_password

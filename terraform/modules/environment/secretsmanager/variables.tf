@@ -52,6 +52,11 @@ variable "redis_host" {
   type = string
 }
 
+variable "redis_auth_token" {
+  type      = string
+  sensitive = true
+}
+
 variable "db_host" {
   type = string
 }

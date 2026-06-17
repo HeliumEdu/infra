@@ -8,13 +8,31 @@ resource "aws_iam_access_key" "s3_access_key" {
 }
 
 data "aws_iam_policy_document" "helium_s3" {
+  # Bucket-level: list and locate only. Excludes bucket-policy/ACL/public-access-block
+  # management so a leaked app key cannot expose the private media bucket or delete buckets.
   statement {
     resources = [
-      "arn:aws:s3:::heliumedu.${var.environment}**",
-      "arn:aws:s3:::heliumedu.${var.environment}/**",
-      "arn:aws:s3:::heliumedu.${var.environment}.*/**",
+      "arn:aws:s3:::heliumedu.${var.environment}",
+      "arn:aws:s3:::heliumedu.${var.environment}.*",
     ]
-    actions = ["s3:*"]
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+  }
+
+  # Object-level: read/write/delete media and collected static objects.
+  statement {
+    resources = [
+      "arn:aws:s3:::heliumedu.${var.environment}/*",
+      "arn:aws:s3:::heliumedu.${var.environment}.*/*",
+    ]
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:AbortMultipartUpload",
+    ]
   }
 }
 
