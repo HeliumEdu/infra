@@ -82,18 +82,19 @@ resource "aws_s3_bucket_website_configuration" "www" {
   }
 }
 
-resource "aws_acm_certificate" "landing" {
-  domain_name       = "landing.heliumedu.com"
-  validation_method = "DNS"
+resource "aws_acm_certificate" "marketing" {
+  domain_name               = "www.heliumedu.com"
+  subject_alternative_names = ["landing.heliumedu.com"]
+  validation_method         = "DNS"
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_route53_record" "landing_cert_validation" {
+resource "aws_route53_record" "marketing_cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.landing.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.marketing.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -108,15 +109,15 @@ resource "aws_route53_record" "landing_cert_validation" {
   allow_overwrite = true
 }
 
-resource "aws_acm_certificate_validation" "landing" {
-  certificate_arn         = aws_acm_certificate.landing.arn
-  validation_record_fqdns = [for record in aws_route53_record.landing_cert_validation : record.fqdn]
+resource "aws_acm_certificate_validation" "marketing" {
+  certificate_arn         = aws_acm_certificate.marketing.arn
+  validation_record_fqdns = [for record in aws_route53_record.marketing_cert_validation : record.fqdn]
 }
 
-resource "aws_cloudfront_distribution" "landing" {
+resource "aws_cloudfront_distribution" "marketing" {
   enabled             = true
-  aliases             = ["landing.heliumedu.com"]
-  comment             = "landing.heliumedu.com"
+  aliases             = ["www.heliumedu.com"]
+  comment             = "www.heliumedu.com"
   default_root_object = "index.html"
   price_class         = "PriceClass_100"
 
@@ -158,7 +159,7 @@ resource "aws_cloudfront_distribution" "landing" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn            = aws_acm_certificate_validation.landing.certificate_arn
+    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
   }
@@ -170,14 +171,144 @@ resource "aws_cloudfront_distribution" "landing" {
   }
 }
 
+resource "aws_route53_record" "www_heliumedu_com" {
+  zone_id = data.aws_route53_zone.heliumedu_com.zone_id
+  name    = "www.heliumedu.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.marketing.domain_name
+    zone_id                = aws_cloudfront_distribution.marketing.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+// Redirect-only host: landing.heliumedu.com -> https://www.heliumedu.com{path}
+
+resource "aws_s3_bucket" "landing_redirect" {
+  bucket = "landing.heliumedu.com-redirect"
+}
+
+resource "aws_s3_bucket_public_access_block" "landing_redirect" {
+  bucket = aws_s3_bucket.landing_redirect.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+data "aws_iam_policy_document" "landing_redirect_allow_http_access" {
+  statement {
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    resources = ["${aws_s3_bucket.landing_redirect.arn}/*"]
+    actions   = ["s3:GetObject"]
+  }
+}
+
+resource "aws_s3_bucket_policy" "landing_redirect" {
+  bucket = aws_s3_bucket.landing_redirect.id
+  policy = data.aws_iam_policy_document.landing_redirect_allow_http_access.json
+
+  depends_on = [aws_s3_bucket_public_access_block.landing_redirect]
+}
+
+resource "aws_s3_bucket_website_configuration" "landing_redirect" {
+  bucket = aws_s3_bucket.landing_redirect.bucket
+
+  redirect_all_requests_to {
+    host_name = "www.heliumedu.com"
+    protocol  = "https"
+  }
+}
+
+resource "aws_cloudfront_distribution" "landing_redirect" {
+  enabled     = true
+  aliases     = ["landing.heliumedu.com"]
+  comment     = "landing.heliumedu.com (redirect to www.heliumedu.com)"
+  price_class = "PriceClass_100"
+
+  origin {
+    domain_name = aws_s3_bucket_website_configuration.landing_redirect.website_endpoint
+    origin_id   = "${aws_s3_bucket.landing_redirect.bucket}-origin"
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  default_cache_behavior {
+    target_origin_id = "${aws_s3_bucket.landing_redirect.bucket}-origin"
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    default_ttl            = 0
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = false
+    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1.2_2021"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  // Wait for the marketing distribution's alias swap to release landing.heliumedu.com
+  // before this distribution attempts to claim it.
+  depends_on = [aws_cloudfront_distribution.marketing]
+}
+
 resource "aws_route53_record" "landing" {
   zone_id = data.aws_route53_zone.heliumedu_com.zone_id
   name    = "landing.heliumedu.com"
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.landing.domain_name
-    zone_id                = aws_cloudfront_distribution.landing.hosted_zone_id
+    name                   = aws_cloudfront_distribution.landing_redirect.domain_name
+    zone_id                = aws_cloudfront_distribution.landing_redirect.hosted_zone_id
     evaluate_target_health = false
   }
+}
+
+// Migration shims: rename existing resources rather than destroy/recreate to avoid
+// disruption during apply. After this PR settles, these moved blocks can be removed.
+
+moved {
+  from = aws_acm_certificate.landing
+  to   = aws_acm_certificate.marketing
+}
+
+moved {
+  from = aws_route53_record.landing_cert_validation
+  to   = aws_route53_record.marketing_cert_validation
+}
+
+moved {
+  from = aws_acm_certificate_validation.landing
+  to   = aws_acm_certificate_validation.marketing
+}
+
+moved {
+  from = aws_cloudfront_distribution.landing
+  to   = aws_cloudfront_distribution.marketing
 }
