@@ -159,6 +159,10 @@ resource "aws_ecs_task_definition" "platform_api_service" {
         {
           name  = "TZ"
           value = "UTC"
+        },
+        {
+          name  = "PLATFORM_MINIMUM_SUPPORTED_VERSION"
+          value = var.minimum_supported_version
         }
       ]
       logConfiguration = {
