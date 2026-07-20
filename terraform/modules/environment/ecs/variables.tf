@@ -2,6 +2,12 @@ variable "helium_version" {
   description = "The container versions to deploy"
 }
 
+variable "minimum_supported_version" {
+  description = "Oldest client version the API still supports; older clients are forced to update"
+  type        = string
+  default     = "0.0.0"
+}
+
 variable "default_arch" {
   description = "The target arch of container builds"
   type        = string
