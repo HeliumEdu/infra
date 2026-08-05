@@ -28,18 +28,6 @@ variable "smtp_email_password" {
   type = string
 }
 
-variable "twilio_account_sid" {
-  type = string
-}
-
-variable "twilio_auth_token" {
-  type = string
-}
-
-variable "twilio_phone_number" {
-  type = string
-}
-
 variable "s3_user_access_key_id" {
   type = string
 }

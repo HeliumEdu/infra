@@ -13,16 +13,6 @@ variable "aws_region" {
   default     = "us-east-2"
 }
 
-variable "helium_area_code" {
-  description = "The area code for the Helium phone number"
-  default     = "815"
-}
-
-variable "ci_area_code" {
-  description = "The area code for the CI test phone number"
-  default     = "815"
-}
-
 variable "heliumedu_com_zone_id" {
   description = "For non-prod zones, this is used to link the env's subdomain in the parent domain"
 }
@@ -51,20 +41,3 @@ variable "AWS_SECRET_ACCESS_KEY" {
   sensitive   = true
 }
 
-variable "TWILIO_ACCOUNT_SID" {
-  description = "The Twilio account SID"
-  sensitive   = true
-}
-
-variable "TWILIO_AUTH_TOKEN" {
-  description = "The Twilio auth token"
-  sensitive   = true
-}
-
-variable "HELIUM_TWIML_HANDLER_URL" {
-  description = "The URL for the Helium TwiML Bin"
-}
-
-variable "CI_TWIML_HANDLER_URL" {
-  description = "The URL for the CI TwiML Bin"
-}

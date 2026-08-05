@@ -18,15 +18,6 @@ variable "heliumstudy_com_cert_arn" {
   type        = string
 }
 
-variable "s3_bucket" {
-  description = "The S3 bucket to host"
-  type        = string
-}
-
-variable "s3_website_endpoint" {
-  default = "The endpoint for the S3 site"
-}
-
 variable "s3_frontend_app_bucket" {
   description = "The S3 bucket for the Flutter app frontend"
   type        = string

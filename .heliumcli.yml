@@ -10,11 +10,7 @@ projects:
 - platform
 - frontend
 - www
-- cluster-tests
-- frontend-legacy
-releaseProjects:
-- cluster-tests
-- frontend-legacy
+releaseProjects: []
 projectsRelativeDir: projects
 remoteName: origin
 serverBinFilename: bin/runserver
