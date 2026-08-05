@@ -111,8 +111,6 @@ module "cloudfront" {
 
   environment                         = var.environment
   environment_prefix                  = var.environment_prefix
-  s3_bucket                           = module.s3.heliumedu_s3_frontend_bucket_name
-  s3_website_endpoint                 = module.s3.heliumedu_s3_website_endpoint
   s3_frontend_app_bucket              = module.s3.heliumedu_s3_frontend_app_bucket_name
   s3_frontend_app_website_endpoint    = module.s3.heliumedu_s3_frontend_app_website_endpoint
   s3_ci_frontend_app_website_endpoint = module.s3.heliumedu_ci_s3_frontend_app_website_endpoint
@@ -155,9 +153,6 @@ module "secretsmanager" {
   smtp_email_user               = module.ses.smtp_username
   smtp_email_password           = module.ses.smtp_password
   ci_app_host                   = module.cloudfront.ci_frontend_app_cloudfront_domain_name
-  twilio_account_sid            = var.TWILIO_ACCOUNT_SID
-  twilio_auth_token             = var.TWILIO_AUTH_TOKEN
-  twilio_phone_number           = module.twilio.helium_phone_number
   firebase_project_id           = var.FIREBASE_PROJECT_ID
   firebase_private_key_id       = var.FIREBASE_PRIVATE_KEY_ID
   firebase_private_key          = var.FIREBASE_PRIVATE_KEY
@@ -166,14 +161,4 @@ module "secretsmanager" {
   firebase_client_x509_cert_url = var.FIREBASE_CLIENT_X509_CERT_URL
   ga4_measurement_id            = var.GA4_MEASUREMENT_ID
   ga4_api_secret                = var.GA4_API_SECRET
-}
-
-module "twilio" {
-  source = "../../modules/environment/twilio"
-
-  environment              = var.environment
-  helium_area_code         = var.helium_area_code
-  ci_area_code             = var.ci_area_code
-  helium_twiml_handler_url = var.HELIUM_TWIML_HANDLER_URL
-  ci_twiml_handler_url     = var.CI_TWIML_HANDLER_URL
 }

@@ -3,24 +3,6 @@ locals {
   platform_usage_text = "Helium is open source, and usage details for this image be found at https://github.com/heliumedu/platform."
 }
 
-resource "aws_ecrpublic_repository" "repository_helium_frontend" {
-  repository_name = "helium/frontend"
-
-  catalog_data {
-    operating_systems = ["Linux"]
-    architectures     = ["x86-64", "ARM 64"]
-    logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
-    description       = "Images for the frontend-legacy containers."
-    about_text        = local.about_text
-    usage_text        = "HeliumEdu is open source, and usage details for this image be found at https://github.com/heliumedu/frontend-legacy."
-  }
-
-  tags = {
-    Environment = "N/A"
-    Service     = "HeliumEdu"
-  }
-}
-
 resource "aws_ecrpublic_repository" "repository_helium_frontend_web" {
   repository_name = "helium/frontend-web"
 
