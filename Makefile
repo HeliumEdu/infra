@@ -2,7 +2,7 @@
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-HELIUMCLI_PROJECTS ?= '["platform", "frontend"]'
+PROJECTS ?= platform frontend www
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
@@ -15,7 +15,7 @@ install-reqs:
 install: install-reqs
 	$(PYTHON_BIN) -m pip install -r requirements.txt
 
-	@HELIUMCLI_FORCE_FETCH=True HELIUMCLI_SKIP_UPDATE_PULL=True HELIUMCLI_PROJECTS=$(HELIUMCLI_PROJECTS) helium-cli update-projects
+	@PROJECTS="$(PROJECTS)" ./bin/update-projects.sh
 
 build: install
 	PLATFORM=$(PLATFORM) make -C projects/platform build-docker
