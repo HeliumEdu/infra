@@ -1764,7 +1764,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Any schedule (cumulative)"
+              alias_name = "Uses schedules"
             }
           }
           request {
@@ -1773,7 +1773,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Multiple schedules"
+              alias_name = "Has multiple schedules"
             }
           }
         }
