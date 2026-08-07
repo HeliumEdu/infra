@@ -1753,7 +1753,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
       # `rotating_schedules` line here when HE-328 (rotating / A-B schedules) ships.
       widget {
         timeseries_definition {
-          title         = "Class Schedule Adoption (% of Active Users)"
+          title         = "Class Schedules"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
