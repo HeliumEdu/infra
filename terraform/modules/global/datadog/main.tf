@@ -1748,6 +1748,38 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
+      widget {
+        query_value_definition {
+          title       = "Class Schedules"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          live_span   = "3mo"
+          request {
+            q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<"
+              value      = 5
+              palette    = "white_on_red"
+            }
+            conditional_formats {
+              comparator = "<"
+              value      = 25
+              palette    = "white_on_yellow"
+            }
+            conditional_formats {
+              comparator = ">="
+              value      = 25
+              palette    = "white_on_green"
+            }
+          }
+          timeseries_background {
+            type = "area"
+          }
+        }
+      }
     }
   }
 }
