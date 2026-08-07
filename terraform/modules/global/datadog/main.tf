@@ -1748,67 +1748,33 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
+      # Class-schedule adoption family on one graph: `class_schedules` is the cumulative umbrella
+      # (any schedule), with the finer sub-types layered as their own lines. Add a
+      # `rotating_schedules` line here when HE-328 (rotating / A-B schedules) ships.
       widget {
-        query_value_definition {
-          title       = "Class Schedules"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          live_span   = "3mo"
+        timeseries_definition {
+          title         = "Class Schedule Adoption (% of Active Users)"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
           request {
-            q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
-            }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
+            q            = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Any schedule (cumulative)"
             }
           }
-          timeseries_background {
-            type = "area"
-          }
-        }
-      }
-      widget {
-        query_value_definition {
-          title       = "Multiple Schedules"
-          title_size  = "16"
-          title_align = "left"
-          precision   = 0
-          custom_unit = "%"
-          live_span   = "3mo"
           request {
-            q          = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
-            aggregator = "last"
-            conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+            q            = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
+              alias_name = "Multiple schedules"
             }
-            conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
-            }
-            conditional_formats {
-              comparator = ">="
-              value      = 25
-              palette    = "white_on_green"
-            }
-          }
-          timeseries_background {
-            type = "area"
           }
         }
       }
