@@ -221,6 +221,29 @@ resource "aws_s3_bucket_lifecycle_configuration" "helium_alb_logs_lifecycle" {
   }
 }
 
+// Buckets only created once, for production
+
+resource "aws_s3_bucket" "heliumedu" {
+  count = var.environment == "prod" ? 1 : 0
+
+  bucket = "heliumedu"
+
+  tags = {
+    Environment = "N/A"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
+  count = var.environment == "prod" ? 1 : 0
+
+  bucket = aws_s3_bucket.heliumedu[0].id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 // CI preview bucket
 
 resource "aws_s3_bucket" "heliumedu_ci_frontend_app_static" {
