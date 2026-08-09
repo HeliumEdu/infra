@@ -20,11 +20,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     defaults = ["*"]
   }
   template_variable {
-    name     = "version"
-    prefix   = "version"
-    defaults = ["*"]
-  }
-  template_variable {
     name     = "staff"
     prefix   = "staff"
     defaults = ["false"]
@@ -46,7 +41,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $version, $user_agent} by {client}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent} by {client}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -60,7 +55,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $version, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path}.as_count()"
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -72,7 +67,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale = false
           precision = 0
           request {
-            q          = "default_zero(sum:platform.action.user.verified{$env,$version, $user_agent, staff:false}.as_count())"
+            q          = "default_zero(sum:platform.action.user.verified{$env, $user_agent, staff:false}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -84,7 +79,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale = false
           precision = 0
           request {
-            q          = "default_zero(sum:platform.task{$env,$version, $user_agent,staff:false,name:user.delete}.as_count())"
+            q          = "default_zero(sum:platform.task{$env, $user_agent,staff:false,name:user.delete}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -96,7 +91,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_size  = "16"
           title_align = "left"
           request {
-            q = "avg:platform.request.timing.95percentile{$env, $user_agent, $authenticated, $version} by {path}"
+            q = "avg:platform.request.timing.95percentile{$env, $user_agent, $authenticated} by {path}"
           }
         }
       }
@@ -108,11 +103,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env, $version}, 86400, 'avg')"
+            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env}, 86400, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env, $version}, 86400, 'avg')"
+              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env}, 86400, 'avg')"
               alias_name = "Setup Duration (1d rolling avg)"
             }
           }
@@ -147,7 +142,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.task.failed{$env, $version} by {name}.as_count()"
+            q            = "sum:platform.task.failed{$env} by {name}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -159,11 +154,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.external.firebase.failed{$env, $version}.as_count()"
+            q            = "sum:platform.external.firebase.failed{$env}.as_count()"
             display_type = "bars"
             style { palette = "red" }
             metadata {
-              expression = "sum:platform.external.firebase.failed{$env, $version}.as_count()"
+              expression = "sum:platform.external.firebase.failed{$env}.as_count()"
               alias_name = "Firebase Failures"
             }
           }
@@ -175,11 +170,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.push.failed{$env, $version}.as_count()"
+            q            = "sum:platform.action.push.failed{$env}.as_count()"
             display_type = "bars"
             style { palette = "red" }
             metadata {
-              expression = "sum:platform.action.push.failed{$env, $version}.as_count()"
+              expression = "sum:platform.action.push.failed{$env}.as_count()"
               alias_name = "Push Failures"
             }
           }
@@ -191,11 +186,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.email.failed{$env, $version}.as_count()"
+            q            = "sum:platform.action.email.failed{$env}.as_count()"
             display_type = "bars"
             style { palette = "red" }
             metadata {
-              expression = "sum:platform.action.email.failed{$env, $version}.as_count()"
+              expression = "sum:platform.action.email.failed{$env}.as_count()"
               alias_name = "Email Failures"
             }
           }
@@ -207,7 +202,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.feed.ical.failed{$env, $version} by {reason}.as_count()"
+            q            = "sum:platform.feed.ical.failed{$env} by {reason}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -286,7 +281,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "top(sum:platform.request{$env, $staff, $authenticated, $version, $user_agent} by {path}.as_count(), 10, 'sum', 'desc')"
+            q            = "top(sum:platform.request{$env, $staff, $authenticated, $user_agent} by {path}.as_count(), 10, 'sum', 'desc')"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -300,7 +295,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "top(avg:platform.request.timing.95percentile{$env, $authenticated, $version, $user_agent} by {path}, 5, 'mean', 'desc')"
+            q            = "top(avg:platform.request.timing.95percentile{$env, $authenticated, $user_agent} by {path}, 5, 'mean', 'desc')"
             display_type = "line"
             style { palette = "warm" }
           }
@@ -312,7 +307,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:500, $env, $authenticated, $version, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:500, $env, $authenticated, $user_agent} by {path}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -324,7 +319,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:400, $env, $staff, $authenticated, $version, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:400, $env, $staff, $authenticated, $user_agent} by {path}.as_count()"
             display_type = "bars"
             style { palette = "orange" }
           }
@@ -336,7 +331,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:429, $env, $staff, $authenticated, $version, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:429, $env, $staff, $authenticated, $user_agent} by {path}.as_count()"
             display_type = "bars"
             style { palette = "orange" }
           }
@@ -348,7 +343,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env,status_code:200, method:get,$user_agent, $version ,path:feed.private.*.ics} by {path}.as_count()"
+            q            = "sum:platform.request{$env,status_code:200, method:get,$user_agent,path:feed.private.*.ics} by {path}.as_count()"
             display_type = "bars"
             style { palette = "green" }
           }
@@ -360,11 +355,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, $version, path:feed.externalcalendars.events}.as_count()"
+            q            = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, path:feed.externalcalendars.events}.as_count()"
             display_type = "bars"
             style { palette = "green" }
             metadata {
-              expression = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, $version, path:feed.externalcalendars.events}.as_count()"
+              expression = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, path:feed.externalcalendars.events}.as_count()"
               alias_name = "path:feed.externalcalendars.events"
             }
           }
@@ -378,7 +373,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $version, path:importexport.*} by {path}.as_count()"
+            q            = "sum:platform.request{$env, $staff, path:importexport.*} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -520,7 +515,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.reminder.sent{$env, $version} by {channel}.as_count()"
+            q            = "sum:platform.action.reminder.sent{$env} by {channel}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -532,11 +527,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.email.sent{$env, $version, !type:reminder} by {type}.as_count()"
+            q            = "sum:platform.action.email.sent{$env, !type:reminder} by {type}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:platform.action.email.sent{$env, $version, !type:reminder} by {type}.as_count()"
+              expression = "sum:platform.action.email.sent{$env, !type:reminder} by {type}.as_count()"
               alias_name = "Emails"
             }
           }
@@ -548,11 +543,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.task{$env, $version, name:token.refresh.*} by {name}.as_count()"
+            q            = "sum:platform.task{$env, name:token.refresh.*} by {name}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
             metadata {
-              expression = "sum:platform.task{$env, $version, name:token.refresh.*} by {name}.as_count()"
+              expression = "sum:platform.task{$env, name:token.refresh.*} by {name}.as_count()"
               alias_name = "Refresh Tokens"
             }
           }
@@ -564,11 +559,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.task{$env, $version, name:user.dangling.purge}.as_count()"
+            q            = "sum:platform.task{$env, name:user.dangling.purge}.as_count()"
             display_type = "bars"
             style { palette = "blue" }
             metadata {
-              expression = "sum:platform.task{$env, $version, name:user.dangling.purge}.as_count()"
+              expression = "sum:platform.task{$env, name:user.dangling.purge}.as_count()"
               alias_name = "Dangling Purged"
             }
           }
