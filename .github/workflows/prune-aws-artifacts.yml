@@ -26,6 +26,7 @@ jobs:
     name: Prune ECR (${{ matrix.repository }})
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     strategy:
       fail-fast: false
@@ -83,6 +84,7 @@ jobs:
     name: Prune S3 (frontend-web)
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Prune old build artifacts
