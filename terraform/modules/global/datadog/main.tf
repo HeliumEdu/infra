@@ -1531,24 +1531,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1568,24 +1576,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1605,24 +1621,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1642,24 +1666,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1679,24 +1711,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1716,24 +1756,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1753,24 +1801,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1793,24 +1849,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
@@ -1830,24 +1894,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<="
-              value      = 3
-              palette    = "red"
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 10
-              palette    = "orange"
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = "<="
-              value      = 25
-              palette    = "blue"
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
             }
             conditional_formats {
-              comparator = ">"
-              value      = 25
-              palette    = "green"
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
             }
           }
           timeseries_background {
