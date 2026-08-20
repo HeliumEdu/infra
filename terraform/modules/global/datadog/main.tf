@@ -1531,19 +1531,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1563,19 +1568,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1595,19 +1605,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1627,19 +1642,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1659,19 +1679,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1691,19 +1716,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1723,19 +1753,24 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
-              comparator = "<"
-              value      = 5
-              palette    = "white_on_red"
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
             conditional_formats {
-              comparator = "<"
-              value      = 25
-              palette    = "white_on_yellow"
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
             }
             conditional_formats {
-              comparator = ">="
+              comparator = "<="
               value      = 25
-              palette    = "white_on_green"
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
           timeseries_background {
@@ -1743,33 +1778,80 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
-      # Class-schedule adoption family on one graph: `class_schedules` is the cumulative umbrella
-      # (any schedule), with the finer sub-types layered as their own lines. Add a
-      # `rotating_schedules` line here when HE-328 (rotating / A-B schedules) ships.
+      # Class-schedule adoption family, one tile per sub-type: `class_schedules` is the cumulative
+      # umbrella (any schedule) and `multiple_schedules` is the finer sub-type. Add a
+      # `rotating_schedules` tile here when HE-328 (rotating / A-B schedules) ships.
       widget {
-        timeseries_definition {
-          title         = "Class Schedules"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
+        query_value_definition {
+          title       = "Class Schedules"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          live_span   = "3mo"
           request {
-            q            = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Uses schedules (%)"
+            q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<="
+              value      = 3
+              palette    = "red"
+            }
+            conditional_formats {
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
+            }
+            conditional_formats {
+              comparator = "<="
+              value      = 25
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
             }
           }
+          timeseries_background {
+            type = "area"
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Multiple Schedules"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          live_span   = "3mo"
           request {
-            q            = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
-            display_type = "line"
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
-              alias_name = "Has multiple schedules (%)"
+            q          = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
+            aggregator = "last"
+            conditional_formats {
+              comparator = "<="
+              value      = 3
+              palette    = "red"
             }
+            conditional_formats {
+              comparator = "<="
+              value      = 10
+              palette    = "orange"
+            }
+            conditional_formats {
+              comparator = "<="
+              value      = 25
+              palette    = "blue"
+            }
+            conditional_formats {
+              comparator = ">"
+              value      = 25
+              palette    = "green"
+            }
+          }
+          timeseries_background {
+            type = "area"
           }
         }
       }
