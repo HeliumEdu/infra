@@ -51,7 +51,7 @@ resource "datadog_monitor" "feed_reindex_slowdown" {
   type     = "query alert"
   query    = "avg(last_1d):avg:platform.task.timing.95percentile{env:prod, name:feed.reindex} / 1000 > 180"
   message  = <<-EOT
-    Feed reindex p95 runtime has averaged above {{ threshold }}s over the last day. Reindex is async and not user-facing, so this is a non-urgent heads-up that task performance is drifting — a good time to look at reindex efficiency or worker scaling.
+    Reindex of Feeds in the cache has averaged above {{ threshold }} seconds (p95) over the last day.
 
     Notify: @support@heliumedu.com
   EOT
@@ -96,7 +96,7 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
 resource "datadog_monitor" "low_push_notification_traffic" {
   name     = "Low Push Notification Traffic"
   type     = "query alert"
-  query    = "sum(last_24h):sum:platform.action.push.sent{env:prod}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.action.push.sent{env:prod}.as_count() < 1"
   message  = <<-EOT
     Push notifications sent are below {{ threshold }} in the last 24 hours. The Helium platform or Firebase service may need investigation.
 
@@ -110,8 +110,8 @@ resource "datadog_monitor" "low_push_notification_traffic" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 10
-    critical = 5
+    warning  = 5
+    critical = 1
   }
 
   tags = ["managed_by:terraform", "alert_type:informational"]
@@ -365,7 +365,7 @@ resource "datadog_monitor" "api_5xx_spike" {
   message           = <<-EOT
     API 5xx error spike detected. Investigate:
     - App-level 500s: the platform may be experiencing errors (check Sentry)
-    - ALB ELB 5xx: ALB-generated errors (502/503/504) — ECS targets may be unhealthy or unreachable
+    - ALB ELB 5xx: ALB-generated errors (502/503/504); ECS targets may be unhealthy or unreachable
     - ALB Target 5xx: backend returning 5xx as seen by the ALB
 
     Notify: @support@heliumedu.com
@@ -404,7 +404,7 @@ resource "datadog_monitor" "ses_bounce_rate" {
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.05"
   message  = <<-EOT
-    SES account bounce rate has exceeded 5% over the last 24 hours — the level at which AWS begins reviewing accounts (suspension risk at 10%).
+    SES account bounce rate has exceeded 5% over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
 
     Investigate recent email sends for invalid addresses or unexpected bounce patterns.
 
@@ -428,11 +428,11 @@ resource "datadog_monitor" "ses_bounce_rate" {
 resource "datadog_monitor" "ses_complaint_rate" {
   name     = "SES Complaint Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.001"
+  query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.003"
   message  = <<-EOT
-    SES account complaint rate has exceeded 0.1% over the last 24 hours — the level at which AWS begins reviewing accounts (suspension risk at 0.5%).
+    SES account complaint rate has exceeded 0.3% over the last 24 hours. AWS begins reviewing accounts at 0.1% and may suspend sending at 0.5%.
 
-    Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints — investigate for bugs or unexpected send volume instead.
+    Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints; investigate for bugs or unexpected send volume instead.
 
     Notify: @support@heliumedu.com
   EOT
@@ -444,8 +444,7 @@ resource "datadog_monitor" "ses_complaint_rate" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 0.0005
-    critical = 0.001
+    critical = 0.003
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
@@ -509,7 +508,7 @@ resource "datadog_monitor" "client_4xx_anomaly" {
   type     = "query alert"
   query    = "avg(last_4h):anomalies(sum:platform.request{env:prod AND (status_code:400 OR status_code:404 OR status_code:422)}.as_count(), 'agile', 3) >= 1"
   message  = <<-EOT
-    Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. This usually means a client build shipped a bad request contract. Slice the platform.request graph by path and client_version to find the offending endpoint/release.
+    Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. Slice platform.request by path and client_version to find the offending endpoint or release.
 
     Notify: @support@heliumedu.com
   EOT
