@@ -16,6 +16,7 @@ module "hcp_notifications" {
   recipient_user_id = data.tfe_organization_membership.notification_recipient.user_id
 
   workspaces = {
+    "global"    = { enabled = true }
     "prod"      = { enabled = true }
     "dev"       = { enabled = var.dev_env_enabled }
     "dev-local" = { enabled = true }
