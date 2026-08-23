@@ -15,6 +15,16 @@ resource "datadog_dashboard" "helium_heads_up" {
     defaults = ["*"]
   }
   template_variable {
+    name     = "client"
+    prefix   = "client"
+    defaults = ["*"]
+  }
+  template_variable {
+    name     = "client_os"
+    prefix   = "client_os"
+    defaults = ["*"]
+  }
+  template_variable {
     name     = "authenticated"
     prefix   = "authenticated"
     defaults = ["*"]
@@ -41,7 +51,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent} by {client,client_os}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os} by {client,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -55,7 +65,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
+            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -281,7 +291,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "top(sum:platform.request{$env, $staff, $authenticated, $user_agent} by {path}.as_count(), 10, 'sum', 'desc')"
+            q            = "top(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os} by {path}.as_count(), 10, 'sum', 'desc')"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -307,7 +317,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:500, $env, $authenticated, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:500, $env, $authenticated, $user_agent, $client, $client_os} by {path}.as_count()"
             display_type = "bars"
             style { palette = "red" }
           }
@@ -319,7 +329,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:400, $env, $staff, $authenticated, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:400, $env, $staff, $authenticated, $user_agent, $client, $client_os} by {path}.as_count()"
             display_type = "bars"
             style { palette = "orange" }
           }
@@ -331,7 +341,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{status_code:429, $env, $staff, $authenticated, $user_agent} by {path}.as_count()"
+            q            = "sum:platform.request{status_code:429, $env, $staff, $authenticated, $user_agent, $client, $client_os} by {path}.as_count()"
             display_type = "bars"
             style { palette = "orange" }
           }
@@ -343,7 +353,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env,status_code:200, method:get,$user_agent,path:feed.private.*.ics} by {path}.as_count()"
+            q            = "sum:platform.request{$env,status_code:200, method:get,$user_agent, $client, $client_os,path:feed.private.*.ics} by {path}.as_count()"
             display_type = "bars"
             style { palette = "green" }
           }
@@ -355,11 +365,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, path:feed.externalcalendars.events}.as_count()"
+            q            = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, $client, $client_os, path:feed.externalcalendars.events}.as_count()"
             display_type = "bars"
             style { palette = "green" }
             metadata {
-              expression = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, path:feed.externalcalendars.events}.as_count()"
+              expression = "sum:platform.request{$env, $staff, status_code:200, method:get, $user_agent, $client, $client_os, path:feed.externalcalendars.events}.as_count()"
               alias_name = "path:feed.externalcalendars.events"
             }
           }
@@ -373,7 +383,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, path:importexport.*} by {path}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, path:importexport.*} by {path}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -923,6 +933,21 @@ resource "datadog_dashboard" "helium_user_behavior" {
     defaults = ["prod"]
   }
   template_variable {
+    name     = "user_agent"
+    prefix   = "user_agent"
+    defaults = ["*"]
+  }
+  template_variable {
+    name     = "client"
+    prefix   = "client"
+    defaults = ["*"]
+  }
+  template_variable {
+    name     = "client_os"
+    prefix   = "client_os"
+    defaults = ["*"]
+  }
+  template_variable {
     name     = "staff"
     prefix   = "staff"
     defaults = ["false"]
@@ -985,7 +1010,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
+            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
