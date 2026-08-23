@@ -507,7 +507,7 @@ resource "datadog_monitor" "rds_connection_config" {
 resource "datadog_monitor" "client_4xx_anomaly" {
   name     = "Client 4xx Error Anomaly"
   type     = "query alert"
-  query    = "avg(last_4h):anomalies(sum:platform.request{env:prod, status_code IN (400,404,422)}.as_count(), 'agile', 3) >= 1"
+  query    = "avg(last_4h):anomalies(sum:platform.request{env:prod AND (status_code:400 OR status_code:404 OR status_code:422)}.as_count(), 'agile', 3) >= 1"
   message  = <<-EOT
     Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. This usually means a client build shipped a bad request contract. Slice the platform.request graph by path and client_version to find the offending endpoint/release.
 
