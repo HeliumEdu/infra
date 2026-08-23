@@ -1,15 +1,18 @@
 resource "datadog_monitor" "low_email_traffic" {
   name     = "Low Email Traffic"
   type     = "query alert"
-  query    = "sum(last_4h):sum:platform.action.email.sent{env:prod}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.action.email.sent{env:prod}.as_count() < 5"
   message  = <<-EOT
-    Emails sent are below {{ threshold }} in the last 4 hours. The Helium platform or AWS SES service may need investigation.
+    Emails sent are below {{ threshold }} in the last 24 hours. The Helium platform or AWS SES service may need investigation.
+
+    Notify: @support@heliumedu.com
   EOT
   priority = 5
 
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 10
@@ -22,15 +25,18 @@ resource "datadog_monitor" "low_email_traffic" {
 resource "datadog_monitor" "token_api_low_traffic" {
   name     = "Low Login Traffic (/token)"
   type     = "query alert"
-  query    = "sum(last_4h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 5"
   message  = <<-EOT
-    Successful logins on /token are below {{ threshold }} in the last 4 hours.
+    Successful logins on /token are below {{ threshold }} in the last 24 hours.
+
+    Notify: @support@heliumedu.com
   EOT
   priority = 5
 
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 10
@@ -40,12 +46,12 @@ resource "datadog_monitor" "token_api_low_traffic" {
   tags = ["managed_by:terraform", "alert_type:informational"]
 }
 
-resource "datadog_monitor" "feed_reindex_time_exceeded" {
-  name     = "Feed Reindex Time Exceeded Threshold"
+resource "datadog_monitor" "feed_reindex_slowdown" {
+  name     = "Feed Reindex Slowdown"
   type     = "query alert"
-  query    = "sum(last_1h):max:platform.task.timing.avg{env:prod, name:feed.reindex} / 1000 > 300"
+  query    = "avg(last_1d):avg:platform.task.timing.95percentile{env:prod, name:feed.reindex} / 1000 > 180"
   message  = <<-EOT
-    Reindex of Feeds in the cache exceeded {{ threshold }} seconds.
+    Feed reindex p95 runtime has averaged above {{ threshold }}s over the last day. Reindex is async and not user-facing, so this is a non-urgent heads-up that task performance is drifting — a good time to look at reindex efficiency or worker scaling.
 
     Notify: @support@heliumedu.com
   EOT
@@ -57,7 +63,7 @@ resource "datadog_monitor" "feed_reindex_time_exceeded" {
 
   monitor_thresholds {
     warning  = 120
-    critical = 300
+    critical = 180
   }
 
   tags = ["managed_by:terraform", "alert_type:informational"]
@@ -66,15 +72,18 @@ resource "datadog_monitor" "feed_reindex_time_exceeded" {
 resource "datadog_monitor" "token_refresh_api_low_traffic" {
   name     = "Low Session Refresh Traffic (/token/refresh)"
   type     = "query alert"
-  query    = "sum(last_4h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token.refresh}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token.refresh}.as_count() < 5"
   message  = <<-EOT
-    Successful session refreshes on /token/refresh are below {{ threshold }} in the last 4 hours.
+    Successful session refreshes on /token/refresh are below {{ threshold }} in the last 24 hours.
+
+    Notify: @support@heliumedu.com
   EOT
   priority = 5
 
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 10
@@ -87,15 +96,18 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
 resource "datadog_monitor" "low_push_notification_traffic" {
   name     = "Low Push Notification Traffic"
   type     = "query alert"
-  query    = "sum(last_4h):sum:platform.action.push.sent{env:prod}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.action.push.sent{env:prod}.as_count() < 5"
   message  = <<-EOT
-    Push notifications sent are below {{ threshold }} in the last 4 hours. The Helium platform or Firebase service may need investigation.
+    Push notifications sent are below {{ threshold }} in the last 24 hours. The Helium platform or Firebase service may need investigation.
+
+    Notify: @support@heliumedu.com
   EOT
   priority = 5
 
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 10
@@ -119,6 +131,7 @@ resource "datadog_monitor" "email_delivery_failures" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     critical = 5
@@ -141,6 +154,7 @@ resource "datadog_monitor" "push_delivery_failures" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     critical = 5
@@ -181,6 +195,7 @@ resource "datadog_monitor" "calendar_sync_failures" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     critical = 5
@@ -203,6 +218,7 @@ resource "datadog_monitor" "firebase_oauth_failures" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     critical = 5
@@ -225,40 +241,13 @@ resource "datadog_monitor" "task_failures" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     critical = 5
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
-}
-
-resource "datadog_monitor" "api_undersized" {
-  name     = "API Tasks Undersized"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ecs.cpuutilization{clustername:helium_prod, servicename:*api*} > 60"
-  message  = <<-EOT
-    API CPU utilization has averaged above {{ threshold }}% for the last 24 hours.
-
-    This sustained high utilization indicates your API tasks are undersized. Consider:
-    - Increasing task CPU allocation in ECS task definition
-    - Increasing Gunicorn workers/threads if memory allows
-    - Raising platform_host_min for more baseline capacity
-
-    Notify: @support@heliumedu.com
-  EOT
-  priority = 4
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-
-  monitor_thresholds {
-    warning  = 50
-    critical = 60
-  }
-
-  tags = ["managed_by:terraform", "alert_type:config"]
 }
 
 resource "datadog_monitor" "worker_undersized" {
@@ -280,6 +269,7 @@ resource "datadog_monitor" "worker_undersized" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 50
@@ -289,54 +279,10 @@ resource "datadog_monitor" "worker_undersized" {
   tags = ["managed_by:terraform", "alert_type:config"]
 }
 
-resource "datadog_monitor" "api_autoscale_triggered" {
-  name     = "API Autoscaling Triggered"
-  type     = "query alert"
-  query    = "avg(last_5m):avg:aws.ecs.service.running{clustername:helium_prod, servicename:*api*} > 1"
-  message  = <<-EOT
-    API service has scaled to {{ value }} tasks (above baseline of 1). This is informational.
-
-    @support@heliumedu.com
-  EOT
-  priority = 5
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-
-  monitor_thresholds {
-    critical = 1
-  }
-
-  tags = ["managed_by:terraform", "alert_type:informational"]
-}
-
-resource "datadog_monitor" "worker_autoscale_triggered" {
-  name     = "Worker Autoscaling Triggered"
-  type     = "query alert"
-  query    = "avg(last_5m):avg:aws.ecs.service.running{clustername:helium_prod, servicename:*worker*} > 1"
-  message  = <<-EOT
-    Worker service has scaled to {{ value }} tasks (above baseline of 1). This is informational.
-
-    @support@heliumedu.com
-  EOT
-  priority = 5
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-
-  monitor_thresholds {
-    critical = 1
-  }
-
-  tags = ["managed_by:terraform", "alert_type:informational"]
-}
-
 resource "datadog_monitor" "api_slow_responses" {
   name     = "API Response Times Degraded"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.95percentile{env:prod} / 1000 > 3000"
+  query    = "avg(last_1d):avg:platform.request.timing.95percentile{env:prod} > 3000"
   message  = <<-EOT
     API p95 response time has averaged above {{ threshold }}ms for the last 24 hours.
 
@@ -352,6 +298,7 @@ resource "datadog_monitor" "api_slow_responses" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 2000
@@ -361,38 +308,10 @@ resource "datadog_monitor" "api_slow_responses" {
   tags = ["managed_by:terraform", "alert_type:config"]
 }
 
-resource "datadog_monitor" "api_capacity_config" {
-  name     = "API Capacity Configuration Wrong"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:aws.applicationelb.active_connection_count{name:helium-prod} / avg:aws.ecs.service.running{clustername:helium_prod, servicename:*api*} > 18"
-  message  = <<-EOT
-    Average connections per API task has been above {{ threshold }} for the last 24 hours.
-
-    With 24 concurrent connections per task (3 workers × 8 threads), sustained high utilization means your capacity configuration needs adjustment:
-    - Increase platform_host_min for more baseline capacity
-    - Increase Gunicorn workers/threads per task (via GUNICORN_WORKERS / GUNICORN_THREADS env vars)
-    - Increase task CPU/memory to support more workers
-
-    Notify: @support@heliumedu.com
-  EOT
-  priority = 4
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-
-  monitor_thresholds {
-    warning  = 14
-    critical = 18
-  }
-
-  tags = ["managed_by:terraform", "alert_type:config"]
-}
-
 resource "datadog_monitor" "redis_needs_upgrade" {
   name     = "Redis Instance Needs Upgrade"
   type     = "query alert"
-  query    = "avg(last_1d):100 - (avg:aws.elasticache.freeable_memory{name:helium-prod} / 1000000000 * 100) > 70"
+  query    = "avg(last_1d):avg:aws.elasticache.database_memory_usage_percentage{replication_group:helium-prod} > 70"
   message  = <<-EOT
     Redis memory utilization has averaged above {{ threshold }}% for the last 24 hours.
 
@@ -408,6 +327,7 @@ resource "datadog_monitor" "redis_needs_upgrade" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 60
@@ -427,6 +347,7 @@ resource "datadog_monitor" "api_5xx_alb_child" {
   include_tags        = false
   on_missing_data     = "resolve"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 1
@@ -437,10 +358,11 @@ resource "datadog_monitor" "api_5xx_alb_child" {
 }
 
 resource "datadog_monitor" "api_5xx_spike" {
-  name     = "API 5xx Error Spike"
-  type     = "composite"
-  query    = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id}"
-  message  = <<-EOT
+  name              = "API 5xx Error Spike"
+  type              = "composite"
+  query             = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id}"
+  renotify_interval = 1440
+  message           = <<-EOT
     API 5xx error spike detected. Investigate:
     - App-level 500s: the platform may be experiencing errors (check Sentry)
     - ALB ELB 5xx: ALB-generated errors (502/503/504) — ECS targets may be unhealthy or unreachable
@@ -448,7 +370,7 @@ resource "datadog_monitor" "api_5xx_spike" {
 
     Notify: @support@heliumedu.com
   EOT
-  priority = 2
+  priority          = 2
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
@@ -467,6 +389,7 @@ resource "datadog_monitor" "frontend_5xx_spike" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 1
@@ -479,9 +402,9 @@ resource "datadog_monitor" "frontend_5xx_spike" {
 resource "datadog_monitor" "ses_bounce_rate" {
   name     = "SES Bounce Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.025"
+  query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.05"
   message  = <<-EOT
-    SES account bounce rate has exceeded 2.5% over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
+    SES account bounce rate has exceeded 5% over the last 24 hours — the level at which AWS begins reviewing accounts (suspension risk at 10%).
 
     Investigate recent email sends for invalid addresses or unexpected bounce patterns.
 
@@ -492,9 +415,11 @@ resource "datadog_monitor" "ses_bounce_rate" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
-    critical = 0.025
+    warning  = 0.03
+    critical = 0.05
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
@@ -503,9 +428,9 @@ resource "datadog_monitor" "ses_bounce_rate" {
 resource "datadog_monitor" "ses_complaint_rate" {
   name     = "SES Complaint Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.0005"
+  query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.001"
   message  = <<-EOT
-    SES account complaint rate has exceeded 0.05% over the last 24 hours. AWS begins reviewing accounts at 0.1% and may suspend sending at 0.5%.
+    SES account complaint rate has exceeded 0.1% over the last 24 hours — the level at which AWS begins reviewing accounts (suspension risk at 0.5%).
 
     Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints — investigate for bugs or unexpected send volume instead.
 
@@ -516,9 +441,11 @@ resource "datadog_monitor" "ses_complaint_rate" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
-    critical = 0.0005
+    warning  = 0.0005
+    critical = 0.001
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
@@ -538,6 +465,7 @@ resource "datadog_monitor" "support_contact_abuse" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 10
@@ -566,6 +494,7 @@ resource "datadog_monitor" "rds_connection_config" {
   include_tags        = false
   on_missing_data     = "default"
   require_full_window = false
+  renotify_interval   = 1440
 
   monitor_thresholds {
     warning  = 45
@@ -573,4 +502,32 @@ resource "datadog_monitor" "rds_connection_config" {
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
+}
+
+resource "datadog_monitor" "client_4xx_anomaly" {
+  name     = "Client 4xx Error Anomaly"
+  type     = "query alert"
+  query    = "avg(last_4h):anomalies(sum:platform.request{env:prod, status_code IN (400,404,422)}.as_count(), 'agile', 3) >= 1"
+  message  = <<-EOT
+    Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. This usually means a client build shipped a bad request contract. Slice the platform.request graph by path and client_version to find the offending endpoint/release.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 1
+  }
+
+  monitor_threshold_windows {
+    trigger_window  = "last_30m"
+    recovery_window = "last_30m"
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
