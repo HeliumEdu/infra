@@ -41,7 +41,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent} by {client}.as_count()"
+            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent} by {client,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -55,7 +55,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path}.as_count()"
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -985,7 +985,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path}.as_count()"
+            q            = "sum:platform.request{$env, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
