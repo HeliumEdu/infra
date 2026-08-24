@@ -999,20 +999,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
       layout_type      = "ordered"
 
       widget {
-        note_definition {
-          content     = <<-EOT
-        **Cohort:** users active in the last 30 days - fixed.
-
-        These metrics are emitted without a `window` tag, so the `window` selector above does **not** affect this group.
-          EOT
-          font_size   = "14"
-          text_align  = "left"
-          has_padding = true
-          show_tick   = false
-        }
-      }
-
-      widget {
         timeseries_definition {
           title         = "Active Users"
           title_size    = "16"
@@ -1167,20 +1153,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
       background_color = "vivid_blue"
       show_title       = true
       layout_type      = "ordered"
-
-      widget {
-        note_definition {
-          content     = <<-EOT
-        **Cohort:** users active in the last $window.value - set by the `window` selector above.
-
-        Lines show 3 months of nightly history for that cohort. The `3mo` badge controls history depth only, not the cohort.
-          EOT
-          font_size   = "14"
-          text_align  = "left"
-          has_padding = true
-          show_tick   = false
-        }
-      }
 
       widget {
         timeseries_definition {
@@ -1636,27 +1608,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
       layout_type      = "ordered"
 
       widget {
-        note_definition {
-          content     = <<-EOT
-        **Cohort:** users active in the last $window.value - set by the `window` selector above.
-
-        **Tile value:** last night's reading. The `3mo` badge controls sparkline history only and does not affect the number. Adoption counts *any* lifetime use of a feature, not use within the cohort window.
-          EOT
-          font_size   = "14"
-          text_align  = "left"
-          has_padding = true
-          show_tick   = false
-        }
-      }
-
-      widget {
         query_value_definition {
           title       = "Grade Tracking"
           title_size  = "16"
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1701,7 +1658,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1746,7 +1702,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1791,7 +1746,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1836,7 +1790,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1881,7 +1834,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1926,7 +1878,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -1971,7 +1922,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -2016,7 +1966,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.rotating_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
@@ -2061,7 +2010,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           title_align = "left"
           precision   = 0
           custom_unit = "%"
-          live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.multiple_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
