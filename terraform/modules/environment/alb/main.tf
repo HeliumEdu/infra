@@ -5,6 +5,8 @@ resource "aws_lb" "helium" {
   security_groups    = [var.security_group]
   subnets            = [for id in var.subnet_ids : id]
 
+  ip_address_type = "dualstack"
+
   enable_deletion_protection = true
 
   access_logs {
