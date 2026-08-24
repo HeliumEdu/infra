@@ -1,11 +1,13 @@
 resource "aws_vpc" "helium_vpc" {
-  cidr_block = "172.30.0.0/16"
+  cidr_block                       = "172.30.0.0/16"
+  assign_generated_ipv6_cidr_block = true
 }
 
 resource "aws_subnet" "subnets" {
   for_each                = var.region_azs
   vpc_id                  = aws_vpc.helium_vpc.id
   cidr_block              = "172.30.${each.value["index"]}.0/24"
+  ipv6_cidr_block         = cidrsubnet(aws_vpc.helium_vpc.ipv6_cidr_block, 8, each.value["index"])
   availability_zone       = "${var.aws_region}${each.value["suffix"]}"
   map_public_ip_on_launch = true
 }
@@ -20,6 +22,11 @@ resource "aws_route_table" "helium_route_table" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.helium_gateway.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.helium_gateway.id
   }
 }
 
@@ -45,6 +52,22 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
 resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
   security_group_id = aws_security_group.http_s.id
   cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv6" {
+  security_group_id = aws_security_group.http_s.id
+  cidr_ipv6         = "::/0"
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv6" {
+  security_group_id = aws_security_group.http_s.id
+  cidr_ipv6         = "::/0"
   from_port         = 443
   ip_protocol       = "tcp"
   to_port           = 443
