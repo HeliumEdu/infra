@@ -14,8 +14,6 @@ resource "aws_route53_zone" "heliumedu_dev_zone" {
   name = "${var.environment_prefix}heliumedu.dev"
 }
 
-// Record only created once, to point non-production zones' subdomain to the primary zone
-
 resource "aws_route53_record" "heliumedu_com_ns" {
   count = var.heliumedu_com_zone_id != null ? 1 : 0
 
@@ -55,8 +53,6 @@ resource "aws_route53_record" "heliumstudy_dev_ns" {
   ttl     = "300"
   records = aws_route53_zone.heliumstudy_dev_zone.name_servers
 }
-
-// Records only created once, for production
 
 resource "aws_route53_record" "heliumstudy_com_gh_txt" {
   count = var.environment == "prod" ? 1 : 0

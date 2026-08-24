@@ -192,8 +192,6 @@ resource "aws_route53_record" "support_heliumedu_com" {
   }
 }
 
-// CI preview distribution
-
 resource "aws_cloudfront_distribution" "heliumedu_ci_frontend_app" {
   count = var.environment == "prod" ? 1 : 0
 
@@ -260,8 +258,6 @@ resource "aws_cloudfront_distribution" "heliumedu_ci_frontend_app" {
   }
 }
 
-// CloudFront access logs bucket
-
 resource "aws_s3_bucket" "cloudfront_logs" {
   bucket = "heliumedu.${var.environment}.cloudfront.logs"
 }
@@ -295,8 +291,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs_lifecycle" {
     }
   }
 }
-
-// Flutter app frontend (app.heliumedu.com)
 
 resource "aws_cloudfront_distribution" "app_heliumedu_com" {
   enabled             = true

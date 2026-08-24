@@ -1,4 +1,3 @@
-// IAM user for platform S3 access (media, static files, etc.)
 resource "aws_iam_user" "s3_user" {
   name = "helium-${var.environment}-s3-user"
 }
@@ -105,8 +104,6 @@ resource "aws_s3_bucket_cors_configuration" "heliumedu_platform_static" {
   }
 }
 
-// Flutter app frontend bucket (app.heliumedu.com)
-
 resource "aws_s3_bucket" "heliumedu_frontend_app_static" {
   bucket = "heliumedu.${var.environment}.frontend-app.static"
 }
@@ -168,7 +165,6 @@ resource "aws_s3_bucket_website_configuration" "heliumedu_frontend_app" {
   }
 }
 
-// ALB access logs bucket
 resource "aws_s3_bucket" "helium_alb_logs" {
   bucket = "heliumedu.${var.environment}.alb.logs"
 }
@@ -182,7 +178,6 @@ resource "aws_s3_bucket_public_access_block" "helium_alb_logs_block_public" {
   restrict_public_buckets = false
 }
 
-// Get the ELB service account for the current region
 data "aws_elb_service_account" "main" {}
 
 data "aws_iam_policy_document" "helium_alb_logs_allow_elb_delivery" {
@@ -221,8 +216,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "helium_alb_logs_lifecycle" {
   }
 }
 
-// Buckets only created once, for production
-
 resource "aws_s3_bucket" "heliumedu" {
   count = var.environment == "prod" ? 1 : 0
 
@@ -243,8 +236,6 @@ resource "aws_s3_bucket_public_access_block" "heliumedu_block_public" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
-
-// CI preview bucket
 
 resource "aws_s3_bucket" "heliumedu_ci_frontend_app_static" {
   count = var.environment == "prod" ? 1 : 0

@@ -184,8 +184,6 @@ resource "aws_route53_record" "www_heliumedu_com" {
   }
 }
 
-// Redirect-only host: landing.heliumedu.com -> https://www.heliumedu.com{path}
-
 resource "aws_s3_bucket" "landing_redirect" {
   bucket = "landing.heliumedu.com-redirect"
 }
@@ -273,10 +271,6 @@ resource "aws_cloudfront_distribution" "landing_redirect" {
       restriction_type = "none"
     }
   }
-
-  // Wait for the marketing distribution's alias swap to release landing.heliumedu.com
-  // before this distribution attempts to claim it.
-  depends_on = [aws_cloudfront_distribution.marketing]
 }
 
 resource "aws_route53_record" "landing" {
@@ -289,27 +283,4 @@ resource "aws_route53_record" "landing" {
     zone_id                = aws_cloudfront_distribution.landing_redirect.hosted_zone_id
     evaluate_target_health = false
   }
-}
-
-// Migration shims: rename existing resources rather than destroy/recreate to avoid
-// disruption during apply. After this PR settles, these moved blocks can be removed.
-
-moved {
-  from = aws_acm_certificate.landing
-  to   = aws_acm_certificate.marketing
-}
-
-moved {
-  from = aws_route53_record.landing_cert_validation
-  to   = aws_route53_record.marketing_cert_validation
-}
-
-moved {
-  from = aws_acm_certificate_validation.landing
-  to   = aws_acm_certificate_validation.marketing
-}
-
-moved {
-  from = aws_cloudfront_distribution.landing
-  to   = aws_cloudfront_distribution.marketing
 }

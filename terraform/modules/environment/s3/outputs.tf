@@ -1,4 +1,3 @@
-// Platform S3 credentials (for media, static files, etc.)
 output "s3_access_key_id" {
   sensitive = true
   value     = aws_iam_access_key.s3_access_key.id
