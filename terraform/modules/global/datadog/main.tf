@@ -35,7 +35,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     defaults = ["false"]
   }
 
-  # Quick Stats Group
   widget {
     group_definition {
       title            = "Quick Stats"
@@ -126,7 +125,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     }
   }
 
-  # Critical Alerts Group
   widget {
     group_definition {
       title            = "Critical Signals"
@@ -221,7 +219,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     }
   }
 
-  # API Metrics Group
   widget {
     group_definition {
       title            = "API Metrics"
@@ -392,7 +389,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     }
   }
 
-  # Worker Metrics Group
   widget {
     group_definition {
       title            = "Worker Metrics"
@@ -606,7 +602,7 @@ resource "datadog_dashboard" "helium_heads_up" {
     }
   }
 
-  # AWS Metrics (Actionable) - 15 min lag from CloudWatch
+  # 15 min lag from CloudWatch
   widget {
     group_definition {
       title            = "AWS Metrics (Actionable)"
@@ -840,7 +836,6 @@ resource "datadog_dashboard" "helium_heads_up" {
     }
   }
 
-  # AWS Metrics (Retrospective)
   widget {
     group_definition {
       title            = "AWS Metrics (Retrospective)"
@@ -959,12 +954,63 @@ resource "datadog_dashboard" "helium_user_behavior" {
     available_values = ["1d", "7d", "30d", "90d", "180d"]
   }
 
+  # Datadog has no single-select template variable; these pin `window` to one cohort.
+  template_variable_preset {
+    name = "Cohort: 1d actives"
+    template_variable {
+      name   = "window"
+      values = ["1d"]
+    }
+  }
+  template_variable_preset {
+    name = "Cohort: 7d actives"
+    template_variable {
+      name   = "window"
+      values = ["7d"]
+    }
+  }
+  template_variable_preset {
+    name = "Cohort: 30d actives"
+    template_variable {
+      name   = "window"
+      values = ["30d"]
+    }
+  }
+  template_variable_preset {
+    name = "Cohort: 90d actives"
+    template_variable {
+      name   = "window"
+      values = ["90d"]
+    }
+  }
+  template_variable_preset {
+    name = "Cohort: 180d actives"
+    template_variable {
+      name   = "window"
+      values = ["180d"]
+    }
+  }
+
   widget {
     group_definition {
       title            = "Engagement Overview"
       background_color = "vivid_green"
       show_title       = true
       layout_type      = "ordered"
+
+      widget {
+        note_definition {
+          content     = <<-EOT
+        **Cohort:** users active in the last 30 days - fixed.
+
+        These metrics are emitted without a `window` tag, so the `window` selector above does **not** affect this group.
+          EOT
+          font_size   = "14"
+          text_align  = "left"
+          has_padding = true
+          show_tick   = false
+        }
+      }
 
       widget {
         timeseries_definition {
@@ -1121,6 +1167,20 @@ resource "datadog_dashboard" "helium_user_behavior" {
       background_color = "vivid_blue"
       show_title       = true
       layout_type      = "ordered"
+
+      widget {
+        note_definition {
+          content     = <<-EOT
+        **Cohort:** users active in the last $window.value - set by the `window` selector above.
+
+        Lines show 3 months of nightly history for that cohort. The `3mo` badge controls history depth only, not the cohort.
+          EOT
+          font_size   = "14"
+          text_align  = "left"
+          has_padding = true
+          show_tick   = false
+        }
+      }
 
       widget {
         timeseries_definition {
@@ -1534,6 +1594,37 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
+      widget {
+        timeseries_definition {
+          title         = "Rotating Schedules per User"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          live_span     = "3mo"
+          request {
+            q            = "avg:platform.users.data.rotating_schedules_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style { palette = "purple" }
+            metadata {
+              expression = "avg:platform.users.data.rotating_schedules_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "Avg"
+            }
+          }
+          request {
+            q            = "p95:platform.users.data.rotating_schedules_per_user{$env, $staff, $window}.fill(last)"
+            display_type = "line"
+            style {
+              palette   = "purple"
+              line_type = "dashed"
+            }
+            metadata {
+              expression = "p95:platform.users.data.rotating_schedules_per_user{$env, $staff, $window}.fill(last)"
+              alias_name = "p95"
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1543,6 +1634,20 @@ resource "datadog_dashboard" "helium_user_behavior" {
       background_color = "vivid_purple"
       show_title       = true
       layout_type      = "ordered"
+
+      widget {
+        note_definition {
+          content     = <<-EOT
+        **Cohort:** users active in the last $window.value - set by the `window` selector above.
+
+        **Tile value:** last night's reading. The `3mo` badge controls sparkline history only and does not affect the number. Adoption counts *any* lifetime use of a feature, not use within the cohort window.
+          EOT
+          font_size   = "14"
+          text_align  = "left"
+          has_padding = true
+          show_tick   = false
+        }
+      }
 
       widget {
         query_value_definition {
@@ -1859,9 +1964,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
         }
       }
-      # Class-schedule adoption family, one tile per sub-type: `class_schedules` is the cumulative
-      # umbrella (any schedule) and `multiple_schedules` is the finer sub-type. Add a
-      # `rotating_schedules` tile here when HE-328 (rotating / A-B schedules) ships.
       widget {
         query_value_definition {
           title       = "Class Schedules"
@@ -1872,6 +1974,51 @@ resource "datadog_dashboard" "helium_user_behavior" {
           live_span   = "3mo"
           request {
             q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+            aggregator = "last"
+            conditional_formats {
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
+            }
+          }
+          timeseries_background {
+            type = "area"
+          }
+        }
+      }
+      widget {
+        query_value_definition {
+          title       = "Rotating Schedules"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          live_span   = "3mo"
+          request {
+            q          = "avg:platform.users.adoption.rotating_schedules.pct{$env, $staff, $window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="

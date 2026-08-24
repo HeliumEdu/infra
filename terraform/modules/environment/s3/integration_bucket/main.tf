@@ -1,4 +1,3 @@
-// Integration bucket - shared across all environments for CI email polling
 resource "aws_s3_bucket" "integration" {
   bucket = "heliumedu-integration"
 

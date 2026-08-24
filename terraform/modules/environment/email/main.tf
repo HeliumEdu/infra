@@ -1,5 +1,3 @@
-// Records only created once, for production
-
 resource "aws_route53_record" "heliumedu_com_inbound_mx" {
   count = var.environment == "prod" ? 1 : 0
 
