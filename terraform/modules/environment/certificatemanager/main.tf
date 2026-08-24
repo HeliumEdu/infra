@@ -4,6 +4,7 @@ resource "aws_acm_certificate" "heliumedu_com" {
     "api.${var.route53_heliumedu_com_zone_name}",
     "app.${var.route53_heliumedu_com_zone_name}",
     "support.${var.route53_heliumedu_com_zone_name}",
+    "landing.${var.route53_heliumedu_com_zone_name}",
   ]
   validation_method = "DNS"
 
