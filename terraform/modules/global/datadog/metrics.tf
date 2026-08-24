@@ -10,7 +10,7 @@ locals {
     "platform.users.data.notes_per_user",
     "platform.users.data.reminders_per_user",
     "platform.users.data.resources_per_user",
-    "platform.users.data.rotating_schedules_per_user",
+    "platform.users.data.schedules_per_user",
     "platform.users.engagement.completions_per_user",
     "platform.users.engagement.graded_homework_per_user",
   ])
