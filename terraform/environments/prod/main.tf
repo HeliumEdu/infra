@@ -218,38 +218,6 @@ resource "aws_s3_bucket_website_configuration" "www" {
   }
 }
 
-resource "aws_acm_certificate" "marketing" {
-  domain_name               = "www.heliumedu.com"
-  subject_alternative_names = ["landing.heliumedu.com"]
-  validation_method         = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "marketing_cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.marketing.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id         = module.route53.heliumedu_com_zone_id
-  name            = each.value.name
-  type            = each.value.type
-  records         = [each.value.record]
-  ttl             = 60
-  allow_overwrite = true
-}
-
-resource "aws_acm_certificate_validation" "marketing" {
-  certificate_arn         = aws_acm_certificate.marketing.arn
-  validation_record_fqdns = [for record in aws_route53_record.marketing_cert_validation : record.fqdn]
-}
-
 resource "aws_cloudfront_distribution" "marketing" {
   enabled             = true
   aliases             = ["www.heliumedu.com"]
@@ -295,7 +263,7 @@ resource "aws_cloudfront_distribution" "marketing" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
+    acm_certificate_arn            = module.certificatemanager.heliumedu_com_cert_arn
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
   }
@@ -396,7 +364,7 @@ resource "aws_cloudfront_distribution" "landing_redirect" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
+    acm_certificate_arn            = module.certificatemanager.heliumedu_com_cert_arn
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
   }
@@ -418,84 +386,4 @@ resource "aws_route53_record" "landing" {
     zone_id                = aws_cloudfront_distribution.landing_redirect.hosted_zone_id
     evaluate_target_health = false
   }
-}
-
-import {
-  to = aws_s3_bucket.www
-  id = "heliumedu.www.static"
-}
-
-import {
-  to = aws_s3_bucket_public_access_block.www
-  id = "heliumedu.www.static"
-}
-
-import {
-  to = aws_s3_bucket_policy.www
-  id = "heliumedu.www.static"
-}
-
-import {
-  to = aws_s3_bucket_cors_configuration.www
-  id = "heliumedu.www.static"
-}
-
-import {
-  to = aws_s3_bucket_website_configuration.www
-  id = "heliumedu.www.static"
-}
-
-import {
-  to = aws_s3_bucket.landing_redirect
-  id = "landing.heliumedu.com-redirect"
-}
-
-import {
-  to = aws_s3_bucket_public_access_block.landing_redirect
-  id = "landing.heliumedu.com-redirect"
-}
-
-import {
-  to = aws_s3_bucket_policy.landing_redirect
-  id = "landing.heliumedu.com-redirect"
-}
-
-import {
-  to = aws_s3_bucket_website_configuration.landing_redirect
-  id = "landing.heliumedu.com-redirect"
-}
-
-import {
-  to = aws_acm_certificate.marketing
-  id = "arn:aws:acm:us-east-1:562129510549:certificate/84931a07-1c25-42c2-8dc8-d27bb5d055ce"
-}
-
-import {
-  to = aws_cloudfront_distribution.marketing
-  id = "EDNGG671XEBWW"
-}
-
-import {
-  to = aws_cloudfront_distribution.landing_redirect
-  id = "EGQPK4YBMWVCC"
-}
-
-import {
-  to = aws_route53_record.www_heliumedu_com
-  id = "Z100615238TR7W7P1S38U_www.heliumedu.com_A"
-}
-
-import {
-  to = aws_route53_record.landing
-  id = "Z100615238TR7W7P1S38U_landing.heliumedu.com_A"
-}
-
-import {
-  to = aws_route53_record.marketing_cert_validation["www.heliumedu.com"]
-  id = "Z100615238TR7W7P1S38U__81acbfe41d489cba8585b0574dd32cab.www.heliumedu.com_CNAME"
-}
-
-import {
-  to = aws_route53_record.marketing_cert_validation["landing.heliumedu.com"]
-  id = "Z100615238TR7W7P1S38U__53ce36f09d53a6d5ac58f20c7dfd0ca4.landing.heliumedu.com._CNAME"
 }
