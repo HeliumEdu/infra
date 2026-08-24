@@ -13,7 +13,7 @@ resource "aws_s3_bucket_website_configuration" "heliumedu_frontend_non_www_confi
   bucket = aws_s3_bucket.heliumedu_frontend_non_www.bucket
 
   redirect_all_requests_to {
-    host_name = "www.${var.route53_heliumedu_com_zone_name}"
+    host_name = "www.heliumedu.com"
     protocol  = "https"
   }
 }
@@ -91,7 +91,7 @@ resource "aws_s3_bucket_website_configuration" "support_redirect_bucket" {
 
   routing_rule {
     redirect {
-      host_name          = "www.${var.route53_heliumedu_com_zone_name}"
+      host_name          = "www.heliumedu.com"
       protocol           = "https"
       replace_key_with   = "support"
       http_redirect_code = "301"
@@ -459,7 +459,7 @@ resource "aws_s3_bucket_website_configuration" "heliumstudy_com_redirect_bucket"
   bucket = aws_s3_bucket.heliumstudy_com_redirect_bucket.bucket
 
   redirect_all_requests_to {
-    host_name = "www.${var.environment_prefix}heliumedu.com"
+    host_name = "www.heliumedu.com"
     protocol  = "https"
   }
 }

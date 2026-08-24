@@ -23,264 +23,130 @@ module "hcp_notifications" {
   }
 }
 
-data "aws_route53_zone" "heliumedu_com" {
-  name = "heliumedu.com"
-}
-
-resource "aws_s3_bucket" "www" {
-  bucket = "heliumedu.www.static"
-}
-
-resource "aws_s3_bucket_public_access_block" "www" {
-  bucket = aws_s3_bucket.www.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-data "aws_iam_policy_document" "www_allow_http_access" {
-  statement {
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    resources = ["${aws_s3_bucket.www.arn}/*"]
-    actions   = ["s3:GetObject"]
-  }
-}
-
-resource "aws_s3_bucket_policy" "www" {
-  bucket = aws_s3_bucket.www.id
-  policy = data.aws_iam_policy_document.www_allow_http_access.json
-
-  depends_on = [aws_s3_bucket_public_access_block.www]
-}
-
-resource "aws_s3_bucket_cors_configuration" "www" {
-  bucket = aws_s3_bucket.www.id
-
-  cors_rule {
-    allowed_headers = ["*"]
-    allowed_methods = ["GET", "HEAD"]
-    allowed_origins = ["*"]
-    expose_headers  = ["ETag"]
-    max_age_seconds = 3000
-  }
-}
-
-resource "aws_s3_bucket_website_configuration" "www" {
-  bucket = aws_s3_bucket.www.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "404.html"
-  }
-}
-
-resource "aws_acm_certificate" "marketing" {
-  domain_name               = "www.heliumedu.com"
-  subject_alternative_names = ["landing.heliumedu.com"]
-  validation_method         = "DNS"
+removed {
+  from = aws_s3_bucket.www
 
   lifecycle {
-    create_before_destroy = true
+    destroy = false
   }
 }
 
-resource "aws_route53_record" "marketing_cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.marketing.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+removed {
+  from = aws_s3_bucket_public_access_block.www
 
-  zone_id         = data.aws_route53_zone.heliumedu_com.zone_id
-  name            = each.value.name
-  type            = each.value.type
-  records         = [each.value.record]
-  ttl             = 60
-  allow_overwrite = true
-}
-
-resource "aws_acm_certificate_validation" "marketing" {
-  certificate_arn         = aws_acm_certificate.marketing.arn
-  validation_record_fqdns = [for record in aws_route53_record.marketing_cert_validation : record.fqdn]
-}
-
-resource "aws_cloudfront_distribution" "marketing" {
-  enabled             = true
-  aliases             = ["www.heliumedu.com"]
-  comment             = "www.heliumedu.com"
-  default_root_object = "index.html"
-  price_class         = "PriceClass_100"
-
-  origin {
-    origin_id   = "${aws_s3_bucket.www.bucket}-origin"
-    domain_name = aws_s3_bucket_website_configuration.www.website_endpoint
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1"]
-    }
-  }
-
-  default_cache_behavior {
-    target_origin_id = "${aws_s3_bucket.www.bucket}-origin"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    default_ttl            = 3600
-    min_ttl                = 0
-    max_ttl                = 86400
-  }
-
-  custom_error_response {
-    error_code         = 404
-    response_code      = 404
-    response_page_path = "/404.html"
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = false
-    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
-    ssl_support_method             = "sni-only"
-    minimum_protocol_version       = "TLSv1.2_2021"
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
+  lifecycle {
+    destroy = false
   }
 }
 
-resource "aws_route53_record" "www_heliumedu_com" {
-  zone_id = data.aws_route53_zone.heliumedu_com.zone_id
-  name    = "www.heliumedu.com"
-  type    = "A"
+removed {
+  from = aws_s3_bucket_policy.www
 
-  alias {
-    name                   = aws_cloudfront_distribution.marketing.domain_name
-    zone_id                = aws_cloudfront_distribution.marketing.hosted_zone_id
-    evaluate_target_health = false
+  lifecycle {
+    destroy = false
   }
 }
 
-resource "aws_s3_bucket" "landing_redirect" {
-  bucket = "landing.heliumedu.com-redirect"
-}
+removed {
+  from = aws_s3_bucket_cors_configuration.www
 
-resource "aws_s3_bucket_public_access_block" "landing_redirect" {
-  bucket = aws_s3_bucket.landing_redirect.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-data "aws_iam_policy_document" "landing_redirect_allow_http_access" {
-  statement {
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    resources = ["${aws_s3_bucket.landing_redirect.arn}/*"]
-    actions   = ["s3:GetObject"]
+  lifecycle {
+    destroy = false
   }
 }
 
-resource "aws_s3_bucket_policy" "landing_redirect" {
-  bucket = aws_s3_bucket.landing_redirect.id
-  policy = data.aws_iam_policy_document.landing_redirect_allow_http_access.json
+removed {
+  from = aws_s3_bucket_website_configuration.www
 
-  depends_on = [aws_s3_bucket_public_access_block.landing_redirect]
-}
-
-resource "aws_s3_bucket_website_configuration" "landing_redirect" {
-  bucket = aws_s3_bucket.landing_redirect.bucket
-
-  redirect_all_requests_to {
-    host_name = "www.heliumedu.com"
-    protocol  = "https"
+  lifecycle {
+    destroy = false
   }
 }
 
-resource "aws_cloudfront_distribution" "landing_redirect" {
-  enabled     = true
-  aliases     = ["landing.heliumedu.com"]
-  comment     = "landing.heliumedu.com (redirect to www.heliumedu.com)"
-  price_class = "PriceClass_100"
+removed {
+  from = aws_acm_certificate.marketing
 
-  origin {
-    domain_name = aws_s3_bucket_website_configuration.landing_redirect.website_endpoint
-    origin_id   = "${aws_s3_bucket.landing_redirect.bucket}-origin"
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
-  default_cache_behavior {
-    target_origin_id = "${aws_s3_bucket.landing_redirect.bucket}-origin"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-
-    forwarded_values {
-      query_string = true
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    default_ttl            = 0
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = false
-    acm_certificate_arn            = aws_acm_certificate_validation.marketing.certificate_arn
-    ssl_support_method             = "sni-only"
-    minimum_protocol_version       = "TLSv1.2_2021"
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
+  lifecycle {
+    destroy = false
   }
 }
 
-resource "aws_route53_record" "landing" {
-  zone_id = data.aws_route53_zone.heliumedu_com.zone_id
-  name    = "landing.heliumedu.com"
-  type    = "A"
+removed {
+  from = aws_route53_record.marketing_cert_validation
 
-  alias {
-    name                   = aws_cloudfront_distribution.landing_redirect.domain_name
-    zone_id                = aws_cloudfront_distribution.landing_redirect.hosted_zone_id
-    evaluate_target_health = false
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_acm_certificate_validation.marketing
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_cloudfront_distribution.marketing
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_route53_record.www_heliumedu_com
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_s3_bucket.landing_redirect
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_s3_bucket_public_access_block.landing_redirect
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_s3_bucket_policy.landing_redirect
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_s3_bucket_website_configuration.landing_redirect
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_cloudfront_distribution.landing_redirect
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_route53_record.landing
+
+  lifecycle {
+    destroy = false
   }
 }
