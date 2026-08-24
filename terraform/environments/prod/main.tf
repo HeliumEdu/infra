@@ -72,7 +72,6 @@ module "ecs" {
   platform_api_repository_uri      = module.ecr.platform_api_repository_uri
   platform_worker_repository_uri   = module.ecr.platform_worker_repository_uri
   environment                      = var.environment
-  environment_prefix               = var.environment_prefix
   aws_account_id                   = local.aws_account_id
   aws_region                       = var.aws_region
   http_platform                    = module.vpc.http_sg_platform
