@@ -530,3 +530,28 @@ resource "datadog_monitor" "client_4xx_anomaly" {
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
+
+resource "datadog_monitor" "certificate_renewal_failed" {
+  name     = "SSL Certificate Renewal Failed"
+  type     = "query alert"
+  query    = "min(last_1d):min:aws.certificatemanager.days_to_expiry{*} < 30"
+  message  = <<-EOT
+    An ACM certificate expires in under {{ threshold }} days. ACM auto-renews DNS-validated certificates starting at 60 days, so reaching this threshold means renewal is failing. The usual cause is a missing or altered `_<hash>` validation CNAME in Route53, which serves no traffic and so breaks nothing else until the certificate expires.
+
+    Run `terraform plan` in the affected workspace to surface the drifted validation record and apply it. ACM retries renewal on its own once the record is restored.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = true
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 30
+  }
+
+  tags = ["managed_by:terraform", "alert_type:config"]
+}
