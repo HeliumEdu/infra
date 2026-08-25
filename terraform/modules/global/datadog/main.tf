@@ -64,7 +64,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
+            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -88,7 +88,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale = false
           precision = 0
           request {
-            q          = "default_zero(sum:platform.task{$env, $user_agent,staff:false,name:user.delete}.as_count())"
+            q          = "default_zero(sum:platform.task{$env,staff:false,name:user.delete}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -100,7 +100,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_size  = "16"
           title_align = "left"
           request {
-            q = "avg:platform.request.timing.95percentile{$env, $user_agent, $authenticated} by {path}"
+            q = "avg:platform.request.timing.95percentile{$env} by {path}"
           }
         }
       }
@@ -302,7 +302,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "top(avg:platform.request.timing.95percentile{$env, $authenticated, $user_agent} by {path}, 5, 'mean', 'desc')"
+            q            = "top(avg:platform.request.timing.95percentile{$env} by {path}, 5, 'mean', 'desc')"
             display_type = "line"
             style { palette = "warm" }
           }
@@ -943,15 +943,15 @@ resource "datadog_dashboard" "helium_user_behavior" {
     defaults = ["*"]
   }
   template_variable {
-    name     = "staff"
-    prefix   = "staff"
-    defaults = ["false"]
-  }
-  template_variable {
-    name             = "window"
+    name             = "adoption_window"
     prefix           = "window"
     defaults         = ["30d"]
     available_values = ["1d", "7d", "30d", "90d", "180d"]
+  }
+  template_variable {
+    name     = "staff"
+    prefix   = "staff"
+    defaults = ["false"]
   }
 
   widget {
@@ -1005,7 +1005,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client_os}.as_count()"
+            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client,client_os}.as_count()"
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -1598,7 +1598,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.grade_tracking.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1642,7 +1642,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.external_calendars.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1686,7 +1686,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.notebook.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1730,7 +1730,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.resources.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1774,7 +1774,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.reminders.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1818,7 +1818,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.attachments.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1862,7 +1862,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.feeds.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1906,7 +1906,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.class_schedules.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
@@ -1950,7 +1950,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
           precision   = 0
           custom_unit = "%"
           request {
-            q          = "avg:platform.users.adoption.rotating_schedules.pct{$env, $staff, $window}.fill(last)"
+            q          = "avg:platform.users.adoption.rotating_schedules.pct{$env, $staff, $adoption_window}.fill(last)"
             aggregator = "last"
             conditional_formats {
               comparator      = "<="
