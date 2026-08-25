@@ -20,7 +20,7 @@ resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
   zone_id = var.route53_heliumedu_com_zone_id
   name    = "api.${var.route53_heliumedu_com_zone_name}"
   type    = "CNAME"
-  ttl     = "86400"
+  ttl     = "300"
   records = [aws_lb.helium.dns_name]
 }
 
