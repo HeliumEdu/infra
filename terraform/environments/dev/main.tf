@@ -27,12 +27,8 @@ module "certificatemanager" {
 
   route53_heliumedu_com_zone_id     = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name   = module.route53.heliumedu_com_zone_name
-  route53_heliumedu_dev_zone_id     = module.route53.heliumedu_dev_zone_id
-  route53_heliumedu_dev_zone_name   = module.route53.heliumedu_dev_zone_name
   route53_heliumstudy_com_zone_id   = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name = module.route53.heliumstudy_com_zone_name
-  route53_heliumstudy_dev_zone_id   = module.route53.heliumstudy_dev_zone_id
-  route53_heliumstudy_dev_zone_name = module.route53.heliumstudy_dev_zone_name
 }
 
 module "vpc" {
