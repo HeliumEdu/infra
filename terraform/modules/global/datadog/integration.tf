@@ -20,6 +20,7 @@ resource "datadog_integration_aws_account" "helium" {
     namespace_filters {
       include_only = [
         "AWS/ApplicationELB",
+        "AWS/CertificateManager",
         "AWS/CloudFront",
         "AWS/ECS",
         "AWS/ElastiCache",
