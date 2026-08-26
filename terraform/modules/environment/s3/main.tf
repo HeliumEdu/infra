@@ -46,6 +46,18 @@ resource "aws_s3_bucket" "heliumedu_media" {
   bucket = "heliumedu.${var.environment}.media"
 }
 
+resource "aws_s3_bucket_cors_configuration" "heliumedu_media" {
+  bucket = aws_s3_bucket.heliumedu_media.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "heliumedu_media_block_public" {
   bucket = aws_s3_bucket.heliumedu_media.id
 
