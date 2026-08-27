@@ -212,7 +212,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           request {
             q            = "sum:platform.feed.ical.failed{$env} by {reason}.as_count()"
             display_type = "bars"
-            style { palette = "red" }
+            style { palette = "orange" }
           }
         }
       }
