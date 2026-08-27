@@ -178,12 +178,17 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.action.push.failed{$env}.as_count()"
+            q            = "sum:platform.action.push.failed{$env} by {reason}.as_count()"
             display_type = "bars"
             style { palette = "red" }
+          }
+          request {
+            q            = "sum:platform.action.push.token.purged{$env}.as_count()"
+            display_type = "line"
+            style { palette = "grey" }
             metadata {
-              expression = "sum:platform.action.push.failed{$env}.as_count()"
-              alias_name = "Push Failures"
+              expression = "sum:platform.action.push.token.purged{$env}.as_count()"
+              alias_name = "Tokens Purged"
             }
           }
         }
