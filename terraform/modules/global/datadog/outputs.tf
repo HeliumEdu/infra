@@ -28,7 +28,6 @@ output "monitor_ids" {
     low_session_traffic = datadog_monitor.token_refresh_api_low_traffic.id
 
     # Immediate/Diagnostic (help understand why something is broken)
-    feed_reindex_slow      = datadog_monitor.feed_reindex_slowdown.id
     email_failures         = datadog_monitor.email_delivery_failures.id
     push_failures          = datadog_monitor.push_delivery_failures.id
     server_errors          = datadog_monitor.server_error_spike.id
