@@ -46,29 +46,6 @@ resource "datadog_monitor" "token_api_low_traffic" {
   tags = ["managed_by:terraform", "alert_type:informational"]
 }
 
-resource "datadog_monitor" "feed_reindex_slowdown" {
-  name     = "Feed Reindex Slowdown"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:platform.task.timing.95percentile{env:prod, name:feed.reindex} / 1000 > 180"
-  message  = <<-EOT
-    Reindex of Feeds in the cache has averaged above {{ threshold }} seconds (p95) over the last day.
-
-    Notify: @support@heliumedu.com
-  EOT
-  priority = 5
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-
-  monitor_thresholds {
-    warning  = 120
-    critical = 180
-  }
-
-  tags = ["managed_by:terraform", "alert_type:informational"]
-}
-
 resource "datadog_monitor" "token_refresh_api_low_traffic" {
   name     = "Low Session Refresh Traffic (/token/refresh)"
   type     = "query alert"
