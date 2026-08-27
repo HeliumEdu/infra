@@ -138,7 +138,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           autoscale = false
           precision = 0
           request {
-            q          = "default_zero(sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.push.failed{$env}.as_count() + sum:platform.external.firebase.failed{$env}.as_count() + sum:platform.feed.ical.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count())"
+            q          = "default_zero(sum:platform.action.email.failed{$env}.as_count() + sum:platform.action.push.failed{$env}.as_count() + sum:platform.external.firebase.failed{$env}.as_count() + sum:platform.task.failed{$env}.as_count())"
             aggregator = "sum"
           }
           timeseries_background { type = "bars" }
@@ -211,13 +211,26 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "Calendar Sync Failures"
+          title         = "SES Suppression Failures"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.feed.ical.failed{$env} by {reason}.as_count()"
+            q            = "sum:platform.ses.suppression.add_failed{$env}.as_count()"
             display_type = "bars"
-            style { palette = "orange" }
+            style { palette = "red" }
+            metadata {
+              expression = "sum:platform.ses.suppression.add_failed{$env}.as_count()"
+              alias_name = "Add Failed"
+            }
+          }
+          request {
+            q            = "sum:platform.ses.suppression.check_failed{$env}.as_count()"
+            display_type = "bars"
+            style { palette = "warm" }
+            metadata {
+              expression = "sum:platform.ses.suppression.check_failed{$env}.as_count()"
+              alias_name = "Check Failed"
+            }
           }
         }
       }
@@ -601,6 +614,27 @@ resource "datadog_dashboard" "helium_heads_up" {
             q            = "sum:platform.task.sync_fallback{$env} by {name}.as_count()"
             display_type = "bars"
             style { palette = "red" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Calendar Sync Failures"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.feed.ical.failed{$env} by {reason}.as_count()"
+            display_type = "bars"
+            style { palette = "orange" }
+          }
+          request {
+            q            = "sum:platform.feed.ical.disabled{$env}.as_count()"
+            display_type = "line"
+            style { palette = "grey" }
+            metadata {
+              expression = "sum:platform.feed.ical.disabled{$env}.as_count()"
+              alias_name = "Calendars Disabled"
+            }
           }
         }
       }

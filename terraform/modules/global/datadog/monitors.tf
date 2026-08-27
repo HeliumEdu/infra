@@ -120,7 +120,7 @@ resource "datadog_monitor" "email_delivery_failures" {
 resource "datadog_monitor" "push_delivery_failures" {
   name     = "Push Notification Delivery Failure Spike"
   type     = "query alert"
-  query    = "sum(last_1h):sum:platform.action.push.failed{env:prod,!reason:unregistered,!reason:sender_id_mismatch}.as_count() > 5"
+  query    = "sum(last_1h):sum:platform.action.push.failed{env:prod,!reason:unregistered}.as_count() > 5"
   message  = <<-EOT
     More than {{ threshold }} push notification delivery failures detected in the last hour, excluding tokens that were simply retired. Firebase Cloud Messaging should be investigated.
 
