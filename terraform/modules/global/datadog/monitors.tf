@@ -227,6 +227,29 @@ resource "datadog_monitor" "task_failures" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+resource "datadog_monitor" "stuck_pending_delete_users" {
+  name     = "Stuck Pending-Delete Users"
+  type     = "query alert"
+  query    = "max(last_1d):max:platform.users.pending_delete.stuck{env:prod} > 0"
+  message  = <<-EOT
+    Accounts that requested deletion are still pending after the sweep re-queued them, so their data has not been removed.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 0
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
 resource "datadog_monitor" "worker_undersized" {
   name     = "Worker Tasks Undersized"
   type     = "query alert"
