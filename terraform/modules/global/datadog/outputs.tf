@@ -34,6 +34,7 @@ output "monitor_ids" {
     calendar_sync_failures = datadog_monitor.calendar_sync_failures.id
     firebase_failures      = datadog_monitor.firebase_oauth_failures.id
     task_failures          = datadog_monitor.task_failures.id
+    stuck_pending_deletes  = datadog_monitor.stuck_pending_delete_users.id
     api_5xx_spike          = datadog_monitor.api_5xx_spike.id
     api_5xx_alb_child      = datadog_monitor.api_5xx_alb_child.id
     frontend_5xx_spike     = datadog_monitor.frontend_5xx_spike.id
