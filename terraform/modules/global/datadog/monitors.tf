@@ -207,15 +207,15 @@ resource "datadog_monitor" "firebase_oauth_failures" {
 resource "datadog_monitor" "task_failures" {
   name     = "Background Task Failure Spike"
   type     = "query alert"
-  query    = "sum(last_1h):sum:platform.task.failed{env:prod}.as_count() > 5"
+  query    = "sum(last_1h):sum:platform.task.failed{env:prod} by {name}.as_count() > 5"
   message  = <<-EOT
-    More than {{ threshold }} background task failures detected in the last hour. Celery workers and task processing should be investigated.
+    More than {{ threshold }} failures of the background task {{{{name.name}}}} in the last hour. Celery workers and task processing should be investigated.
 
     Notify: @support@heliumedu.com
   EOT
   priority = 3
 
-  include_tags        = false
+  include_tags        = true
   on_missing_data     = "default"
   require_full_window = false
   renotify_interval   = 1440
@@ -227,24 +227,24 @@ resource "datadog_monitor" "task_failures" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
-resource "datadog_monitor" "stuck_pending_delete_users" {
-  name     = "Stuck Pending-Delete Users"
+resource "datadog_monitor" "scheduled_task_not_running" {
+  name     = "Scheduled Task Not Running"
   type     = "query alert"
-  query    = "max(last_1d):max:platform.users.pending_delete.stuck{env:prod} > 0"
+  query    = "sum(last_2d):sum:platform.task.timing.count{env:prod,name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,feed.reindex)} by {name} < 1"
   message  = <<-EOT
-    Accounts that requested deletion are still pending after the sweep re-queued them, so their data has not been removed.
+    The scheduled task {{name.name}} has not executed. Every task here runs at least daily, so no execution at all means Beat, the worker, or the task's registration is broken rather than the work merely failing.
 
     Notify: @support@heliumedu.com
   EOT
-  priority = 3
+  priority = 2
 
-  include_tags        = false
-  on_missing_data     = "default"
+  include_tags        = true
+  on_missing_data     = "show_and_notify_no_data"
   require_full_window = false
   renotify_interval   = 1440
 
   monitor_thresholds {
-    critical = 0
+    critical = 1
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
