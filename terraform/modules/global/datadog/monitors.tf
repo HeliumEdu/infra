@@ -230,7 +230,7 @@ resource "datadog_monitor" "task_failures" {
 resource "datadog_monitor" "scheduled_task_not_running" {
   name     = "Scheduled Task Not Running"
   type     = "query alert"
-  query    = "sum(last_2d):sum:platform.task.timing.count{env:prod AND name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,feed.reindex)} by {name} < 1"
+  query    = "sum(last_2d):sum:platform.task.timing.count{env:prod AND name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,feed.reindex.dispatch)} by {name} < 1"
   message  = <<-EOT
     The scheduled task {{name.name}} has not executed. Every task here runs at least daily, so no execution at all means Beat, the worker, or the task's registration is broken rather than the work merely failing.
 
