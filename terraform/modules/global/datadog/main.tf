@@ -984,7 +984,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
   template_variable {
     name             = "adoption_window"
     prefix           = "window"
-    defaults         = ["30d"]
+    defaults         = ["90d"]
     available_values = ["1d", "7d", "30d", "90d", "180d"]
   }
   template_variable {
@@ -1142,6 +1142,29 @@ resource "datadog_dashboard" "helium_user_behavior" {
             metadata {
               expression = "p95:platform.users.engagement.graded_homework_per_user{$env, $staff}.fill(last)"
               alias_name = "p95"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Review Prompts"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, status_code:204, path:auth.user.settings.reviewpromptack} by {client_os}.as_count()"
+            display_type = "bars"
+            style { palette = "dog_classic" }
+          }
+          request {
+            q            = "sum:platform.task{$env, $staff, name:user.review-prompt.evaluate.user}.as_count()"
+            display_type = "line"
+            style { palette = "grey" }
+            metadata {
+              expression = "sum:platform.task{$env, $staff, name:user.review-prompt.evaluate.user}.as_count()"
+              alias_name = "Flagged"
             }
           }
         }
