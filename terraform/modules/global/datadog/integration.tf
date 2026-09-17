@@ -31,7 +31,7 @@ resource "datadog_integration_aws_account" "helium" {
   }
 
   resources_config {
-    extended_collection = false
+    extended_collection = true
   }
 
   logs_config {
