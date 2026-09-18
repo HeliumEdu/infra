@@ -50,7 +50,7 @@ resource "aws_lb_target_group" "platform" {
   deregistration_delay = var.request_timeout_seconds
 
   health_check {
-    path                = "/status/?subset=core"
+    path                = "/status/core/"
     timeout             = 10
     interval            = 30
     healthy_threshold   = 2
