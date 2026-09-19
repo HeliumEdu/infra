@@ -1015,6 +1015,18 @@ resource "datadog_dashboard" "helium_user_behavior" {
       layout_type      = "ordered"
 
       widget {
+        query_value_definition {
+          title     = "Online Users (15m)"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "default_zero(avg:platform.users.online{$env, $staff})"
+            aggregator = "last"
+          }
+          timeseries_background { type = "area" }
+        }
+      }
+      widget {
         timeseries_definition {
           title         = "Active Users"
           title_size    = "16"
