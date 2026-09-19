@@ -2079,33 +2079,3 @@ resource "datadog_dashboard" "helium_user_behavior" {
     }
   }
 }
-
-resource "datadog_monitor" "high_priority_queue_wait" {
-  name    = "High Priority Task Queue Wait Time Elevated"
-  type    = "query alert"
-  message = <<-EOT
-    High priority tasks are waiting in the queue for extended periods (p95 above {{ threshold }} ms over the last hour).
-
-    This indicates the worker may be overwhelmed with low-priority tasks,
-    and it may be time to split into separate high/low priority queues.
-
-    Current p95 queue wait time: {{ value }} ms
-
-    Notify: @support@heliumedu.com
-  EOT
-
-  query = "avg(last_1h):avg:platform.task.queue_time.95percentile{env:prod, priority:high} > 60000"
-
-  monitor_thresholds {
-    critical = 60000
-    warning  = 45000
-  }
-
-  priority            = 4
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 120
-
-  tags = ["managed_by:terraform", "alert_type:config"]
-}
