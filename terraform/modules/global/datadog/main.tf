@@ -406,20 +406,6 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "Search Requests"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count()"
-            display_type = "bars"
-            style { palette = "dog_classic" }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
           title         = "Search Response Time (p95 ms)"
           title_size    = "16"
           title_align   = "left"
@@ -429,20 +415,6 @@ resource "datadog_dashboard" "helium_heads_up" {
             q            = "avg:platform.request.timing.95percentile{$env, search:true} by {path}"
             display_type = "line"
             style { palette = "warm" }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Search Share of Requests (%)"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / (sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() + sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:false} by {path}.as_count()) * 100"
-            display_type = "line"
-            style { palette = "cool" }
           }
         }
       }
@@ -1105,21 +1077,8 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
             metadata {
               expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 3600, 604800, 'avg')"
-              alias_name = "Hours (7d rolling avg)"
+              alias_name = "Avg Onboarding Duration (7d rolling avg)"
             }
-          }
-          request {
-            q              = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
-            display_type   = "line"
-            on_right_yaxis = true
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
-              alias_name = "Minutes (7d rolling avg)"
-            }
-          }
-          right_yaxis {
-            label = "minutes"
           }
         }
       }
@@ -1221,6 +1180,20 @@ resource "datadog_dashboard" "helium_user_behavior" {
               expression = "sum:platform.task{$env, $staff, name:user.review-prompt.evaluate.user}.as_count()"
               alias_name = "Flagged"
             }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Search Share of Requests (%)"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / (sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() + sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:false} by {path}.as_count()) * 100"
+            display_type = "line"
+            style { palette = "cool" }
           }
         }
       }
