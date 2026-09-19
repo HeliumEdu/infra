@@ -106,17 +106,17 @@ resource "datadog_dashboard" "helium_heads_up" {
       }
       widget {
         timeseries_definition {
-          title         = "User Setup Duration (ms, 1d rolling avg)"
+          title         = "User Setup Duration (s, 1d rolling avg)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env}, 86400, 'avg')"
+            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env} / 1000, 86400, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env}, 86400, 'avg')"
+              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env} / 1000, 86400, 'avg')"
               alias_name = "Setup Duration (1d rolling avg)"
             }
           }
@@ -440,7 +440,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:*} by {path}.as_count() * 100"
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / (sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() + sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:false} by {path}.as_count()) * 100"
             display_type = "line"
             style { palette = "cool" }
           }
@@ -1094,19 +1094,32 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "User Time in Onboarding (mins, 7d rolling avg)"
+          title         = "User Time in Onboarding (hours, 7d rolling avg)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
+            q            = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 3600, 604800, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
-              alias_name = "Avg Onboarding Duration (7d rolling avg)"
+              expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 3600, 604800, 'avg')"
+              alias_name = "Hours (7d rolling avg)"
             }
+          }
+          request {
+            q              = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
+            display_type   = "line"
+            on_right_yaxis = true
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "moving_rollup(avg:platform.onboarding.duration.avg{$env, $staff} / 60, 604800, 'avg')"
+              alias_name = "Minutes (7d rolling avg)"
+            }
+          }
+          right_yaxis {
+            label = "minutes"
           }
         }
       }
