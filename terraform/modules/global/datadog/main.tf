@@ -440,7 +440,7 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true, path IN (planner.notes, planner.events, planner.homework, feed.externalcalendars.events)} by {path}.as_count() / sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, path IN (planner.notes, planner.events, planner.homework, feed.externalcalendars.events)} by {path}.as_count() * 100"
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:*} by {path}.as_count() * 100"
             display_type = "line"
             style { palette = "cool" }
           }
