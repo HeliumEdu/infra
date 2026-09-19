@@ -1185,7 +1185,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Search Share of Requests (%)"
+          title         = "Search Requests (%)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
