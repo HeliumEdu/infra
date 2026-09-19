@@ -404,6 +404,48 @@ resource "datadog_dashboard" "helium_heads_up" {
           }
         }
       }
+      widget {
+        timeseries_definition {
+          title         = "Search Requests"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count()"
+            display_type = "bars"
+            style { palette = "dog_classic" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Search Response Time (p95 ms)"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "avg:platform.request.timing.95percentile{$env, search:true} by {path}"
+            display_type = "line"
+            style { palette = "warm" }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
+          title         = "Search Share of Requests (%)"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          request {
+            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true, path IN (planner.notes, planner.events, planner.homework, feed.externalcalendars.events)} by {path}.as_count() / sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, path IN (planner.notes, planner.events, planner.homework, feed.externalcalendars.events)} by {path}.as_count() * 100"
+            display_type = "line"
+            style { palette = "cool" }
+          }
+        }
+      }
     }
   }
 
