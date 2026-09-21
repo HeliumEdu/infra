@@ -121,12 +121,12 @@ resource "datadog_dashboard" "helium_heads_up" {
             }
           }
           request {
-            q            = "moving_rollup(max:platform.user.setup.total_duration.max{$env} / 1000, 86400, 'max')"
+            q            = "max:platform.user.setup.total_duration.max{$env} / 1000"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "moving_rollup(max:platform.user.setup.total_duration.max{$env} / 1000, 86400, 'max')"
-              alias_name = "Setup Duration (1d rolling max)"
+              expression = "max:platform.user.setup.total_duration.max{$env} / 1000"
+              alias_name = "Setup Duration (max)"
             }
           }
         }
