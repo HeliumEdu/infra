@@ -1064,14 +1064,50 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
-          title         = "Logins"
+          title         = "Platform Share (% of Authenticated Requests)"
           title_size    = "16"
           title_align   = "left"
           show_legend   = true
           legend_layout = "auto"
+          yaxis {
+            min = "0"
+            max = "100"
+          }
           request {
-            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client,client_os}.as_count()"
-            display_type = "bars"
+            formula {
+              formula_expression = "ios / (ios + android + web) * 100"
+              alias              = "iOS App"
+            }
+            formula {
+              formula_expression = "android / (ios + android + web) * 100"
+              alias              = "Android App"
+            }
+            formula {
+              formula_expression = "web / (ios + android + web) * 100"
+              alias              = "Web"
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "ios"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:ios}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "android"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:android}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "web"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:web}.as_count()"
+              }
+            }
+            display_type = "area"
             style { palette = "dog_classic" }
           }
         }
