@@ -112,12 +112,21 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env} / 1000, 86400, 'avg')"
+            q            = "moving_rollup(cutoff_max(avg:platform.user.setup.total_duration.avg{$env} / 1000, 60), 86400, 'avg')"
             display_type = "line"
             style { palette = "dog_classic" }
             metadata {
-              expression = "moving_rollup(avg:platform.user.setup.total_duration.avg{$env} / 1000, 86400, 'avg')"
-              alias_name = "Setup Duration (1d rolling avg)"
+              expression = "moving_rollup(cutoff_max(avg:platform.user.setup.total_duration.avg{$env} / 1000, 60), 86400, 'avg')"
+              alias_name = "Setup Duration (1d rolling avg, outliers > 60s omitted)"
+            }
+          }
+          request {
+            q            = "moving_rollup(max:platform.user.setup.total_duration.max{$env} / 1000, 86400, 'max')"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "moving_rollup(max:platform.user.setup.total_duration.max{$env} / 1000, 86400, 'max')"
+              alias_name = "Setup Duration (1d rolling max)"
             }
           }
         }
