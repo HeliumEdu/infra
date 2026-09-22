@@ -413,20 +413,6 @@ resource "datadog_dashboard" "helium_heads_up" {
           }
         }
       }
-      widget {
-        timeseries_definition {
-          title         = "Search Response Time (p95 ms)"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "avg:platform.request.timing.95percentile{$env, search:true} by {path}"
-            display_type = "line"
-            style { palette = "warm" }
-          }
-        }
-      }
     }
   }
 
@@ -1237,20 +1223,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
               expression = "sum:platform.task{$env, $staff, name:user.review-prompt.evaluate.user}.as_count()"
               alias_name = "Flagged"
             }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "Search Requests (%)"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          request {
-            q            = "sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() / (sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:true} by {path}.as_count() + sum:platform.request{$env, $staff, $user_agent, $client, $client_os, method:get, search:false} by {path}.as_count()) * 100"
-            display_type = "line"
-            style { palette = "cool" }
           }
         }
       }

@@ -280,11 +280,11 @@ resource "datadog_monitor" "worker_undersized" {
 }
 
 resource "datadog_monitor" "api_slow_responses" {
-  name     = "API Response Times Degraded"
+  name     = "API Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.95percentile{env:prod} > 3000"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete.*} by {path} > 1000"
   message  = <<-EOT
-    API p95 response time has averaged above {{ threshold }}ms for the last 24 hours.
+    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
 
     Sustained slow responses indicate a configuration or optimization issue:
     - Database queries need optimization (check Sentry for N+1, slow queries)
@@ -301,8 +301,66 @@ resource "datadog_monitor" "api_slow_responses" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 2000
-    critical = 3000
+    warning  = 500
+    critical = 1000
+  }
+
+  tags = ["managed_by:terraform", "alert_type:config"]
+}
+
+resource "datadog_monitor" "importexport_slow_responses" {
+  name     = "Import/Export Response Times Degraded - {{path.name}}"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 5000"
+  message  = <<-EOT
+    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
+
+    Import and export run synchronously, so this is user-facing wait time:
+    - Check for N+1 growth in the import/export serializers as models gain fields
+    - Confirm example schedule seeding has not grown (resources/example_schedule.json)
+    - Large user datasets may need the work moved to a background task
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 4
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 3000
+    critical = 5000
+  }
+
+  tags = ["managed_by:terraform", "alert_type:config"]
+}
+
+resource "datadog_monitor" "task_duration_degraded" {
+  name     = "Background Task Duration Degraded - {{name.name}}"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod} by {name} > 60000"
+  message  = <<-EOT
+    Task {{name.name}} has averaged above {{ threshold }}ms of execution time for the last 24 hours.
+
+    Sustained slow execution indicates a configuration or optimization issue:
+    - Check for N+1 growth as the task's underlying models gain fields or relations
+    - Per-user tasks scale with user count, per-row tasks with data volume
+    - Sustained growth may mean the task needs batching or a schedule change
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 4
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 30000
+    critical = 60000
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
