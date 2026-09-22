@@ -49,5 +49,7 @@ output "monitor_ids" {
     redis_needs_upgrade      = datadog_monitor.redis_needs_upgrade.id
     rds_connection_config    = datadog_monitor.rds_connection_config.id
     high_priority_queue_wait = datadog_monitor.high_priority_queue_wait.id
+    importexport_slow        = datadog_monitor.importexport_slow_responses.id
+    task_duration_degraded   = datadog_monitor.task_duration_degraded.id
   }
 }
