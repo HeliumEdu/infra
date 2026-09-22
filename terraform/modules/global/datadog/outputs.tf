@@ -42,6 +42,7 @@ output "monitor_ids" {
     ses_bounce_rate        = datadog_monitor.ses_bounce_rate.id
     ses_complaint_rate     = datadog_monitor.ses_complaint_rate.id
     support_contact_abuse  = datadog_monitor.support_contact_abuse.id
+    reminder_dispatch_sat  = datadog_monitor.reminder_dispatch_saturation.id
 
     # Config-focused (sustained issues requiring config changes)
     worker_undersized        = datadog_monitor.worker_undersized.id
