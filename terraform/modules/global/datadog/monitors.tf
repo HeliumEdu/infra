@@ -311,7 +311,7 @@ resource "datadog_monitor" "api_slow_responses" {
 resource "datadog_monitor" "importexport_slow_responses" {
   name     = "Import/Export Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 5000"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 8000"
   message  = <<-EOT
     The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
 
@@ -330,8 +330,8 @@ resource "datadog_monitor" "importexport_slow_responses" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 3000
-    critical = 5000
+    warning  = 5000
+    critical = 8000
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
