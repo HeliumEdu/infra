@@ -5,7 +5,7 @@ variable "helium_version" {
 
 variable "minimum_supported_version" {
   description = "Oldest client version the API still supports; older clients are forced to update. 0.0.0 disables the gate."
-  default     = "0.0.0"
+  default     = "3.8.0"
 }
 
 variable "environment" {
