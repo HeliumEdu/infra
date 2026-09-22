@@ -369,7 +369,7 @@ resource "datadog_monitor" "task_duration_degraded" {
 resource "datadog_monitor" "reminder_dispatch_saturation" {
   name     = "Reminder Dispatch Approaching Its Interval - {{name.name}}"
   type     = "query alert"
-  query    = "avg(last_1h):avg:platform.task.timing.avg{env:prod, name IN (reminder.email.process,reminder.push.process)} by {name} > 45000"
+  query    = "avg(last_1h):avg:platform.task.timing.avg{env:prod AND name IN (reminder.email.process,reminder.push.process)} by {name} > 45000"
   message  = <<-EOT
     The mean runtime for {{name.name}} has been above {{ threshold }}ms over the last hour, against a 60 second dispatch interval.
 
