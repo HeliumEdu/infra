@@ -1216,11 +1216,11 @@ resource "datadog_dashboard" "helium_user_behavior" {
             style { palette = "dog_classic" }
           }
           request {
-            q            = "sum:platform.action.review-prompt.flagged{$env}.as_count()"
+            q            = "sum:platform.action.review_prompt.flagged{$env}.as_count()"
             display_type = "line"
             style { palette = "grey" }
             metadata {
-              expression = "sum:platform.action.review-prompt.flagged{$env}.as_count()"
+              expression = "sum:platform.action.review_prompt.flagged{$env}.as_count()"
               alias_name = "Flagged"
             }
           }
