@@ -340,7 +340,7 @@ resource "datadog_monitor" "importexport_slow_responses" {
 resource "datadog_monitor" "task_duration_degraded" {
   name     = "Background Task Duration Degraded - {{name.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod} by {name} > 60000"
+  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process} by {name} > 60000"
   message  = <<-EOT
     Task {{name.name}} has averaged above {{ threshold }}ms of execution time for the last 24 hours.
 
@@ -364,6 +364,35 @@ resource "datadog_monitor" "task_duration_degraded" {
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
+}
+
+resource "datadog_monitor" "reminder_dispatch_saturation" {
+  name     = "Reminder Dispatch Approaching Its Interval - {{name.name}}"
+  type     = "query alert"
+  query    = "avg(last_1h):avg:platform.task.timing.avg{env:prod, name IN (reminder.email.process,reminder.push.process)} by {name} > 45000"
+  message  = <<-EOT
+    The mean runtime for {{name.name}} has been above {{ threshold }}ms over the last hour, against a 60 second dispatch interval.
+
+    A fan-out approaching its own interval risks overlapping ticks and late reminders:
+    - Reminders due per minute may have outgrown one-at-a-time dispatch
+    - Broker latency may be elevated (cross-check high priority queue wait time)
+    - Dispatch may need batching rather than an apply_async per reminder
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 30000
+    critical = 45000
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
 resource "datadog_monitor" "redis_needs_upgrade" {
