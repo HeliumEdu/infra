@@ -282,7 +282,7 @@ resource "datadog_monitor" "worker_undersized" {
 resource "datadog_monitor" "api_slow_responses" {
   name     = "API Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete.*} by {path} > 1000"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete.*} by {path} > 500"
   message  = <<-EOT
     The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
 
@@ -301,8 +301,8 @@ resource "datadog_monitor" "api_slow_responses" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 500
-    critical = 1000
+    warning  = 250
+    critical = 500
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
@@ -311,7 +311,7 @@ resource "datadog_monitor" "api_slow_responses" {
 resource "datadog_monitor" "importexport_slow_responses" {
   name     = "Import/Export Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 8000"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 10000"
   message  = <<-EOT
     The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
 
@@ -330,8 +330,8 @@ resource "datadog_monitor" "importexport_slow_responses" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 5000
-    critical = 8000
+    warning  = 6000
+    critical = 10000
   }
 
   tags = ["managed_by:terraform", "alert_type:config"]
@@ -359,7 +359,7 @@ resource "datadog_monitor" "task_duration_degraded" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    warning  = 30000
+    warning  = 20000
     critical = 60000
   }
 
