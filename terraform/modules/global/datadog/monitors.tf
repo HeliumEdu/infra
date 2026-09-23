@@ -282,7 +282,7 @@ resource "datadog_monitor" "worker_undersized" {
 resource "datadog_monitor" "api_slow_responses" {
   name     = "API Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete.*} by {path} > 500"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path} > 500"
   message  = <<-EOT
     The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
 
@@ -337,10 +337,68 @@ resource "datadog_monitor" "importexport_slow_responses" {
   tags = ["managed_by:terraform", "alert_type:config"]
 }
 
+resource "datadog_monitor" "auth_slow_responses" {
+  name     = "Auth Response Times Degraded - {{path.name}}"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod AND path IN (auth.token,auth.user.register,auth.user.forgot.confirm)} by {path} > 1500"
+  message  = <<-EOT
+    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
+
+    These paths hash a password; above this threshold, work has been added on top of that baseline:
+    - Work made synchronous that belongs in a background task (email, analytics, provisioning)
+    - N+1 growth in the user or settings serializers
+    - API tasks may be undersized
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 4
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 800
+    critical = 1500
+  }
+
+  tags = ["managed_by:terraform", "alert_type:config"]
+}
+
+resource "datadog_monitor" "auth_hashing_weakened" {
+  name     = "Auth Password Hashing Unexpectedly Fast"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:auth.token} < 200"
+  message  = <<-EOT
+    The mean response time for logins on /token has averaged below {{ threshold }}ms for the last 24 hours.
+
+    Responses this fast mean password verification is not running as configured:
+    - A faster hasher, or a lower iteration count, at the front of PASSWORD_HASHERS
+    - Authentication short-circuiting before check_password
+    - Faster underlying hardware, which needs the iteration count raised to compensate
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "resolve"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 300
+    critical = 200
+  }
+
+  tags = ["managed_by:terraform", "alert_type:config"]
+}
+
 resource "datadog_monitor" "task_duration_degraded" {
   name     = "Background Task Duration Degraded - {{name.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process} by {name} > 60000"
+  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name} > 60000"
   message  = <<-EOT
     Task {{name.name}} has averaged above {{ threshold }}ms of execution time for the last 24 hours.
 
