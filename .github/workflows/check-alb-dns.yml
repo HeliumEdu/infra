@@ -16,7 +16,6 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: us-east-1
-  DD_API_KEY: ${{ secrets.PROJECT_DATADOG_API_KEY }}
   LB_NAME: helium-prod
 
 concurrency:
@@ -43,32 +42,34 @@ jobs:
 
           echo "$OUTPUT"
 
-          DRIFT=$(echo "$OUTPUT" | sed -n 's/^drift_count=//p' | tail -1)
-          echo "drift=${DRIFT:-}" >> "$GITHUB_OUTPUT"
-          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          ORPHANED=$(echo "$OUTPUT" | sed -n 's/^orphaned_count=//p' | tail -1)
+          UNADVERTISED=$(echo "$OUTPUT" | sed -n 's/^unadvertised_count=//p' | tail -1)
+          {
+            echo "orphaned=${ORPHANED:-}"
+            echo "unadvertised=${UNADVERTISED:-}"
+            echo "status=$STATUS"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Report drift to Datadog
-        if: always() && steps.check.outputs.drift != ''
-        env:
-          DRIFT: ${{ steps.check.outputs.drift }}
-        run: |
-          curl -sS -X POST "https://api.datadoghq.com/api/v2/series" \
-            -H "Accept: application/json" \
-            -H "Content-Type: application/json" \
-            -H "DD-API-KEY: ${DD_API_KEY}" \
-            -d "$(jq -n --argjson value "$DRIFT" --arg ts "$(date +%s)" '
-              {
-                series: [{
-                  metric: "helium.alb.dns_drift",
-                  type: 3,
-                  points: [{ timestamp: ($ts | tonumber), value: $value }],
-                  tags: ["env:prod"]
-                }]
-              }')" \
-            --fail-with-body
+      - name: Report orphaned addresses to Datadog
+        if: always() && steps.check.outputs.orphaned != ''
+        uses: HeliumEdu/.github/actions/datadog-metric@main
+        with:
+          api-key: ${{ secrets.PROJECT_DATADOG_API_KEY }}
+          metric: helium.alb.dns_drift
+          value: ${{ steps.check.outputs.orphaned }}
+          tags: env:prod,kind:orphaned
 
-      - name: Fail when addresses disagree
+      - name: Report unadvertised nodes to Datadog
+        if: always() && steps.check.outputs.unadvertised != ''
+        uses: HeliumEdu/.github/actions/datadog-metric@main
+        with:
+          api-key: ${{ secrets.PROJECT_DATADOG_API_KEY }}
+          metric: helium.alb.dns_drift
+          value: ${{ steps.check.outputs.unadvertised }}
+          tags: env:prod,kind:unadvertised
+
+      - name: Fail when the check does not pass
         if: steps.check.outputs.status != '0'
         run: |
-          echo "Advertised addresses and attached interfaces disagree."
+          echo "The check exited ${{ steps.check.outputs.status }}; its output above has the detail."
           exit 1

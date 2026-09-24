@@ -732,11 +732,11 @@ resource "datadog_monitor" "high_priority_queue_wait" {
 }
 
 resource "datadog_monitor" "alb_dns_drift" {
-  name     = "ALB DNS Drift"
+  name     = "ALB DNS Drift - Orphaned Address"
   type     = "query alert"
-  query    = "max(last_2h):max:helium.alb.dns_drift{env:prod} > 0"
+  query    = "max(last_90m):max:helium.alb.dns_drift{env:prod,kind:orphaned} > 0"
   message  = <<-EOT
-    The addresses the load balancer advertises in DNS no longer match the addresses attached to its interfaces, so clients may be resolving an address with nothing behind it. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
+    The load balancer advertises an address in DNS with no interface behind it, so clients resolving it hang until they time out. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -753,3 +753,50 @@ resource "datadog_monitor" "alb_dns_drift" {
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
+
+resource "datadog_monitor" "alb_dns_unadvertised" {
+  name     = "ALB DNS Drift - Unadvertised Nodes"
+  type     = "query alert"
+  query    = "min(last_6h):max:helium.alb.dns_drift{env:prod,kind:unadvertised} > 0"
+  message  = <<-EOT
+    Load balancer nodes have been attached but absent from DNS for 6 hours, the early sign of the record set no longer tracking node replacements. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md.
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 0
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "canary_failing" {
+  name     = "Canary Tests Failing"
+  type     = "query alert"
+  query    = "sum(last_150m):sum:helium.canary.failed{env:prod} >= 2"
+  message  = <<-EOT
+    The canary tests have failed on consecutive runs. Check the failed Canary Tests runs in the frontend repo; screenshots of each failure are attached as artifacts. No data means the canary itself stopped running.
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "show_and_notify_no_data"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 2
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
