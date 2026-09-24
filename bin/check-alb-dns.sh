@@ -10,6 +10,7 @@ set -euo pipefail
 
 LB_NAME="${1:-${LB_NAME:-helium-prod}}"
 RESOLVER="${RESOLVER:-}"
+ORPHAN_RECHECK_SECONDS="${ORPHAN_RECHECK_SECONDS:-90}"
 
 dig_cmd() {
   if [ -n "$RESOLVER" ]; then
@@ -29,12 +30,16 @@ if [ -z "$LB_DNS" ] || [ "$LB_DNS" = "None" ]; then
   exit 2
 fi
 
-advertised=$(dig_cmd "$LB_DNS" A | grep -E '^[0-9]+\.' | sort -u)
+resolve_advertised() {
+  dig_cmd "$LB_DNS" A | { grep -E '^[0-9]+\.' || true; } | sort -u
+}
+
+advertised=$(resolve_advertised)
 
 attached=$(aws ec2 describe-network-interfaces \
   --filters "Name=description,Values=ELB app/${LB_NAME}/*" \
   --query 'NetworkInterfaces[].Association.PublicIp' \
-  --output text | tr '\t' '\n' | grep -E '^[0-9]+\.' | sort -u)
+  --output text | tr '\t' '\n' | { grep -E '^[0-9]+\.' || true; } | sort -u)
 
 if [ -z "$advertised" ]; then
   echo "$LB_DNS returned no A records." >&2
@@ -47,6 +52,14 @@ if [ -z "$attached" ]; then
 fi
 
 orphaned=$(comm -23 <(echo "$advertised") <(echo "$attached"))
+
+if [ -n "$orphaned" ]; then
+  echo "Advertised addresses with no interface; re-resolving in ${ORPHAN_RECHECK_SECONDS}s to rule out a stale cache."
+  sleep "$ORPHAN_RECHECK_SECONDS"
+  advertised=$(resolve_advertised)
+  orphaned=$(comm -12 <(echo "$orphaned") <(echo "$advertised"))
+fi
+
 unadvertised=$(comm -13 <(echo "$advertised") <(echo "$attached"))
 
 echo "Load balancer: $LB_NAME ($LB_DNS)"
@@ -81,9 +94,8 @@ else
   echo "Recovery: see docs/helium-alb-dns.md"
 fi
 
-drift_count=$(printf '%s\n%s\n' "$orphaned" "$unadvertised" | grep -c '^[0-9]' || true)
-
 echo
-echo "drift_count=${drift_count}"
+echo "orphaned_count=$(echo "$orphaned" | grep -c '^[0-9]' || true)"
+echo "unadvertised_count=$(echo "$unadvertised" | grep -c '^[0-9]' || true)"
 
 exit "$status"

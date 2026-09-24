@@ -42,6 +42,12 @@ variable "DD_APP_KEY" {
   sensitive   = true
 }
 
+variable "GITHUB_PAT" {
+  description = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
+  type        = string
+  sensitive   = true
+}
+
 variable "TERRAFORM_API_TOKEN" {
   description = "HCP Terraform team token used to manage workspace notification configurations"
   type        = string

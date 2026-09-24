@@ -2,6 +2,7 @@ module "datadog" {
   source = "../../modules/global/datadog"
 
   aws_account_id = var.AWS_ACCOUNT_ID
+  github_pat     = var.GITHUB_PAT
 }
 
 data "tfe_organization_membership" "notification_recipient" {
