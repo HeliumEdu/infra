@@ -736,7 +736,7 @@ resource "datadog_monitor" "alb_dns_drift" {
   type     = "query alert"
   query    = "max(last_2h):max:helium.alb.dns_drift{env:prod} > 0"
   message  = <<-EOT
-    The addresses the load balancer advertises in DNS no longer match the addresses attached to its interfaces, so clients may be resolving an address with nothing behind it. Run bin/check-alb-dns.sh and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
+    The addresses the load balancer advertises in DNS no longer match the addresses attached to its interfaces, so clients may be resolving an address with nothing behind it. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
 
     Notify: @alerts@heliumedu.com
   EOT
