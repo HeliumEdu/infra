@@ -14,11 +14,12 @@ locals {
 }
 
 resource "datadog_synthetics_global_variable" "github_pat" {
-  name        = "GITHUB_PAT"
-  description = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
-  value       = var.github_pat
-  secure      = true
-  tags        = ["managed_by:terraform"]
+  name             = "GITHUB_PAT"
+  description      = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
+  value_wo         = var.github_pat
+  value_wo_version = sha256(var.github_pat)
+  secure           = true
+  tags             = ["managed_by:terraform"]
 }
 
 resource "datadog_synthetics_test" "workflow_dispatch" {
