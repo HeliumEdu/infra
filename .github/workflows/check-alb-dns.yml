@@ -3,8 +3,6 @@ name: "Check ALB DNS"
 run-name: "Check ALB DNS"
 
 on:
-  schedule:
-    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
