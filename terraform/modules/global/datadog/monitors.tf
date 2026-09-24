@@ -730,3 +730,26 @@ resource "datadog_monitor" "high_priority_queue_wait" {
 
   tags = ["managed_by:terraform", "alert_type:config"]
 }
+
+resource "datadog_monitor" "alb_dns_drift" {
+  name     = "ALB DNS Drift"
+  type     = "query alert"
+  query    = "max(last_2h):max:helium.alb.dns_drift{env:prod} > 0"
+  message  = <<-EOT
+    The addresses the load balancer advertises in DNS no longer match the addresses attached to its interfaces, so clients may be resolving an address with nothing behind it. Run bin/check-alb-dns.sh and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
+
+    Notify: @support@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "show_and_notify_no_data"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 0
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}

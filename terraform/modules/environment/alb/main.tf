@@ -9,6 +9,8 @@ resource "aws_lb" "helium" {
 
   enable_deletion_protection = true
 
+  enable_zonal_shift = true
+
   access_logs {
     bucket  = var.alb_access_logs_bucket
     prefix  = "alb/${var.environment}"
@@ -20,7 +22,7 @@ resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
   zone_id = var.route53_heliumedu_com_zone_id
   name    = "api.${var.route53_heliumedu_com_zone_name}"
   type    = "CNAME"
-  ttl     = "300"
+  ttl     = 60
   records = [aws_lb.helium.dns_name]
 }
 
