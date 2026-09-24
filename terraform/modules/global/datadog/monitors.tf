@@ -5,7 +5,7 @@ resource "datadog_monitor" "low_email_traffic" {
   message  = <<-EOT
     Emails sent are below {{ threshold }} in the last 24 hours. The Helium platform or AWS SES service may need investigation.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 5
 
@@ -29,7 +29,7 @@ resource "datadog_monitor" "token_api_low_traffic" {
   message  = <<-EOT
     Successful logins on /token are below {{ threshold }} in the last 24 hours.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 5
 
@@ -53,7 +53,7 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
   message  = <<-EOT
     Successful session refreshes on /token/refresh are below {{ threshold }} in the last 24 hours.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 5
 
@@ -77,7 +77,7 @@ resource "datadog_monitor" "low_push_notification_traffic" {
   message  = <<-EOT
     Push notifications sent are below {{ threshold }} in the last 24 hours. The Helium platform or Firebase service may need investigation.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 5
 
@@ -101,7 +101,7 @@ resource "datadog_monitor" "email_delivery_failures" {
   message  = <<-EOT
     More than {{ threshold }} email delivery failures detected in the last hour. AWS SES or the email sending service should be investigated.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -124,7 +124,7 @@ resource "datadog_monitor" "push_delivery_failures" {
   message  = <<-EOT
     More than {{ threshold }} push notification delivery failures detected in the last hour, excluding tokens that were simply retired. Firebase Cloud Messaging should be investigated.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -165,7 +165,7 @@ resource "datadog_monitor" "calendar_sync_failures" {
   message  = <<-EOT
     More than {{ threshold }} calendar sync failures detected in the last hour. iCal feed fetching should be investigated.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -188,7 +188,7 @@ resource "datadog_monitor" "firebase_oauth_failures" {
   message  = <<-EOT
     More than {{ threshold }} Firebase/OAuth failures detected in the last hour. OAuth integration should be investigated.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -211,7 +211,7 @@ resource "datadog_monitor" "task_failures" {
   message  = <<-EOT
     More than {{ threshold }} failures of the background task {{name.name}} in the last hour. Celery workers and task processing should be investigated.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -234,7 +234,7 @@ resource "datadog_monitor" "scheduled_task_not_running" {
   message  = <<-EOT
     The scheduled task {{name.name}} has not executed. Every task here runs at least daily, so no execution at all means Beat, the worker, or the task's registration is broken rather than the work merely failing.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
@@ -262,7 +262,7 @@ resource "datadog_monitor" "worker_undersized" {
     - Increasing Celery concurrency if memory allows
     - Raising platform_worker_min for more baseline capacity
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -291,7 +291,7 @@ resource "datadog_monitor" "api_slow_responses" {
     - API tasks may be undersized
     - Missing database indexes
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -320,7 +320,7 @@ resource "datadog_monitor" "importexport_slow_responses" {
     - Confirm example schedule seeding has not grown (resources/example_schedule.json)
     - Large user datasets may need the work moved to a background task
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -349,7 +349,7 @@ resource "datadog_monitor" "auth_slow_responses" {
     - N+1 growth in the user or settings serializers
     - API tasks may be undersized
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -378,7 +378,7 @@ resource "datadog_monitor" "auth_hashing_weakened" {
     - Authentication short-circuiting before check_password
     - Faster underlying hardware, which needs the iteration count raised to compensate
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
@@ -407,7 +407,7 @@ resource "datadog_monitor" "task_duration_degraded" {
     - Per-user tasks scale with user count, per-row tasks with data volume
     - Sustained growth may mean the task needs batching or a schedule change
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -436,7 +436,7 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
     - Broker latency may be elevated (cross-check high priority queue wait time)
     - Dispatch may need batching rather than an apply_async per reminder
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -465,7 +465,7 @@ resource "datadog_monitor" "redis_needs_upgrade" {
     - Check for Celery queue backlog
     - Consider upgrading ElastiCache instance size
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -513,7 +513,7 @@ resource "datadog_monitor" "api_5xx_spike" {
     - ALB ELB 5xx: ALB-generated errors (502/503/504); ECS targets may be unhealthy or unreachable
     - ALB Target 5xx: backend returning 5xx as seen by the ALB
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority          = 2
 
@@ -527,7 +527,7 @@ resource "datadog_monitor" "frontend_5xx_spike" {
   message  = <<-EOT
     CloudFront 5xx error rate has exceeded {{ threshold }}% in the last 5 minutes. The frontend S3 origin may be unavailable or misconfigured.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
@@ -553,7 +553,7 @@ resource "datadog_monitor" "ses_bounce_rate" {
 
     Investigate recent email sends for invalid addresses or unexpected bounce patterns.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
@@ -579,7 +579,7 @@ resource "datadog_monitor" "ses_complaint_rate" {
 
     Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints; investigate for bugs or unexpected send volume instead.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
@@ -602,7 +602,7 @@ resource "datadog_monitor" "support_contact_abuse" {
   message  = <<-EOT
     Support contact honeypot and throttle signals have exceeded {{ threshold }} combined over the last 24 hours. Review submission sources and tighten controls if needed.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -631,7 +631,7 @@ resource "datadog_monitor" "rds_connection_config" {
     - Check for connection leaks in application code
     - Consider upgrading RDS instance size (and updating this monitor's thresholds)
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 4
 
@@ -655,7 +655,7 @@ resource "datadog_monitor" "client_4xx_anomaly" {
   message  = <<-EOT
     Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. Slice platform.request by path and client_version to find the offending endpoint or release.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -685,7 +685,7 @@ resource "datadog_monitor" "certificate_renewal_failed" {
 
     Run `terraform plan` in the affected workspace to surface the drifted validation record and apply it. ACM retries renewal on its own once the record is restored.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 3
 
@@ -712,7 +712,7 @@ resource "datadog_monitor" "high_priority_queue_wait" {
 
     Current p95 queue wait time: {{ value }} ms
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
 
   query = "avg(last_1h):avg:platform.task.queue_time.95percentile{env:prod, priority:high} > 60000"
@@ -738,7 +738,7 @@ resource "datadog_monitor" "alb_dns_drift" {
   message  = <<-EOT
     The addresses the load balancer advertises in DNS no longer match the addresses attached to its interfaces, so clients may be resolving an address with nothing behind it. Run bin/check-alb-dns.sh and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
 
-    Notify: @support@heliumedu.com
+    Notify: @alerts@heliumedu.com
   EOT
   priority = 2
 
