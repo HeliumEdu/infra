@@ -31,7 +31,15 @@ if [ -z "$LB_DNS" ] || [ "$LB_DNS" = "None" ]; then
 fi
 
 resolve_advertised() {
-  dig_cmd "$LB_DNS" A | { grep -E '^[0-9]+\.' || true; } | sort -u
+  local records
+  records=$(dig_cmd "$LB_DNS" A | { grep -E '^[0-9]+\.' || true; } | sort -u)
+
+  if [ -z "$records" ]; then
+    echo "$LB_DNS returned no A records." >&2
+    exit 2
+  fi
+
+  echo "$records"
 }
 
 advertised=$(resolve_advertised)
@@ -40,11 +48,6 @@ attached=$(aws ec2 describe-network-interfaces \
   --filters "Name=description,Values=ELB app/${LB_NAME}/*" \
   --query 'NetworkInterfaces[].Association.PublicIp' \
   --output text | tr '\t' '\n' | { grep -E '^[0-9]+\.' || true; } | sort -u)
-
-if [ -z "$advertised" ]; then
-  echo "$LB_DNS returned no A records." >&2
-  exit 2
-fi
 
 if [ -z "$attached" ]; then
   echo "No ELB network interfaces found for '$LB_NAME'." >&2
