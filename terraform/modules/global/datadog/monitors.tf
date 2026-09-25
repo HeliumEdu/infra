@@ -282,9 +282,9 @@ resource "datadog_monitor" "worker_undersized" {
 resource "datadog_monitor" "api_slow_responses" {
   name     = "API Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path} > 500"
+  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path}.rollup(avg, 3600)) > 500"
   message  = <<-EOT
-    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
+    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
 
     Sustained slow responses indicate a configuration or optimization issue:
     - Database queries need optimization (check Sentry for N+1, slow queries)
@@ -311,9 +311,9 @@ resource "datadog_monitor" "api_slow_responses" {
 resource "datadog_monitor" "importexport_slow_responses" {
   name     = "Import/Export Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path} > 10000"
+  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path}.rollup(avg, 3600)) > 10000"
   message  = <<-EOT
-    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
+    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
 
     Import and export run synchronously, so this is user-facing wait time:
     - Check for N+1 growth in the import/export serializers as models gain fields
@@ -340,9 +340,9 @@ resource "datadog_monitor" "importexport_slow_responses" {
 resource "datadog_monitor" "auth_slow_responses" {
   name     = "Auth Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod AND path IN (auth.token,auth.user.register,auth.user.forgot.confirm)} by {path} > 1500"
+  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod AND path IN (auth.token,auth.user.register,auth.user.forgot.confirm)} by {path}.rollup(avg, 3600)) > 1500"
   message  = <<-EOT
-    The mean response time for {{path.name}} has averaged above {{ threshold }}ms for the last 24 hours.
+    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
 
     These paths hash a password; above this threshold, work has been added on top of that baseline:
     - Work made synchronous that belongs in a background task (email, analytics, provisioning)
@@ -369,9 +369,9 @@ resource "datadog_monitor" "auth_slow_responses" {
 resource "datadog_monitor" "auth_hashing_weakened" {
   name     = "Auth Password Hashing Unexpectedly Fast"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.request.timing.avg{env:prod, path:auth.token} < 200"
+  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:auth.token}.rollup(avg, 3600)) < 200"
   message  = <<-EOT
-    The mean response time for logins on /token has averaged below {{ threshold }}ms for the last 24 hours.
+    Response times for logins on /token have held below {{ threshold }}ms over the last 24 hours, outliers excluded.
 
     Responses this fast mean password verification is not running as configured:
     - A faster hasher, or a lower iteration count, at the front of PASSWORD_HASHERS
@@ -398,9 +398,9 @@ resource "datadog_monitor" "auth_hashing_weakened" {
 resource "datadog_monitor" "task_duration_degraded" {
   name     = "Background Task Duration Degraded - {{name.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name} > 60000"
+  query    = "avg(last_1w):median_9(avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name}.rollup(avg, 3600)) > 60000"
   message  = <<-EOT
-    Task {{name.name}} has averaged above {{ threshold }}ms of execution time for the last 24 hours.
+    Task {{name.name}} has held above {{ threshold }}ms of execution time over the last week, outliers excluded.
 
     Sustained slow execution indicates a configuration or optimization issue:
     - Check for N+1 growth as the task's underlying models gain fields or relations
