@@ -161,7 +161,7 @@ resource "datadog_monitor" "server_error_spike" {
 resource "datadog_monitor" "calendar_sync_failures" {
   name     = "Calendar Sync Failure Spike"
   type     = "query alert"
-  query    = "sum(last_1h):sum:platform.feed.ical.failed{env:prod}.as_count() > 5"
+  query    = "sum(last_1h):sum:platform.feed.ical.failed{env:prod}.as_count() > 15"
   message  = <<-EOT
     More than {{ threshold }} calendar sync failures detected in the last hour. iCal feed fetching should be investigated.
 
@@ -175,7 +175,7 @@ resource "datadog_monitor" "calendar_sync_failures" {
   renotify_interval   = 1440
 
   monitor_thresholds {
-    critical = 5
+    critical = 15
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
