@@ -653,7 +653,7 @@ resource "datadog_monitor" "client_4xx_anomaly" {
   type     = "query alert"
   query    = "avg(last_4h):anomalies(sum:platform.request{env:prod AND (status_code:400 OR status_code:404 OR status_code:422)}.as_count(), 'agile', 3) >= 1"
   message  = <<-EOT
-    Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. Slice platform.request by path and client_version to find the offending endpoint or release.
+    Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. Slice platform.request by path, client, and client_os to find the offending endpoint or client, then check platform.client_version for a recent release.
 
     Notify: @alerts@heliumedu.com
   EOT
