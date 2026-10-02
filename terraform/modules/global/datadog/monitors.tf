@@ -143,13 +143,13 @@ resource "datadog_monitor" "push_delivery_failures" {
 locals {
   # Added to every 5xx-rate denominator so a handful of requests in a quiet window cannot spike the
   # rate; at real traffic volumes it is negligible and the result converges to the true error rate.
-  error_rate_smoothing_requests = 50
+  error_rate_smoothing_requests = 25
 }
 
 resource "datadog_monitor" "server_error_spike" {
   name     = "API 5xx Error Spike - App (child)"
   type     = "query alert"
-  query    = "max(last_10m):default_zero(sum:platform.request{env:prod, status_code:5*}.as_count().rollup(sum, 300)) / (sum:platform.request{env:prod}.as_count().rollup(sum, 300) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "sum(last_5m):default_zero(sum:platform.request{env:prod, status_code:5*}.as_count()) / (sum:platform.request{env:prod}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = "App-level 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
@@ -491,7 +491,7 @@ resource "datadog_monitor" "redis_needs_upgrade" {
 resource "datadog_monitor" "api_5xx_alb_child" {
   name     = "API 5xx Error Spike - ALB (child)"
   type     = "query alert"
-  query    = "max(last_10m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod}.as_count().rollup(sum, 300)) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod}.as_count().rollup(sum, 300))) / (sum:aws.applicationelb.request_count{name:helium-prod}.as_count().rollup(sum, 300) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "sum(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod}.as_count()) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod}.as_count())) / (sum:aws.applicationelb.request_count{name:helium-prod}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = "ALB 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
@@ -528,7 +528,7 @@ resource "datadog_monitor" "api_5xx_spike" {
 resource "datadog_monitor" "frontend_5xx_spike" {
   name     = "Frontend 5xx Error Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod} by {distributionid}.as_count().rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod} by {distributionid}.as_count().rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = <<-EOT
     CloudFront 5xx error rate for distribution {{distributionid.name}} has exceeded {{ threshold }}% over the last 15 minutes. The frontend S3 origin may be unavailable or misconfigured.
 
