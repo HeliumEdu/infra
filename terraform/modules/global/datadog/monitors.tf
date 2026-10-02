@@ -496,7 +496,7 @@ resource "datadog_monitor" "api_5xx_alb_child" {
   priority = 3
 
   include_tags        = false
-  on_missing_data     = "resolve"
+  on_missing_data     = "default"
   require_full_window = false
   renotify_interval   = 1440
 
