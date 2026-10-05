@@ -3,7 +3,7 @@ resource "datadog_monitor" "low_email_traffic" {
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.action.email.sent{env:prod}.as_count() < 5"
   message  = <<-EOT
-    Emails sent are below {{ threshold }} in the last 24 hours. The Helium platform or AWS SES service may need investigation.
+    Emails sent are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. The Helium platform or AWS SES service may need investigation.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -27,7 +27,7 @@ resource "datadog_monitor" "token_api_low_traffic" {
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 5"
   message  = <<-EOT
-    Successful logins on /token are below {{ threshold }} in the last 24 hours.
+    Successful logins on /token are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -51,7 +51,7 @@ resource "datadog_monitor" "token_refresh_api_low_traffic" {
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token.refresh}.as_count() < 5"
   message  = <<-EOT
-    Successful session refreshes on /token/refresh are below {{ threshold }} in the last 24 hours.
+    Successful session refreshes on /token/refresh are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -75,7 +75,7 @@ resource "datadog_monitor" "low_push_notification_traffic" {
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.action.push.sent{env:prod}.as_count() < 1"
   message  = <<-EOT
-    Push notifications sent are below {{ threshold }} in the last 24 hours. The Helium platform or Firebase service may need investigation.
+    Push notifications sent are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. The Helium platform or Firebase service may need investigation.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -261,7 +261,7 @@ resource "datadog_monitor" "worker_undersized" {
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.ecs.cpuutilization{clustername:helium_prod, servicename:*worker*} > 60"
   message  = <<-EOT
-    Worker CPU utilization has averaged above {{ threshold }}% for the last 24 hours.
+    Worker CPU utilization has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours.
 
     This sustained high utilization indicates your worker tasks are undersized. Consider:
     - Increasing task CPU allocation in ECS task definition
@@ -290,7 +290,7 @@ resource "datadog_monitor" "api_slow_responses" {
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path}.rollup(avg, 3600)) > 500"
   message  = <<-EOT
-    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
+    Response times for {{path.name}} have held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last 24 hours, outliers excluded.
 
     Sustained slow responses indicate a configuration or optimization issue:
     - Database queries need optimization (check Sentry for N+1, slow queries)
@@ -319,7 +319,7 @@ resource "datadog_monitor" "importexport_slow_responses" {
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path}.rollup(avg, 3600)) > 10000"
   message  = <<-EOT
-    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
+    Response times for {{path.name}} have held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last 24 hours, outliers excluded.
 
     Import and export run synchronously, so this is user-facing wait time:
     - Check for N+1 growth in the import/export serializers as models gain fields
@@ -348,7 +348,7 @@ resource "datadog_monitor" "auth_slow_responses" {
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod AND path IN (auth.token,auth.user.register,auth.user.forgot.confirm)} by {path}.rollup(avg, 3600)) > 1500"
   message  = <<-EOT
-    Response times for {{path.name}} have held above {{ threshold }}ms over the last 24 hours, outliers excluded.
+    Response times for {{path.name}} have held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last 24 hours, outliers excluded.
 
     These paths hash a password; above this threshold, work has been added on top of that baseline:
     - Work made synchronous that belongs in a background task (email, analytics, provisioning)
@@ -377,7 +377,7 @@ resource "datadog_monitor" "auth_hashing_weakened" {
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:auth.token}.rollup(avg, 3600)) < 200"
   message  = <<-EOT
-    Response times for logins on /token have held below {{ threshold }}ms over the last 24 hours, outliers excluded.
+    Response times for logins on /token have held below {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last 24 hours, outliers excluded.
 
     Responses this fast mean password verification is not running as configured:
     - A faster hasher, or a lower iteration count, at the front of PASSWORD_HASHERS
@@ -406,7 +406,7 @@ resource "datadog_monitor" "task_duration_degraded" {
   type     = "query alert"
   query    = "avg(last_1w):median_9(avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name}.rollup(avg, 3600)) > 60000"
   message  = <<-EOT
-    Task {{name.name}} has held above {{ threshold }}ms of execution time over the last week, outliers excluded.
+    Task {{name.name}} has held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) of execution time over the last week, outliers excluded.
 
     Sustained slow execution indicates a configuration or optimization issue:
     - Check for N+1 growth as the task's underlying models gain fields or relations
@@ -435,7 +435,7 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
   type     = "query alert"
   query    = "avg(last_1h):avg:platform.task.timing.avg{env:prod AND name IN (reminder.email.process,reminder.push.process)} by {name} > 45000"
   message  = <<-EOT
-    The mean runtime for {{name.name}} has been above {{ threshold }}ms over the last hour, against a 60 second dispatch interval.
+    The mean runtime for {{name.name}} has been above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last hour, against a 60 second dispatch interval.
 
     A fan-out approaching its own interval risks overlapping ticks and late reminders:
     - Reminders due per minute may have outgrown one-at-a-time dispatch
@@ -464,7 +464,7 @@ resource "datadog_monitor" "redis_needs_upgrade" {
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.elasticache.database_memory_usage_percentage{replication_group:helium-prod} > 70"
   message  = <<-EOT
-    Redis memory utilization has averaged above {{ threshold }}% for the last 24 hours.
+    Redis memory utilization has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours.
 
     Sustained high memory usage indicates configuration changes needed:
     - Review cache TTL settings (items not expiring)
@@ -553,7 +553,7 @@ resource "datadog_monitor" "ses_bounce_rate" {
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.05"
   message  = <<-EOT
-    SES account bounce rate has exceeded 5% over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
+    SES account bounce rate has exceeded 3% (warning) / 5% (critical) over the last 24 hours. AWS begins reviewing accounts at 5% and may suspend sending at 10%.
 
     Investigate recent email sends for invalid addresses or unexpected bounce patterns.
 
@@ -604,7 +604,7 @@ resource "datadog_monitor" "support_contact_abuse" {
   type     = "query alert"
   query    = "sum(last_1d):default_zero(sum:platform.action.support_contact.honeypot{env:prod}.as_count()) + default_zero(sum:platform.action.support_contact.throttled{env:prod}.as_count()) > 25"
   message  = <<-EOT
-    Support contact honeypot and throttle signals have exceeded {{ threshold }} combined over the last 24 hours. Review submission sources and tighten controls if needed.
+    Support contact honeypot and throttle signals have exceeded {{ warn_threshold }} (warning) / {{ threshold }} (critical) combined over the last 24 hours. Review submission sources and tighten controls if needed.
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -628,7 +628,7 @@ resource "datadog_monitor" "rds_connection_config" {
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.rds.database_connections{name:helium-prod} > 55"
   message  = <<-EOT
-    RDS connections have averaged above {{ threshold }} for the last 24 hours (max ~66 for db.t4g.micro).
+    RDS connections have averaged above {{ warn_threshold }} (warning) / {{ threshold }} (critical) for the last 24 hours (max ~66 for db.t4g.micro).
 
     Sustained high connection count indicates configuration changes needed:
     - Reduce Gunicorn workers/threads or Celery concurrency
@@ -709,7 +709,7 @@ resource "datadog_monitor" "high_priority_queue_wait" {
   name    = "High Priority Task Queue Wait Time Elevated"
   type    = "query alert"
   message = <<-EOT
-    High priority tasks are waiting in the queue for extended periods (p95 above {{ threshold }} ms over the last hour).
+    High priority tasks are waiting in the queue for extended periods (p95 above {{ warn_threshold }} ms for warning, {{ threshold }} ms for critical, over the last hour).
 
     This indicates the worker may be overwhelmed with low-priority tasks,
     and it may be time to split into separate high/low priority queues.
