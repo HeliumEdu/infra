@@ -1,8 +1,13 @@
-import cf from 'cloudfront';
+// Cross-host paths, mirrored from projects/frontend lib/config/app_router.dart (External redirects)
+const externalRedirects = {
+    '/status': 'https://status.heliumedu.com',
+    '/support': 'https://www.heliumedu.com/support',
+    '/contact': 'https://www.heliumedu.com/contact',
+    '/docs': 'https://api.heliumedu.com/docs',
+    '/api': 'https://api.heliumedu.com'
+};
 
-const kvs = cf.kvs();
-
-async function handler(event) {
+function handler(event) {
     const request = event.request;
     const uri = request.uri;
 
@@ -13,21 +18,14 @@ async function handler(event) {
 
     const path = uri.length > 1 && uri.endsWith('/') ? uri.slice(0, -1) : uri;
 
-    try {
-        // Cross-host redirects, "<status> <location>", synced from projects/frontend on deploy
-        const value = await kvs.get(path);
-        const separator = value.indexOf(' ');
-        const status = Number(value.slice(0, separator));
-
+    if (Object.prototype.hasOwnProperty.call(externalRedirects, path)) {
         return {
-            statusCode: status,
-            statusDescription: status === 301 ? 'Moved Permanently' : 'Found',
+            statusCode: 302,
+            statusDescription: 'Found',
             headers: {
-                location: { value: value.slice(separator + 1) }
+                location: { value: externalRedirects[path] }
             }
         };
-    } catch (err) {
-        // No entry (or the store is unavailable): fall through to the SPA
     }
 
     // For all other requests (SPA routes), serve index.html
