@@ -52,16 +52,6 @@ variable "default_arch" {
   default     = "X86_64"
 }
 
-variable "platform_host_count" {
-  description = "The number of platform API hosts desired in the cluster"
-  default     = 1
-}
-
-variable "platform_worker_count" {
-  description = "The number of platform worker hosts desired in the cluster"
-  default     = 1
-}
-
 variable "db_multi_az" {
   description = "True if DB should be multi-AZ"
   default     = false
