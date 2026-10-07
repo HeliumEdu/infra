@@ -75,9 +75,6 @@ resource "aws_iam_role_policy" "ses_suppression_policy" {
 
 locals {
   arch_tag = var.default_arch == "ARM64" ? "arm64" : "amd64"
-
-  # A mutable "latest" tag needs a roll on every apply, a pinned version rolls only when it is bumped
-  redeployment_trigger = var.helium_version == "latest" ? plantimestamp() : var.helium_version
 }
 
 resource "aws_cloudwatch_log_group" "platform" {
@@ -397,7 +394,7 @@ resource "aws_ecs_service" "helium_platform_api" {
 
   force_new_deployment = true
   triggers = {
-    redeployment = local.redeployment_trigger
+    redeployment = var.helium_version
   }
 
   depends_on = [terraform_data.helium_platform_resource]
@@ -429,7 +426,7 @@ resource "aws_ecs_service" "helium_platform_worker" {
 
   force_new_deployment = true
   triggers = {
-    redeployment = local.redeployment_trigger
+    redeployment = var.helium_version
   }
 
   depends_on = [terraform_data.helium_platform_resource]
