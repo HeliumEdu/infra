@@ -1,8 +1,14 @@
+resource "aws_cloudfront_key_value_store" "app_redirects" {
+  name    = "${var.environment}-app-redirects"
+  comment = "Cross-host redirects for the app, synced from projects/frontend on deploy"
+}
+
 resource "aws_cloudfront_function" "rewrites_spa" {
-  name    = "${var.environment}-rewrites-spa"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/rewrites-spa.js")
+  name                         = "${var.environment}-rewrites-spa"
+  runtime                      = "cloudfront-js-2.0"
+  publish                      = true
+  code                         = file("${path.module}/rewrites-spa.js")
+  key_value_store_associations = [aws_cloudfront_key_value_store.app_redirects.arn]
 }
 
 resource "aws_s3_bucket" "heliumedu_frontend_non_www" {

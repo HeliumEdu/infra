@@ -214,11 +214,17 @@ resource "aws_s3_bucket_website_configuration" "www" {
   }
 }
 
-resource "aws_cloudfront_function" "www_redirect_status" {
-  name    = "${var.environment}-www-redirect-status"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/redirect-status.js")
+resource "aws_cloudfront_key_value_store" "www_redirects" {
+  name    = "${var.environment}-www-redirects"
+  comment = "Redirects for www.heliumedu.com, synced from projects/www on deploy"
+}
+
+resource "aws_cloudfront_function" "www_redirects" {
+  name                         = "${var.environment}-www-redirects"
+  runtime                      = "cloudfront-js-2.0"
+  publish                      = true
+  code                         = file("${path.module}/redirects.js")
+  key_value_store_associations = [aws_cloudfront_key_value_store.www_redirects.arn]
 }
 
 resource "aws_cloudfront_distribution" "marketing" {
@@ -259,7 +265,7 @@ resource "aws_cloudfront_distribution" "marketing" {
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.www_redirect_status.arn
+      function_arn = aws_cloudfront_function.www_redirects.arn
     }
   }
 
