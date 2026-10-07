@@ -6,7 +6,7 @@ async function handler(event) {
     const request = event.request;
     const uri = request.uri;
 
-    // If the request is for a file with an extension (assets), serve it directly
+    // Redirects are extensionless pages, so skip the lookup for assets
     if (uri.includes('.')) {
         return request;
     }
@@ -14,7 +14,7 @@ async function handler(event) {
     const path = uri.length > 1 && uri.endsWith('/') ? uri.slice(0, -1) : uri;
 
     try {
-        // Cross-host redirects, "<status> <location>", synced from projects/frontend on deploy
+        // Values are "<status> <location>", synced from projects/www on deploy
         const value = await kvs.get(path);
         const separator = value.indexOf(' ');
         const status = Number(value.slice(0, separator));
@@ -27,11 +27,7 @@ async function handler(event) {
             }
         };
     } catch (err) {
-        // No entry (or the store is unavailable): fall through to the SPA
+        // No entry (or the store is unavailable): serve the site as usual
+        return request;
     }
-
-    // For all other requests (SPA routes), serve index.html
-    request.uri = '/index.html';
-
-    return request;
 }
