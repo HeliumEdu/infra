@@ -214,6 +214,13 @@ resource "aws_s3_bucket_website_configuration" "www" {
   }
 }
 
+resource "aws_cloudfront_function" "www_redirect_status" {
+  name    = "${var.environment}-www-redirect-status"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/redirect-status.js")
+}
+
 resource "aws_cloudfront_distribution" "marketing" {
   enabled             = true
   aliases             = ["www.heliumedu.com"]
@@ -249,6 +256,11 @@ resource "aws_cloudfront_distribution" "marketing" {
     default_ttl            = 3600
     min_ttl                = 0
     max_ttl                = 86400
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.www_redirect_status.arn
+    }
   }
 
   custom_error_response {
