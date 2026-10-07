@@ -1,3 +1,8 @@
+resource "aws_cloudfront_key_value_store" "app_redirects" {
+  name    = "${var.environment}-app-redirects"
+  comment = "Cross-host redirects for the app, synced from projects/frontend on deploy"
+}
+
 resource "aws_cloudfront_function" "rewrites_spa" {
   name    = "${var.environment}-rewrites-spa"
   runtime = "cloudfront-js-2.0"
