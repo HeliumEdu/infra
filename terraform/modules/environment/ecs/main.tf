@@ -369,10 +369,15 @@ resource "aws_ecs_service" "helium_platform_api" {
   name                               = "helium_platform_api"
   cluster                            = aws_ecs_cluster.helium.id
   task_definition                    = aws_ecs_task_definition.platform_api_service.arn
-  desired_count                      = var.platform_host_count
+  desired_count                      = var.platform_host_min
   health_check_grace_period_seconds  = var.request_timeout_seconds * 2
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   capacity_provider_strategy {
     base              = 1
@@ -408,9 +413,14 @@ resource "aws_ecs_service" "helium_platform_worker" {
   name                               = "helium_platform_worker"
   cluster                            = aws_ecs_cluster.helium.id
   task_definition                    = aws_ecs_task_definition.platform_worker_service.arn
-  desired_count                      = var.platform_worker_count
+  desired_count                      = var.platform_worker_min
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   capacity_provider_strategy {
     base              = 1
@@ -456,7 +466,9 @@ resource "aws_appautoscaling_policy" "platform_api_cpu" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
-    target_value = 70.0
+    target_value       = 70.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
   }
 }
 
@@ -471,7 +483,9 @@ resource "aws_appautoscaling_policy" "platform_api_memory" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }
-    target_value = 70.0
+    target_value       = 70.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
   }
 }
 
@@ -495,7 +509,9 @@ resource "aws_appautoscaling_policy" "platform_worker_cpu" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
-    target_value = 70.0
+    target_value       = 70.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
   }
 }
 
@@ -510,7 +526,9 @@ resource "aws_appautoscaling_policy" "platform_worker_memory" {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }
-    target_value = 80.0
+    target_value       = 80.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
   }
 }
 

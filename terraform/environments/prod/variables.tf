@@ -46,16 +46,6 @@ variable "default_arch" {
   default     = "ARM64"
 }
 
-variable "platform_host_count" {
-  description = "The number of platform API hosts desired in the cluster"
-  default     = 2
-}
-
-variable "platform_worker_count" {
-  description = "The number of platform worker hosts desired in the cluster"
-  default     = 2
-}
-
 variable "db_multi_az" {
   description = "True if DB should be multi-AZ"
   default     = false
@@ -73,7 +63,7 @@ variable "num_cache_nodes" {
 
 variable "cache_instance_size" {
   description = "Instance size for cache"
-  default     = "cache.t4g.small"
+  default     = "cache.t4g.micro"
 }
 
 variable "request_timeout_seconds" {

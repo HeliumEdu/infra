@@ -13,11 +13,6 @@ variable "default_arch" {
   type        = string
 }
 
-variable "platform_host_count" {
-  description = "The initial number of platform API hosts desired in the cluster"
-  type        = number
-}
-
 variable "platform_host_min" {
   description = "Minimum number of platform API hosts for autoscaling"
   type        = number
@@ -34,11 +29,6 @@ variable "celery_concurrency" {
   description = "Number of concurrent Celery worker processes per task"
   type        = number
   default     = 2
-}
-
-variable "platform_worker_count" {
-  description = "The initial number of platform worker hosts desired in the cluster"
-  type        = number
 }
 
 variable "platform_worker_min" {
