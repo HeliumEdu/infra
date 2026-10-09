@@ -485,12 +485,21 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "avg:platform.celery.queue.depth{$env}"
+            q            = "avg:platform.celery.queue.depth{$env, priority:high}"
             display_type = "line"
-            style { palette = "orange" }
+            style { palette = "warm" }
             metadata {
-              expression = "avg:platform.celery.queue.depth{$env}"
-              alias_name = "Queue Depth"
+              expression = "avg:platform.celery.queue.depth{$env, priority:high}"
+              alias_name = "High Priority"
+            }
+          }
+          request {
+            q            = "avg:platform.celery.queue.depth{$env, priority:low}"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.celery.queue.depth{$env, priority:low}"
+              alias_name = "Low Priority"
             }
           }
         }

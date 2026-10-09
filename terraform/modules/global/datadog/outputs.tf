@@ -22,10 +22,9 @@ output "monitor_ids" {
   description = "Map of monitor names to IDs"
   value = {
     # Liveness (24h traffic dead-man's switches)
-    low_email_traffic   = datadog_monitor.low_email_traffic.id
-    low_push_traffic    = datadog_monitor.low_push_notification_traffic.id
-    low_login_traffic   = datadog_monitor.token_api_low_traffic.id
-    low_session_traffic = datadog_monitor.token_refresh_api_low_traffic.id
+    low_email_traffic = datadog_monitor.low_email_traffic.id
+    low_push_traffic  = datadog_monitor.low_push_notification_traffic.id
+    low_auth_traffic  = datadog_monitor.auth_low_traffic.id
 
     # Immediate/Diagnostic (help understand why something is broken)
     email_failures         = datadog_monitor.email_delivery_failures.id
@@ -45,12 +44,17 @@ output "monitor_ids" {
     reminder_dispatch_sat  = datadog_monitor.reminder_dispatch_saturation.id
 
     # Config-focused (sustained issues requiring config changes)
-    worker_undersized        = datadog_monitor.worker_undersized.id
     api_slow_responses       = datadog_monitor.api_slow_responses.id
-    redis_needs_upgrade      = datadog_monitor.redis_needs_upgrade.id
-    rds_connection_config    = datadog_monitor.rds_connection_config.id
     high_priority_queue_wait = datadog_monitor.high_priority_queue_wait.id
     importexport_slow        = datadog_monitor.importexport_slow_responses.id
     task_duration_degraded   = datadog_monitor.task_duration_degraded.id
+
+    # Capacity (a finite resource nearing its ceiling)
+    ecs_cpu         = datadog_monitor.ecs_cpu.id
+    ecs_memory      = datadog_monitor.ecs_memory.id
+    rds_cpu         = datadog_monitor.rds_cpu.id
+    rds_connections = datadog_monitor.rds_connections.id
+    rds_storage     = datadog_monitor.rds_storage.id
+    redis_memory    = datadog_monitor.redis_memory.id
   }
 }
