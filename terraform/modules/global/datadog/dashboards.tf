@@ -1067,6 +1067,45 @@ resource "datadog_dashboard" "helium_user_behavior" {
         }
       }
       widget {
+        query_value_definition {
+          title     = "Total Accounts (All Time)"
+          live_span = "1w"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "avg:platform.users.cumulative{$env, milestone:registered}"
+            aggregator = "last"
+          }
+          timeseries_background { type = "area" }
+        }
+      }
+      widget {
+        query_value_definition {
+          title     = "Tourists (Left Within 7 Days)"
+          live_span = "1w"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "avg:platform.users.cumulative{$env, milestone:tourists}"
+            aggregator = "last"
+          }
+          timeseries_background { type = "area" }
+        }
+      }
+      widget {
+        query_value_definition {
+          title     = "Sustained Users (30+ Days)"
+          live_span = "1w"
+          autoscale = false
+          precision = 0
+          request {
+            q          = "avg:platform.users.cumulative{$env, milestone:30d}"
+            aggregator = "last"
+          }
+          timeseries_background { type = "area" }
+        }
+      }
+      widget {
         timeseries_definition {
           title         = "Platform Share (% of Authenticated Requests)"
           title_size    = "16"
