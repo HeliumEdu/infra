@@ -73,6 +73,26 @@ resource "aws_iam_role_policy" "ses_suppression_policy" {
   policy = data.aws_iam_policy_document.ses_suppression_policy_document.json
 }
 
+data "aws_iam_policy_document" "cloudwatch_metrics_policy_document" {
+  statement {
+    effect    = "Allow"
+    actions   = ["cloudwatch:PutMetricData"]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "cloudwatch:namespace"
+      values   = ["Helium/${var.environment}"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "cloudwatch_metrics_policy" {
+  name = "helium-${var.environment}-cloudwatch-metrics-policy"
+  role = aws_iam_role.ecs_role.id
+
+  policy = data.aws_iam_policy_document.cloudwatch_metrics_policy_document.json
+}
+
 locals {
   arch_tag = var.default_arch == "ARM64" ? "arm64" : "amd64"
 }
@@ -228,10 +248,11 @@ resource "aws_ecs_task_definition" "platform_worker_service" {
   family = "helium_platform_worker_${var.environment}"
   container_definitions = jsonencode([
     {
-      name      = "helium_platform_worker"
-      image     = "${var.platform_worker_repository_uri}:${local.arch_tag}-${var.helium_version}"
-      cpu       = 0
-      essential = true
+      name        = "helium_platform_worker"
+      image       = "${var.platform_worker_repository_uri}:${local.arch_tag}-${var.helium_version}"
+      cpu         = 0
+      essential   = true
+      stopTimeout = 120
       environment = [
         {
           name  = "ENVIRONMENT"
@@ -472,23 +493,6 @@ resource "aws_appautoscaling_policy" "platform_api_cpu" {
   }
 }
 
-resource "aws_appautoscaling_policy" "platform_api_memory" {
-  name               = "helium-${var.environment}-api-memory-scaling"
-  policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.platform_api.resource_id
-  scalable_dimension = aws_appautoscaling_target.platform_api.scalable_dimension
-  service_namespace  = aws_appautoscaling_target.platform_api.service_namespace
-
-  target_tracking_scaling_policy_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
-    }
-    target_value       = 70.0
-    scale_in_cooldown  = 300
-    scale_out_cooldown = 300
-  }
-}
-
 # Auto Scaling for Platform Worker
 resource "aws_appautoscaling_target" "platform_worker" {
   max_capacity       = var.platform_worker_max
@@ -498,38 +502,78 @@ resource "aws_appautoscaling_target" "platform_worker" {
   service_namespace  = "ecs"
 }
 
-resource "aws_appautoscaling_policy" "platform_worker_cpu" {
-  name               = "helium-${var.environment}-worker-cpu-scaling"
-  policy_type        = "TargetTrackingScaling"
+# Scales on the high-priority Celery backlog, published by the platform's `emit_queue_depth` task. Low-priority
+# work is allowed to wait, so it scales the worker only once it starts delaying high-priority tasks.
+resource "aws_appautoscaling_policy" "platform_worker_backlog_scale_out" {
+  name               = "helium-${var.environment}-worker-backlog-scale-out"
+  policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.platform_worker.resource_id
   scalable_dimension = aws_appautoscaling_target.platform_worker.scalable_dimension
   service_namespace  = aws_appautoscaling_target.platform_worker.service_namespace
 
-  target_tracking_scaling_policy_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 300
+    metric_aggregation_type = "Maximum"
+
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment          = 1
     }
-    target_value       = 70.0
-    scale_in_cooldown  = 300
-    scale_out_cooldown = 300
   }
 }
 
-resource "aws_appautoscaling_policy" "platform_worker_memory" {
-  name               = "helium-${var.environment}-worker-memory-scaling"
-  policy_type        = "TargetTrackingScaling"
+resource "aws_appautoscaling_policy" "platform_worker_backlog_scale_in" {
+  name               = "helium-${var.environment}-worker-backlog-scale-in"
+  policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.platform_worker.resource_id
   scalable_dimension = aws_appautoscaling_target.platform_worker.scalable_dimension
   service_namespace  = aws_appautoscaling_target.platform_worker.service_namespace
 
-  target_tracking_scaling_policy_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 900
+    metric_aggregation_type = "Maximum"
+
+    step_adjustment {
+      metric_interval_upper_bound = 0
+      scaling_adjustment          = -1
     }
-    target_value       = 80.0
-    scale_in_cooldown  = 300
-    scale_out_cooldown = 300
   }
+}
+
+resource "aws_cloudwatch_metric_alarm" "worker_backlog_high" {
+  alarm_name        = "helium-${var.environment}-worker-backlog-high"
+  alarm_description = "High-priority Celery backlog has held at or above the threshold; scales the worker out."
+
+  namespace   = "Helium/${var.environment}"
+  metric_name = "CeleryHighPriorityQueueDepth"
+  statistic   = "Maximum"
+
+  period              = 60
+  evaluation_periods  = 2
+  threshold           = 10
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  treat_missing_data  = "missing"
+
+  alarm_actions = [aws_appautoscaling_policy.platform_worker_backlog_scale_out.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "worker_backlog_low" {
+  alarm_name        = "helium-${var.environment}-worker-backlog-low"
+  alarm_description = "High-priority Celery backlog has been empty; scales the worker in."
+
+  namespace   = "Helium/${var.environment}"
+  metric_name = "CeleryHighPriorityQueueDepth"
+  statistic   = "Maximum"
+
+  period              = 60
+  evaluation_periods  = 15
+  threshold           = 0
+  comparison_operator = "LessThanOrEqualToThreshold"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [aws_appautoscaling_policy.platform_worker_backlog_scale_in.arn]
 }
 
 # CloudWatch Logs Insights saved queries
@@ -644,29 +688,6 @@ resource "aws_cloudwatch_metric_alarm" "worker_tasks_down" {
   threshold           = 0.05
   comparison_operator = "LessThanThreshold"
   treat_missing_data  = "breaching"
-
-  alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
-  ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]
-}
-
-resource "aws_cloudwatch_metric_alarm" "rds_low_storage" {
-  count = var.environment == "prod" ? 1 : 0
-
-  alarm_name        = "helium-${var.environment}-rds-low-storage"
-  alarm_description = "RDS free storage is below 2 GB. Expand allocated storage before the instance goes read-only."
-
-  namespace   = "AWS/RDS"
-  metric_name = "FreeStorageSpace"
-  dimensions = {
-    DBInstanceIdentifier = "helium-${var.environment}"
-  }
-  statistic = "Average"
-
-  period              = 300
-  evaluation_periods  = 3
-  threshold           = 2147483648
-  comparison_operator = "LessThanThreshold"
-  treat_missing_data  = "notBreaching"
 
   alarm_actions = [aws_sns_topic.cloudwatch_alarms[0].arn]
   ok_actions    = [aws_sns_topic.cloudwatch_alarms[0].arn]

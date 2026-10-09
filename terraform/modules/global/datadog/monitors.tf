@@ -22,19 +22,19 @@ resource "datadog_monitor" "low_email_traffic" {
   tags = ["managed_by:terraform", "alert_type:informational"]
 }
 
-resource "datadog_monitor" "token_api_low_traffic" {
-  name     = "Low Login Traffic (/token)"
+resource "datadog_monitor" "auth_low_traffic" {
+  name     = "Low Auth Traffic - {{path.name}}"
   type     = "query alert"
-  query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token}.as_count() < 5"
+  query    = "sum(last_24h):sum:platform.request{env:prod AND status_code:200 AND method:post AND path IN (auth.token,auth.token.refresh)} by {path}.as_count() < 5"
   message  = <<-EOT
-    Successful logins on /token are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours.
+    Successful requests on {{path.name}} are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. No data means none succeeded at all.
 
     Notify: @alerts@heliumedu.com
   EOT
   priority = 5
 
   include_tags        = false
-  on_missing_data     = "default"
+  on_missing_data     = "show_and_notify_no_data"
   require_full_window = false
   renotify_interval   = 1440
 
@@ -46,28 +46,9 @@ resource "datadog_monitor" "token_api_low_traffic" {
   tags = ["managed_by:terraform", "alert_type:informational"]
 }
 
-resource "datadog_monitor" "token_refresh_api_low_traffic" {
-  name     = "Low Session Refresh Traffic (/token/refresh)"
-  type     = "query alert"
-  query    = "sum(last_24h):sum:platform.request{env:prod, status_code:200, method:post, path:auth.token.refresh}.as_count() < 5"
-  message  = <<-EOT
-    Successful session refreshes on /token/refresh are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours.
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 5
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    warning  = 10
-    critical = 5
-  }
-
-  tags = ["managed_by:terraform", "alert_type:informational"]
+moved {
+  from = datadog_monitor.token_api_low_traffic
+  to   = datadog_monitor.auth_low_traffic
 }
 
 resource "datadog_monitor" "low_push_notification_traffic" {
@@ -256,35 +237,6 @@ resource "datadog_monitor" "scheduled_task_not_running" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
-resource "datadog_monitor" "worker_undersized" {
-  name     = "Worker Tasks Undersized"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:aws.ecs.cpuutilization{clustername:helium_prod, servicename:*worker*} > 60"
-  message  = <<-EOT
-    Worker CPU utilization has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours.
-
-    This sustained high utilization indicates your worker tasks are undersized. Consider:
-    - Increasing task CPU allocation in ECS task definition
-    - Increasing Celery concurrency if memory allows
-    - Raising platform_worker_min for more baseline capacity
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 4
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    warning  = 50
-    critical = 60
-  }
-
-  tags = ["managed_by:terraform", "alert_type:config"]
-}
-
 resource "datadog_monitor" "api_slow_responses" {
   name     = "API Response Times Degraded - {{path.name}}"
   type     = "query alert"
@@ -459,35 +411,6 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
-resource "datadog_monitor" "redis_needs_upgrade" {
-  name     = "Redis Instance Needs Upgrade"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:aws.elasticache.database_memory_usage_percentage{replication_group:helium-prod} > 70"
-  message  = <<-EOT
-    Redis memory utilization has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours.
-
-    Sustained high memory usage indicates configuration changes needed:
-    - Review cache TTL settings (items not expiring)
-    - Check for Celery queue backlog
-    - Consider upgrading ElastiCache instance size
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 4
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    warning  = 60
-    critical = 70
-  }
-
-  tags = ["managed_by:terraform", "alert_type:config"]
-}
-
 resource "datadog_monitor" "api_5xx_alb_child" {
   name     = "API 5xx Error Spike - ALB (child)"
   type     = "query alert"
@@ -621,35 +544,6 @@ resource "datadog_monitor" "support_contact_abuse" {
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
-}
-
-resource "datadog_monitor" "rds_connection_config" {
-  name     = "RDS Connection Configuration Wrong"
-  type     = "query alert"
-  query    = "avg(last_1d):avg:aws.rds.database_connections{name:helium-prod} > 55"
-  message  = <<-EOT
-    RDS connections have averaged above {{ warn_threshold }} (warning) / {{ threshold }} (critical) for the last 24 hours (max ~66 for db.t4g.micro).
-
-    Sustained high connection count indicates configuration changes needed:
-    - Reduce Gunicorn workers/threads or Celery concurrency
-    - Check for connection leaks in application code
-    - Consider upgrading RDS instance size (and updating this monitor's thresholds)
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 4
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    warning  = 45
-    critical = 55
-  }
-
-  tags = ["managed_by:terraform", "alert_type:config"]
 }
 
 resource "datadog_monitor" "client_4xx_anomaly" {
@@ -804,3 +698,204 @@ resource "datadog_monitor" "canary_failing" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+
+# Capacity: one monitor per finite resource, each naming the setting that raises its ceiling. Limits
+# are read from the live prod instances, so they update on the next apply of this stack after a resize.
+
+data "aws_db_instance" "prod" {
+  db_instance_identifier = "helium-prod"
+}
+
+data "aws_ec2_instance_type" "prod_db" {
+  instance_type = trimprefix(data.aws_db_instance.prod.db_instance_class, "db.")
+}
+
+locals {
+  # MySQL's default max_connections is DBInstanceClassMemory / 12582880. RDS reserves some memory
+  # before computing it, so the instance's full memory yields a slight overestimate.
+  rds_max_connections_estimate = floor(data.aws_ec2_instance_type.prod_db.memory_size * 1048576 / 12582880)
+  rds_allocated_storage_bytes  = data.aws_db_instance.prod.allocated_storage * 1073741824
+}
+
+resource "datadog_monitor" "ecs_cpu" {
+  name     = "Capacity - ECS CPU - {{servicename.name}}"
+  type     = "query alert"
+  query    = "avg(last_1h):avg:aws.ecs.cpuutilization{clustername:helium_prod} by {servicename} > 90"
+  message  = <<-EOT
+    {{servicename.name}} CPU has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last hour.
+
+    Autoscaling adds tasks above 70%, so CPU only holds here when the service is at its max task count or cannot scale:
+    - Raise platform_host_max / platform_worker_max in the prod environment
+    - Increase task CPU in the ECS task definition
+    - For the worker, check for a runaway or newly expensive task
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 80
+    critical = 90
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+moved {
+  from = datadog_monitor.worker_undersized
+  to   = datadog_monitor.ecs_cpu
+}
+
+resource "datadog_monitor" "ecs_memory" {
+  name     = "Capacity - ECS Memory - {{servicename.name}}"
+  type     = "query alert"
+  query    = "avg(last_1h):avg:aws.ecs.memory_utilization{clustername:helium_prod} by {servicename} > 95"
+  message  = <<-EOT
+    {{servicename.name}} memory has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last hour. Tasks reaching 100% are killed and replaced, dropping in-flight work.
+
+    - Increase task memory in the ECS task definition
+    - Lower GUNICORN_WORKERS / GUNICORN_THREADS (API) or CELERY_CONCURRENCY (worker)
+    - Check for a leak: memory that keeps climbing with task uptime rather than with traffic
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 85
+    critical = 95
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+resource "datadog_monitor" "rds_cpu" {
+  name     = "Capacity - RDS CPU"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:aws.rds.cpuutilization{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} > 60"
+  message  = <<-EOT
+    RDS CPU has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours on ${data.aws_db_instance.prod.db_instance_class}.
+
+    - Check Sentry and Performance Insights for slow or N+1 queries
+    - Raise db_instance_size in the prod environment
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 4
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 40
+    critical = 60
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+resource "datadog_monitor" "rds_connections" {
+  name     = "Capacity - RDS Connections"
+  type     = "query alert"
+  query    = "max(last_1h):max:aws.rds.database_connections{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} > ${floor(local.rds_max_connections_estimate * 0.75)}"
+  message  = <<-EOT
+    RDS connections have peaked above {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last hour, against an estimated limit of ${local.rds_max_connections_estimate} for ${data.aws_db_instance.prod.db_instance_class}.
+
+    Each Gunicorn thread holds a persistent connection (CONN_MAX_AGE), so connections grow with API task count:
+    - Lower platform_host_max, or GUNICORN_WORKERS / GUNICORN_THREADS
+    - Check for connection leaks in application code
+    - Raise db_instance_size in the prod environment
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = floor(local.rds_max_connections_estimate * 0.6)
+    critical = floor(local.rds_max_connections_estimate * 0.75)
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+moved {
+  from = datadog_monitor.rds_connection_config
+  to   = datadog_monitor.rds_connections
+}
+
+resource "datadog_monitor" "rds_storage" {
+  name     = "Capacity - RDS Storage"
+  type     = "query alert"
+  query    = "min(last_1h):min:aws.rds.free_storage_space{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} < ${floor(local.rds_allocated_storage_bytes * 0.1)}"
+  message  = <<-EOT
+    RDS free storage is below 20% (warning) / 10% (critical) of its ${data.aws_db_instance.prod.allocated_storage} GiB allocation. The instance goes read-only when it runs out.
+
+    - Raise the RDS allocated storage
+    - Check for runaway table growth
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "show_and_notify_no_data"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = floor(local.rds_allocated_storage_bytes * 0.2)
+    critical = floor(local.rds_allocated_storage_bytes * 0.1)
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+resource "datadog_monitor" "redis_memory" {
+  name     = "Capacity - Redis Memory"
+  type     = "query alert"
+  query    = "avg(last_1d):avg:aws.elasticache.database_memory_usage_percentage{replication_group:helium-prod} > 70"
+  message  = <<-EOT
+    Redis memory utilization has averaged above {{ warn_threshold }}% (warning) / {{ threshold }}% (critical) for the last 24 hours.
+
+    - Review cache TTL settings (items not expiring)
+    - Check for Celery queue backlog
+    - Raise cache_instance_size in the prod environment
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 4
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    warning  = 60
+    critical = 70
+  }
+
+  tags = ["managed_by:terraform", "alert_type:capacity"]
+}
+
+moved {
+  from = datadog_monitor.redis_needs_upgrade
+  to   = datadog_monitor.redis_memory
+}
