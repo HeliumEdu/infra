@@ -1074,22 +1074,12 @@ resource "datadog_dashboard" "helium_user_behavior" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q              = "avg:platform.users.cumulative{$env, milestone:registered}.fill(last)"
-            display_type   = "line"
-            on_right_yaxis = true
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.cumulative{$env, milestone:registered}.fill(last)"
-              alias_name = "Total accounts"
-            }
-          }
-          request {
             q            = "avg:platform.users.cumulative{$env, milestone:verified}.fill(last)"
             display_type = "line"
             style { palette = "cool" }
             metadata {
               expression = "avg:platform.users.cumulative{$env, milestone:verified}.fill(last)"
-              alias_name = "Verified"
+              alias_name = "Total users"
             }
           }
           request {
@@ -1109,10 +1099,6 @@ resource "datadog_dashboard" "helium_user_behavior" {
               expression = "avg:platform.users.cumulative{$env, milestone:tourists}.fill(last)"
               alias_name = "Tourists (left within 7 days)"
             }
-          }
-          right_yaxis {
-            label        = "Total accounts"
-            include_zero = true
           }
         }
       }
