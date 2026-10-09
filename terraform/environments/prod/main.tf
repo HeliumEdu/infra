@@ -72,6 +72,10 @@ module "ecs" {
   platform_target_group            = module.alb.platform_target_group
   subnet_ids                       = module.vpc.subnet_ids
   request_timeout_seconds          = var.request_timeout_seconds
+  platform_host_min                = var.platform_host_min
+  platform_host_max                = var.platform_host_max
+  platform_worker_min              = var.platform_worker_min
+  platform_worker_max              = var.platform_worker_max
 }
 
 module "elasticache" {

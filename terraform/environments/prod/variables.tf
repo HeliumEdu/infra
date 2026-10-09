@@ -66,6 +66,26 @@ variable "cache_instance_size" {
   default     = "cache.t4g.micro"
 }
 
+variable "platform_host_min" {
+  description = "Minimum number of platform API hosts for autoscaling"
+  default     = 2
+}
+
+variable "platform_host_max" {
+  description = "Maximum number of platform API hosts for autoscaling"
+  default     = 4
+}
+
+variable "platform_worker_min" {
+  description = "Minimum number of platform worker hosts for autoscaling"
+  default     = 1
+}
+
+variable "platform_worker_max" {
+  description = "Maximum number of platform worker hosts for autoscaling"
+  default     = 1
+}
+
 variable "request_timeout_seconds" {
   description = "Max request duration in seconds. Used for Gunicorn timeout, ALB deregistration delay, and ECS health check grace period."
   default     = 60
