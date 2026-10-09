@@ -1067,42 +1067,48 @@ resource "datadog_dashboard" "helium_user_behavior" {
         }
       }
       widget {
-        query_value_definition {
-          title     = "Total Accounts (All Time)"
-          live_span = "1w"
-          autoscale = false
-          precision = 0
+        timeseries_definition {
+          title         = "Cumulative Users"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
           request {
-            q          = "avg:platform.users.cumulative{$env, milestone:registered}"
-            aggregator = "last"
+            q            = "avg:platform.users.cumulative{$env, milestone:registered}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.cumulative{$env, milestone:registered}.fill(last)"
+              alias_name = "Total accounts"
+            }
           }
-          timeseries_background { type = "area" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title     = "Tourists (Left Within 7 Days)"
-          live_span = "1w"
-          autoscale = false
-          precision = 0
           request {
-            q          = "avg:platform.users.cumulative{$env, milestone:tourists}"
-            aggregator = "last"
+            q            = "avg:platform.users.cumulative{$env, milestone:verified}.fill(last)"
+            display_type = "line"
+            style { palette = "cool" }
+            metadata {
+              expression = "avg:platform.users.cumulative{$env, milestone:verified}.fill(last)"
+              alias_name = "Verified"
+            }
           }
-          timeseries_background { type = "area" }
-        }
-      }
-      widget {
-        query_value_definition {
-          title     = "Sustained Users (30+ Days)"
-          live_span = "1w"
-          autoscale = false
-          precision = 0
           request {
-            q          = "avg:platform.users.cumulative{$env, milestone:30d}"
-            aggregator = "last"
+            q            = "avg:platform.users.cumulative{$env, milestone:30d}.fill(last)"
+            display_type = "line"
+            style { palette = "purple" }
+            metadata {
+              expression = "avg:platform.users.cumulative{$env, milestone:30d}.fill(last)"
+              alias_name = "Sustained (30+ days)"
+            }
           }
-          timeseries_background { type = "area" }
+          request {
+            q            = "avg:platform.users.cumulative{$env, milestone:tourists}.fill(last)"
+            display_type = "line"
+            style { palette = "warm" }
+            metadata {
+              expression = "avg:platform.users.cumulative{$env, milestone:tourists}.fill(last)"
+              alias_name = "Tourists (left within 7 days)"
+            }
+          }
         }
       }
       widget {
