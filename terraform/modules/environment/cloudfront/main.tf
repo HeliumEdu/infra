@@ -93,7 +93,7 @@ resource "aws_s3_bucket_website_configuration" "support_redirect_bucket" {
     redirect {
       host_name          = "www.heliumedu.com"
       protocol           = "https"
-      replace_key_with   = "support"
+      replace_key_with   = "support/"
       http_redirect_code = "301"
     }
   }

@@ -1,9 +1,9 @@
 // Cross-host paths, mirrored from projects/frontend lib/config/app_router.dart (External redirects)
 const externalRedirects = {
     '/status': 'https://status.heliumedu.com',
-    '/support': 'https://www.heliumedu.com/support',
+    '/support': 'https://www.heliumedu.com/support/',
     '/contact': 'https://www.heliumedu.com/contact',
-    '/docs': 'https://api.heliumedu.com/docs',
+    '/docs': 'https://api.heliumedu.com/docs/',
     '/api': 'https://api.heliumedu.com'
 };
 

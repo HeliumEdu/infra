@@ -28,6 +28,29 @@ async function handler(event) {
         };
     } catch (err) {
         // No entry (or the store is unavailable): serve the site as usual
-        return request;
     }
+
+    if (!uri.endsWith('/')) {
+        return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+                location: { value: uri + '/' + toQueryString(request.querystring) }
+            }
+        };
+    }
+
+    return request;
+}
+
+function toQueryString(querystring) {
+    const pairs = [];
+    for (const key in querystring) {
+        const entry = querystring[key];
+        const values = entry.multiValue ? entry.multiValue : [entry];
+        for (const value of values) {
+            pairs.push(value.value === '' ? key : key + '=' + value.value);
+        }
+    }
+    return pairs.length ? '?' + pairs.join('&') : '';
 }
