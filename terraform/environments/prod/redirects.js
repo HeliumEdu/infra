@@ -45,11 +45,13 @@ async function handler(event) {
 
 function toQueryString(querystring) {
     const pairs = [];
-    for (const key in querystring) {
-        const entry = querystring[key];
+    const keys = Object.keys(querystring);
+    for (let i = 0; i < keys.length; i++) {
+        const entry = querystring[keys[i]];
         const values = entry.multiValue ? entry.multiValue : [entry];
-        for (const value of values) {
-            pairs.push(value.value === '' ? key : key + '=' + value.value);
+        for (let j = 0; j < values.length; j++) {
+            const value = values[j].value;
+            pairs.push(value === '' ? keys[i] : keys[i] + '=' + value);
         }
     }
     return pairs.length ? '?' + pairs.join('&') : '';
