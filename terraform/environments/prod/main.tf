@@ -248,9 +248,10 @@ resource "aws_cloudfront_distribution" "marketing" {
   }
 
   default_cache_behavior {
-    target_origin_id = "${aws_s3_bucket.www.bucket}-origin"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    target_origin_id           = "${aws_s3_bucket.www.bucket}-origin"
+    response_headers_policy_id = module.cloudfront.muppets_response_headers_policy_id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = false
@@ -362,9 +363,10 @@ resource "aws_cloudfront_distribution" "landing_redirect" {
   }
 
   default_cache_behavior {
-    target_origin_id = "${aws_s3_bucket.landing_redirect.bucket}-origin"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    target_origin_id           = "${aws_s3_bucket.landing_redirect.bucket}-origin"
+    response_headers_policy_id = module.cloudfront.muppets_response_headers_policy_id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = true

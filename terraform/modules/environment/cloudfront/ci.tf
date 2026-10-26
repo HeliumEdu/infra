@@ -22,9 +22,10 @@ resource "aws_cloudfront_distribution" "heliumedu_ci_frontend_app" {
   }
 
   default_cache_behavior {
-    target_origin_id = "heliumedu.ci.frontend-app.static-origin"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    target_origin_id           = "heliumedu.ci.frontend-app.static-origin"
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.muppets.id
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = true
