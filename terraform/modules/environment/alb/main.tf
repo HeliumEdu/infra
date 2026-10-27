@@ -97,3 +97,83 @@ resource "aws_lb_listener_rule" "platform" {
     }
   }
 }
+
+resource "aws_lb" "api" {
+  name               = "helium-${var.environment}-api"
+  internal           = true
+  load_balancer_type = "application"
+  security_groups    = [var.api_security_group]
+  subnets            = [for id in var.private_subnet_ids : id]
+
+  ip_address_type = "ipv4"
+
+  enable_deletion_protection = true
+
+  enable_zonal_shift = true
+
+  # Keep CloudFront's X-Forwarded-For as-is, so its last entry is still the client IP
+  xff_header_processing_mode = "preserve"
+
+  access_logs {
+    bucket  = var.alb_access_logs_bucket
+    prefix  = "alb/${var.environment}"
+    enabled = true
+  }
+}
+
+resource "aws_lb_target_group" "platform_api" {
+  name        = "helium-platform-http-api"
+  port        = 8000
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.helium_vpc_id
+
+  # Wait for in-flight requests to complete (should match Gunicorn timeout)
+  deregistration_delay = var.request_timeout_seconds
+
+  health_check {
+    path                = "/status/core/"
+    timeout             = 10
+    interval            = 30
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+
+  depends_on = [aws_lb.api]
+}
+
+resource "aws_lb_listener" "api_https" {
+  load_balancer_arn = aws_lb.api.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = var.heliumedu_com_cert_arn
+
+  default_action {
+    type  = "fixed-response"
+    order = 3
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Unknown host header."
+      status_code  = "400"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "platform_api" {
+  listener_arn = aws_lb_listener.api_https.arn
+  priority     = 2
+
+  action {
+    type = "forward"
+
+    target_group_arn = aws_lb_target_group.platform_api.arn
+  }
+
+  condition {
+    host_header {
+      values = ["api.${var.route53_heliumedu_com_zone_name}"]
+    }
+  }
+}

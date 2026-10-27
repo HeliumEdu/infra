@@ -43,3 +43,13 @@ variable "request_timeout_seconds" {
   type        = number
   default     = 60
 }
+
+variable "private_subnet_ids" {
+  description = "The list of private subnets"
+  type        = list(string)
+}
+
+variable "api_security_group" {
+  description = "The API security group ID"
+  type        = string
+}

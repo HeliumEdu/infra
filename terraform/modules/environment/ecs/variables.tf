@@ -85,6 +85,11 @@ variable "platform_target_group" {
   type        = string
 }
 
+variable "platform_api_target_group" {
+  description = "The platform API LB target group"
+  type        = string
+}
+
 variable "request_timeout_seconds" {
   description = "Max request duration in seconds. Health check grace period is derived as 2x this value."
   type        = number

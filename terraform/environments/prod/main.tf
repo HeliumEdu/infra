@@ -36,6 +36,8 @@ module "alb" {
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   security_group                  = module.vpc.http_s_sg_id
   subnet_ids                      = module.vpc.subnet_ids
+  private_subnet_ids              = module.vpc.private_subnet_ids
+  api_security_group              = module.vpc.https_cloudfront_sg_id
   helium_vpc_id                   = module.vpc.vpc_id
   heliumedu_com_cert_arn          = module.certificatemanager.heliumedu_com_cert_arn
   alb_access_logs_bucket          = module.s3.heliumedu_s3_alb_logs_bucket_name
@@ -70,6 +72,7 @@ module "ecs" {
   aws_region                       = var.aws_region
   http_platform                    = module.vpc.http_sg_platform
   platform_target_group            = module.alb.platform_target_group
+  platform_api_target_group        = module.alb.platform_api_target_group
   subnet_ids                       = module.vpc.subnet_ids
   request_timeout_seconds          = var.request_timeout_seconds
   platform_host_min                = var.platform_host_min
@@ -117,6 +120,9 @@ module "cloudfront" {
   heliumstudy_com_cert_arn            = module.certificatemanager.heliumstudy_com_cert_arn
   route53_heliumstudy_com_zone_id     = module.route53.heliumstudy_com_zone_id
   route53_heliumstudy_com_zone_name   = module.route53.heliumstudy_com_zone_name
+  api_lb_arn                          = module.alb.api_lb_arn
+  api_lb_dns_name                     = module.alb.api_lb_dns_name
+  request_timeout_seconds             = var.request_timeout_seconds
 }
 
 module "ses" {

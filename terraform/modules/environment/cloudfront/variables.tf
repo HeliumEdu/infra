@@ -53,3 +53,19 @@ variable "route53_heliumstudy_com_zone_name" {
   description = "The Route 53 zone name"
   type        = string
 }
+
+variable "api_lb_arn" {
+  description = "The ARN of the API ALB"
+  type        = string
+}
+
+variable "api_lb_dns_name" {
+  description = "The DNS name of the API ALB"
+  type        = string
+}
+
+variable "request_timeout_seconds" {
+  description = "Max request duration in seconds. Used for the API origin read timeout."
+  type        = number
+  default     = 60
+}

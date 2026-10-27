@@ -36,6 +36,25 @@ resource "aws_route_table_association" "route_table_association" {
   route_table_id = aws_route_table.helium_route_table.id
 }
 
+# CloudFront VPC origins can't use use1-az3 (us-east-1e in this account)
+resource "aws_subnet" "private_subnets" {
+  for_each                = var.region_azs
+  vpc_id                  = aws_vpc.helium_vpc.id
+  cidr_block              = "172.30.${each.value["index"] + 10}.0/24"
+  availability_zone       = "${var.aws_region}${each.value["suffix"]}"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_route_table" "helium_private_route_table" {
+  vpc_id = aws_vpc.helium_vpc.id
+}
+
+resource "aws_route_table_association" "private_route_table_association" {
+  for_each       = aws_subnet.private_subnets
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.helium_private_route_table.id
+}
+
 resource "aws_security_group" "http_s" {
   name   = "helium-http/s-public_${var.environment}"
   vpc_id = aws_vpc.helium_vpc.id
@@ -75,6 +94,31 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv6" {
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_http_s" {
   security_group_id = aws_security_group.http_s.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 0
+  ip_protocol       = "tcp"
+  to_port           = 65535
+}
+
+data "aws_ec2_managed_prefix_list" "cloudfront_origin_facing" {
+  name = "com.amazonaws.global.cloudfront.origin-facing"
+}
+
+resource "aws_security_group" "https_cloudfront" {
+  name   = "helium-https-cloudfront_${var.environment}"
+  vpc_id = aws_vpc.helium_vpc.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_https_cloudfront" {
+  security_group_id = aws_security_group.https_cloudfront.id
+  prefix_list_id    = data.aws_ec2_managed_prefix_list.cloudfront_origin_facing.id
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_https_cloudfront" {
+  security_group_id = aws_security_group.https_cloudfront.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 0
   ip_protocol       = "tcp"

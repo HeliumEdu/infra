@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.github/
+.idea/
+.playwright-mcp/
+bin/
+projects/
+state/
+**/.env
+**/*.tfvars

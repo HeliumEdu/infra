@@ -507,3 +507,74 @@ resource "aws_route53_record" "www_heliumstudy_com" {
     evaluate_target_health = false
   }
 }
+
+data "aws_cloudfront_cache_policy" "caching_disabled" {
+  name = "Managed-CachingDisabled"
+}
+
+data "aws_cloudfront_origin_request_policy" "all_viewer" {
+  name = "Managed-AllViewer"
+}
+
+resource "aws_cloudfront_vpc_origin" "api" {
+  vpc_origin_endpoint_config {
+    name                   = "helium-${var.environment}-api"
+    arn                    = var.api_lb_arn
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "https-only"
+
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
+    }
+  }
+}
+
+resource "aws_cloudfront_distribution" "api_heliumedu_com" {
+  enabled         = true
+  aliases         = ["api.${var.route53_heliumedu_com_zone_name}"]
+  comment         = "api.${var.route53_heliumedu_com_zone_name}"
+  price_class     = "PriceClass_100"
+  http_version    = "http2and3"
+  is_ipv6_enabled = true
+
+  logging_config {
+    bucket          = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+    prefix          = "api/"
+    include_cookies = false
+  }
+
+  origin {
+    origin_id   = "helium-${var.environment}-api-origin"
+    domain_name = var.api_lb_dns_name
+    vpc_origin_config {
+      vpc_origin_id            = aws_cloudfront_vpc_origin.api.id
+      origin_read_timeout      = var.request_timeout_seconds
+      origin_keepalive_timeout = 30
+    }
+  }
+
+  default_cache_behavior {
+    target_origin_id           = "helium-${var.environment}-api-origin"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.muppets.id
+    allowed_methods            = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods             = ["GET", "HEAD"]
+    viewer_protocol_policy     = "redirect-to-https"
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = false
+    acm_certificate_arn            = var.heliumedu_com_cert_arn
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1.2_2021"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+}
