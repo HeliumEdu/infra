@@ -80,11 +80,6 @@ variable "http_platform" {
   type        = string
 }
 
-variable "platform_target_group" {
-  description = "The platform LB target group"
-  type        = string
-}
-
 variable "platform_api_target_group" {
   description = "The platform API LB target group"
   type        = string
