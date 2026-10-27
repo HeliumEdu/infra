@@ -18,14 +18,6 @@ resource "aws_lb" "helium" {
   }
 }
 
-resource "aws_route53_record" "api_heliumedu_com_lb_cname" {
-  zone_id = var.route53_heliumedu_com_zone_id
-  name    = "api.${var.route53_heliumedu_com_zone_name}"
-  type    = "CNAME"
-  ttl     = 60
-  records = [aws_lb.helium.dns_name]
-}
-
 resource "aws_lb_listener" "http_redirect" {
   load_balancer_arn = aws_lb.helium.arn
   port              = "80"

@@ -578,3 +578,11 @@ resource "aws_cloudfront_distribution" "api_heliumedu_com" {
     }
   }
 }
+
+resource "aws_route53_record" "api_heliumedu_com" {
+  zone_id = var.route53_heliumedu_com_zone_id
+  name    = "api.${var.route53_heliumedu_com_zone_name}"
+  type    = "CNAME"
+  ttl     = 60
+  records = [aws_cloudfront_distribution.api_heliumedu_com.domain_name]
+}

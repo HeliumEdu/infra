@@ -32,7 +32,6 @@ module "alb" {
   source = "../../modules/environment/alb"
 
   environment                     = var.environment
-  route53_heliumedu_com_zone_id   = module.route53.heliumedu_com_zone_id
   route53_heliumedu_com_zone_name = module.route53.heliumedu_com_zone_name
   security_group                  = module.vpc.http_s_sg_id
   subnet_ids                      = module.vpc.subnet_ids
@@ -123,6 +122,11 @@ module "cloudfront" {
   api_lb_arn                          = module.alb.api_lb_arn
   api_lb_dns_name                     = module.alb.api_lb_dns_name
   request_timeout_seconds             = var.request_timeout_seconds
+}
+
+moved {
+  from = module.alb.aws_route53_record.api_heliumedu_com_lb_cname
+  to   = module.cloudfront.aws_route53_record.api_heliumedu_com
 }
 
 module "ses" {
