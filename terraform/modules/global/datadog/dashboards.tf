@@ -692,29 +692,29 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:aws.applicationelb.httpcode_elb_5xx{name:helium-$env.value}.as_count()"
+            q            = "sum:aws.applicationelb.httpcode_elb_5xx{name:helium-$env.value-api}.as_count()"
             display_type = "bars"
             style { palette = "warm" }
             metadata {
-              expression = "sum:aws.applicationelb.httpcode_elb_5xx{name:helium-$env.value}.as_count()"
+              expression = "sum:aws.applicationelb.httpcode_elb_5xx{name:helium-$env.value-api}.as_count()"
               alias_name = "ELB 5xx"
             }
           }
           request {
-            q            = "sum:aws.applicationelb.httpcode_target_5xx{name:helium-$env.value}.as_count()"
+            q            = "sum:aws.applicationelb.httpcode_target_5xx{name:helium-$env.value-api}.as_count()"
             display_type = "bars"
             style { palette = "warm" }
             metadata {
-              expression = "sum:aws.applicationelb.httpcode_target_5xx{name:helium-$env.value}.as_count()"
+              expression = "sum:aws.applicationelb.httpcode_target_5xx{name:helium-$env.value-api}.as_count()"
               alias_name = "Target 5xx"
             }
           }
           request {
-            q            = "sum:aws.applicationelb.target_connection_error_count{name:helium-$env.value}.as_count()"
+            q            = "sum:aws.applicationelb.target_connection_error_count{name:helium-$env.value-api}.as_count()"
             display_type = "bars"
             style { palette = "warm" }
             metadata {
-              expression = "sum:aws.applicationelb.target_connection_error_count{name:helium-$env.value}.as_count()"
+              expression = "sum:aws.applicationelb.target_connection_error_count{name:helium-$env.value-api}.as_count()"
               alias_name = "Connection Errors"
             }
           }
@@ -761,11 +761,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.applicationelb.healthy_host_count{name:helium-$env.value}"
+            q            = "avg:aws.applicationelb.healthy_host_count{name:helium-$env.value-api}"
             display_type = "area"
             style { palette = "cool" }
             metadata {
-              expression = "avg:aws.applicationelb.healthy_host_count{name:helium-$env.value}"
+              expression = "avg:aws.applicationelb.healthy_host_count{name:helium-$env.value-api}"
               alias_name = "Healthy Targets"
             }
           }
@@ -778,11 +778,11 @@ resource "datadog_dashboard" "helium_heads_up" {
           title_align = "left"
           show_legend = true
           request {
-            q            = "avg:aws.applicationelb.active_connection_count{name:helium-$env.value}"
+            q            = "avg:aws.applicationelb.active_connection_count{name:helium-$env.value-api}"
             display_type = "line"
             style { palette = "purple" }
             metadata {
-              expression = "avg:aws.applicationelb.active_connection_count{name:helium-$env.value}"
+              expression = "avg:aws.applicationelb.active_connection_count{name:helium-$env.value-api}"
               alias_name = "Active Connections"
             }
           }

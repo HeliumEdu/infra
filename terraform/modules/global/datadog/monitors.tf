@@ -414,8 +414,27 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
 resource "datadog_monitor" "api_5xx_alb_child" {
   name     = "API 5xx Error Spike - ALB (child)"
   type     = "query alert"
-  query    = "sum(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod}.as_count()) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod}.as_count())) / (sum:aws.applicationelb.request_count{name:helium-prod}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "sum(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod-api}.as_count()) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod-api}.as_count())) / (sum:aws.applicationelb.request_count{name:helium-prod-api}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = "ALB 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
+  priority = 3
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 5
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "api_5xx_cloudfront_child" {
+  name     = "API 5xx Error Spike - CloudFront (child)"
+  type     = "query alert"
+  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:api}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  message  = "CloudFront 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
   include_tags        = false
@@ -433,13 +452,14 @@ resource "datadog_monitor" "api_5xx_alb_child" {
 resource "datadog_monitor" "api_5xx_spike" {
   name              = "API 5xx Error Spike"
   type              = "composite"
-  query             = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id}"
+  query             = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id} || ${datadog_monitor.api_5xx_cloudfront_child.id}"
   renotify_interval = 1440
   message           = <<-EOT
     API 5xx error spike detected. Investigate:
     - App-level 500s: the platform may be experiencing errors (check Sentry)
     - ALB ELB 5xx: ALB-generated errors (502/503/504); ECS targets may be unhealthy or unreachable
     - ALB Target 5xx: backend returning 5xx as seen by the ALB
+    - CloudFront 5xx: edge errors, including CloudFront unable to reach the internal ALB
 
     Notify: @alerts@heliumedu.com
   EOT
@@ -451,7 +471,7 @@ resource "datadog_monitor" "api_5xx_spike" {
 resource "datadog_monitor" "frontend_5xx_spike" {
   name     = "Frontend 5xx Error Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,!role:api} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,!role:api} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,!role:api} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = <<-EOT
     CloudFront 5xx error rate for distribution {{distributionid.name}} has exceeded {{ threshold }}% over the last 15 minutes. The frontend S3 origin may be unavailable or misconfigured.
 
@@ -627,52 +647,6 @@ resource "datadog_monitor" "high_priority_queue_wait" {
   renotify_interval   = 120
 
   tags = ["managed_by:terraform", "alert_type:config"]
-}
-
-resource "datadog_monitor" "alb_dns_drift" {
-  name     = "ALB DNS Drift - Orphaned Address"
-  type     = "query alert"
-  query    = "max(last_90m):max:helium.alb.dns_drift{env:prod,kind:orphaned} > 0"
-  message  = <<-EOT
-    The load balancer advertises an address in DNS with no interface behind it, so clients resolving it hang until they time out. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md. No data means the check itself stopped running.
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 2
-
-  include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    critical = 0
-  }
-
-  tags = ["managed_by:terraform", "alert_type:diagnostic"]
-}
-
-resource "datadog_monitor" "alb_dns_unadvertised" {
-  name     = "ALB DNS Drift - Unadvertised Nodes"
-  type     = "query alert"
-  query    = "min(last_6h):max:helium.alb.dns_drift{env:prod,kind:unadvertised} > 0"
-  message  = <<-EOT
-    Load balancer nodes have been attached but absent from DNS for 6 hours, the early sign of the record set no longer tracking node replacements. Run bin/check-alb-dns.sh in the infra repo and follow docs/helium-alb-dns.md.
-
-    Notify: @alerts@heliumedu.com
-  EOT
-  priority = 3
-
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
-
-  monitor_thresholds {
-    critical = 0
-  }
-
-  tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
 resource "datadog_monitor" "canary_failing" {

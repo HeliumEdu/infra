@@ -539,6 +539,10 @@ resource "aws_cloudfront_distribution" "api_heliumedu_com" {
   http_version    = "http2and3"
   is_ipv6_enabled = true
 
+  tags = {
+    Role = "api"
+  }
+
   logging_config {
     bucket          = aws_s3_bucket.cloudfront_logs.bucket_domain_name
     prefix          = "api/"

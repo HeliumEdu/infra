@@ -1,10 +1,5 @@
 locals {
   hourly_workflows = {
-    check_alb_dns = {
-      repo     = "infra"
-      workflow = "check-alb-dns.yml"
-      body     = jsonencode({ ref = "main", return_run_details = false })
-    }
     canary = {
       repo     = "frontend"
       workflow = "canary.yml"
