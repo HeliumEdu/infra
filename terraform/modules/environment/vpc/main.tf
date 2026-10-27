@@ -55,51 +55,6 @@ resource "aws_route_table_association" "private_route_table_association" {
   route_table_id = aws_route_table.helium_private_route_table.id
 }
 
-resource "aws_security_group" "http_s" {
-  name   = "helium-http/s-public_${var.environment}"
-  vpc_id = aws_vpc.helium_vpc.id
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
-  security_group_id = aws_security_group.http_s.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
-  security_group_id = aws_security_group.http_s.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv6" {
-  security_group_id = aws_security_group.http_s.id
-  cidr_ipv6         = "::/0"
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv6" {
-  security_group_id = aws_security_group.http_s.id
-  cidr_ipv6         = "::/0"
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_http_s" {
-  security_group_id = aws_security_group.http_s.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 0
-  ip_protocol       = "tcp"
-  to_port           = 65535
-}
-
 data "aws_ec2_managed_prefix_list" "cloudfront_origin_facing" {
   name = "com.amazonaws.global.cloudfront.origin-facing"
 }
