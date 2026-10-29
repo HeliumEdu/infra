@@ -2,7 +2,7 @@
 
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
-PROJECTS ?= platform frontend www
+PROJECTS ?= platform frontend www connector
 SKIP_UPDATE ?= 'false'
 DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
