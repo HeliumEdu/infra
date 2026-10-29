@@ -9,8 +9,8 @@ variable "minimum_supported_version" {
 }
 
 variable "connector_version" {
-  description = "The connector version (null until its first release). Bumping this will trigger a deploy."
-  default     = null
+  description = "The connector version. Bumping this will trigger a deploy."
+  default     = "0.1.0"
 }
 
 variable "environment" {
