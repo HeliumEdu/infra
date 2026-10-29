@@ -183,6 +183,10 @@ resource "aws_ecs_task_definition" "platform_api_service" {
         {
           name  = "PLATFORM_MINIMUM_SUPPORTED_VERSION"
           value = var.minimum_supported_version
+        },
+        {
+          name  = "PLATFORM_OAUTH_CIMD_ALLOWED_HOSTS"
+          value = "claude.ai"
         }
       ]
       logConfiguration = {
