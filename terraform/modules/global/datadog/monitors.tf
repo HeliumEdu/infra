@@ -468,10 +468,35 @@ resource "datadog_monitor" "api_5xx_spike" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+resource "datadog_monitor" "connector_5xx_spike" {
+  name     = "Connector 5xx Error Rate Elevated"
+  type     = "query alert"
+  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,role:connector}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:connector}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,role:connector}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  message  = <<-EOT
+    The connector (mcp.heliumedu.com) 5xx error rate has exceeded {{ threshold }}% over the last 15 minutes. Investigate:
+    - Lambda errors or timeouts: check the helium-prod-connector logs in CloudWatch
+    - Helium's API unreachable: the connector answers 500 when it can't verify a token (see API 5xx Error Spike)
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 5
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
 resource "datadog_monitor" "frontend_5xx_spike" {
   name     = "Frontend 5xx Error Rate Elevated"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,!role:api} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,!role:api} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,!role:api} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
   message  = <<-EOT
     CloudFront 5xx error rate for distribution {{distributionid.name}} has exceeded {{ threshold }}% over the last 15 minutes. The frontend S3 origin may be unavailable or misconfigured.
 

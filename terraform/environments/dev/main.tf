@@ -131,6 +131,19 @@ moved {
   to   = module.cloudfront.aws_route53_record.api_heliumedu_com
 }
 
+module "connector" {
+  source = "../../modules/environment/connector"
+
+  environment                        = var.environment
+  connector_version                  = var.connector_version
+  mcp_heliumedu_com_cert_arn         = module.certificatemanager.mcp_heliumedu_com_cert_arn
+  route53_heliumedu_com_zone_id      = module.route53.heliumedu_com_zone_id
+  route53_heliumedu_com_zone_name    = module.route53.heliumedu_com_zone_name
+  cloudfront_logs_bucket_domain_name = module.cloudfront.cloudfront_logs_bucket_domain_name
+  muppets_response_headers_policy_id = module.cloudfront.muppets_response_headers_policy_id
+  request_timeout_seconds            = var.request_timeout_seconds
+}
+
 module "ses" {
   source = "../../modules/environment/ses"
 

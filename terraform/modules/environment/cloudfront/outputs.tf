@@ -5,3 +5,7 @@ output "ci_frontend_app_cloudfront_domain_name" {
 output "muppets_response_headers_policy_id" {
   value = aws_cloudfront_response_headers_policy.muppets.id
 }
+
+output "cloudfront_logs_bucket_domain_name" {
+  value = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+}
