@@ -4,41 +4,6 @@ locals {
   mcp_host          = "mcp.${var.route53_heliumedu_com_zone_name}"
 }
 
-# Outside "heliumedu.<env>.*", which the platform's S3 user can write to
-resource "aws_s3_bucket" "connector_releases" {
-  bucket = "heliumedu.connector.${var.environment}.releases"
-}
-
-resource "aws_s3_bucket_public_access_block" "connector_releases_block_public" {
-  bucket = aws_s3_bucket.connector_releases.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_iam_user" "connector_ci_user" {
-  name = "helium-${var.environment}-connector-ci-user"
-}
-
-data "aws_iam_policy_document" "connector_releases" {
-  statement {
-    resources = ["${aws_s3_bucket.connector_releases.arn}/connector/*"]
-    actions   = ["s3:PutObject"]
-  }
-}
-
-resource "aws_iam_policy" "connector_releases_access" {
-  name   = "helium-${var.environment}-connector-releases-access"
-  policy = data.aws_iam_policy_document.connector_releases.json
-}
-
-resource "aws_iam_user_policy_attachment" "connector_releases_access_attachment" {
-  user       = aws_iam_user.connector_ci_user.name
-  policy_arn = aws_iam_policy.connector_releases_access.arn
-}
-
 data "aws_iam_policy_document" "connector_assume_role_policy" {
   statement {
     effect  = "Allow"
@@ -93,8 +58,8 @@ resource "aws_lambda_function" "connector" {
   runtime       = "python3.13"
   architectures = ["arm64"]
   handler       = "helium_connector.lambda_handler.handler"
-  s3_bucket     = aws_s3_bucket.connector_releases.id
-  s3_key        = "connector/connector-${var.connector_version}.zip"
+  s3_bucket     = "heliumedu"
+  s3_key        = "helium/connector/connector-${var.connector_version}.zip"
   memory_size   = 512
   timeout       = var.request_timeout_seconds
 
