@@ -4,6 +4,8 @@ locals {
   mcp_host          = "mcp.${var.route53_heliumedu_com_zone_name}"
 }
 
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "connector_assume_role_policy" {
   statement {
     effect  = "Allow"
@@ -60,8 +62,9 @@ resource "aws_lambda_function" "connector" {
   handler       = "helium_connector.lambda_handler.handler"
   s3_bucket     = "heliumedu"
   s3_key        = "helium/connector/connector-${var.connector_version}.zip"
-  memory_size   = 512
-  timeout       = var.request_timeout_seconds
+  # CPU scales with memory; at 512 MB, loading the MCP SDK made cold starts ~2 s
+  memory_size = 1024
+  timeout     = var.request_timeout_seconds
 
   environment {
     variables = {
@@ -111,13 +114,58 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
-resource "aws_cloudfront_function" "restore_www_authenticate" {
+data "aws_iam_policy_document" "connector_edge_assume_role_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      identifiers = ["lambda.amazonaws.com", "edgelambda.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
+resource "aws_iam_role" "connector_edge" {
+  name = "${local.function_name}-edge-role"
+
+  assume_role_policy = data.aws_iam_policy_document.connector_edge_assume_role_policy.json
+}
+
+# Lambda@Edge logs to a group named for the function in whichever region served the request
+data "aws_iam_policy_document" "connector_edge_logs_policy_document" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/us-east-1.${local.function_name}-restore-www-authenticate:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "connector_edge_logs_policy" {
+  name   = "${local.function_name}-edge-logs-policy"
+  role   = aws_iam_role.connector_edge.id
+  policy = data.aws_iam_policy_document.connector_edge_logs_policy_document.json
+}
+
+data "archive_file" "restore_www_authenticate" {
+  type        = "zip"
+  source_file = "${path.module}/restore-www-authenticate.js"
+  output_path = "${path.module}/build/restore-www-authenticate.zip"
+}
+
+resource "aws_lambda_function" "restore_www_authenticate" {
   count = local.connector_enabled ? 1 : 0
 
-  name    = "${var.environment}-restore-www-authenticate"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/restore-www-authenticate.js")
+  function_name    = "${local.function_name}-restore-www-authenticate"
+  role             = aws_iam_role.connector_edge.arn
+  runtime          = "nodejs22.x"
+  handler          = "restore-www-authenticate.handler"
+  filename         = data.archive_file.restore_www_authenticate.output_path
+  source_code_hash = data.archive_file.restore_www_authenticate.output_base64sha256
+  publish          = true
 }
 
 resource "aws_cloudfront_distribution" "mcp_heliumedu_com" {
@@ -168,9 +216,10 @@ resource "aws_cloudfront_distribution" "mcp_heliumedu_com" {
     cached_methods             = ["GET", "HEAD"]
     viewer_protocol_policy     = "redirect-to-https"
 
-    function_association {
-      event_type   = "viewer-response"
-      function_arn = aws_cloudfront_function.restore_www_authenticate[0].arn
+    lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn   = aws_lambda_function.restore_www_authenticate[0].qualified_arn
+      include_body = false
     }
   }
 

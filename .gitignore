@@ -11,3 +11,4 @@
 *.tfstate.*
 *.tfvars
 *.tfvars.json
+build/
