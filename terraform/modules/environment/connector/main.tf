@@ -111,6 +111,15 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
+resource "aws_cloudfront_function" "restore_www_authenticate" {
+  count = local.connector_enabled ? 1 : 0
+
+  name    = "${var.environment}-restore-www-authenticate"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/restore-www-authenticate.js")
+}
+
 resource "aws_cloudfront_distribution" "mcp_heliumedu_com" {
   count = local.connector_enabled ? 1 : 0
 
@@ -158,6 +167,11 @@ resource "aws_cloudfront_distribution" "mcp_heliumedu_com" {
     allowed_methods            = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods             = ["GET", "HEAD"]
     viewer_protocol_policy     = "redirect-to-https"
+
+    function_association {
+      event_type   = "viewer-response"
+      function_arn = aws_cloudfront_function.restore_www_authenticate[0].arn
+    }
   }
 
   viewer_certificate {
