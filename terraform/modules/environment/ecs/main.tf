@@ -186,7 +186,7 @@ resource "aws_ecs_task_definition" "platform_api_service" {
         },
         {
           name  = "PLATFORM_OAUTH_CIMD_ALLOWED_HOSTS"
-          value = "claude.ai"
+          value = "claude.ai,chatgpt.com"
         }
       ]
       logConfiguration = {
