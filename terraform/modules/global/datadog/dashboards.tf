@@ -1120,16 +1120,20 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
           request {
             formula {
-              formula_expression = "ios / (ios + android + web) * 100"
+              formula_expression = "ios / (ios + android + web + connector) * 100"
               alias              = "iOS App"
             }
             formula {
-              formula_expression = "android / (ios + android + web) * 100"
+              formula_expression = "android / (ios + android + web + connector) * 100"
               alias              = "Android App"
             }
             formula {
-              formula_expression = "web / (ios + android + web) * 100"
+              formula_expression = "web / (ios + android + web + connector) * 100"
               alias              = "Web"
+            }
+            formula {
+              formula_expression = "connector / (ios + android + web + connector) * 100"
+              alias              = "Connector (MCP)"
             }
             query {
               metric_query {
@@ -1150,6 +1154,13 @@ resource "datadog_dashboard" "helium_user_behavior" {
                 data_source = "metrics"
                 name        = "web"
                 query       = "sum:platform.request{$env, $staff, authenticated:true, client:web}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "connector"
+                query       = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count())"
               }
             }
             display_type = "area"

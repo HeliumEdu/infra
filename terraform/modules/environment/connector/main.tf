@@ -65,6 +65,7 @@ resource "aws_lambda_function" "connector" {
   # CPU scales with memory; at 512 MB, loading the MCP SDK made cold starts ~2 s
   memory_size = 1024
   timeout     = var.request_timeout_seconds
+  reserved_concurrent_executions = var.max_concurrency
 
   environment {
     variables = {

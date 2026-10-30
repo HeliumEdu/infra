@@ -38,3 +38,9 @@ variable "request_timeout_seconds" {
   description = "How long a request may take, in seconds"
   type        = number
 }
+
+variable "max_concurrency" {
+  description = "The most requests the connector serves at once"
+  type        = number
+  default     = 20
+}
