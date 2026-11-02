@@ -1170,6 +1170,51 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         timeseries_definition {
+          title         = "API Tokens & Connected Apps"
+          title_size    = "16"
+          title_align   = "left"
+          show_legend   = true
+          legend_layout = "auto"
+          yaxis {
+            label        = "Users"
+            include_zero = true
+          }
+          right_yaxis {
+            label        = "Connector requests / day"
+            include_zero = true
+          }
+          request {
+            q            = "avg:platform.users.integrations.api_token{$env, $staff}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.integrations.api_token{$env, $staff}.fill(last)"
+              alias_name = "Users with an API token"
+            }
+          }
+          request {
+            q            = "avg:platform.users.integrations.connected_apps{$env, $staff}.fill(last)"
+            display_type = "line"
+            style { palette = "dog_classic" }
+            metadata {
+              expression = "avg:platform.users.integrations.connected_apps{$env, $staff}.fill(last)"
+              alias_name = "Users with a connected app"
+            }
+          }
+          request {
+            q              = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count().rollup(sum, 86400))"
+            display_type   = "bars"
+            on_right_yaxis = true
+            style { palette = "grey" }
+            metadata {
+              expression = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count().rollup(sum, 86400))"
+              alias_name = "Connector (MCP) requests"
+            }
+          }
+        }
+      }
+      widget {
+        timeseries_definition {
           title         = "User Time in Onboarding (hours, 7d rolling avg)"
           title_size    = "16"
           title_align   = "left"
