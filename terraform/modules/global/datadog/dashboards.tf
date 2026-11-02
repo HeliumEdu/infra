@@ -64,7 +64,7 @@ resource "datadog_dashboard" "helium_heads_up" {
             }
             formula {
               formula_expression = "connector"
-              alias              = "Connector (MCP)"
+              alias              = "Connected App"
             }
             formula {
               formula_expression = "api_token"
@@ -1259,7 +1259,7 @@ resource "datadog_dashboard" "helium_user_behavior" {
             }
             formula {
               formula_expression = "connector / (ios + android + web + connector + api_token) * 100"
-              alias              = "Connector (MCP)"
+              alias              = "Connected App"
             }
             formula {
               formula_expression = "api_token / (ios + android + web + connector + api_token) * 100"
