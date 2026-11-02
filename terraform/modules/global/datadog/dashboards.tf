@@ -50,7 +50,90 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os} by {client,client_os}.as_count()"
+            formula {
+              formula_expression = "ios"
+              alias              = "iOS App"
+            }
+            formula {
+              formula_expression = "android"
+              alias              = "Android App"
+            }
+            formula {
+              formula_expression = "web"
+              alias              = "Web"
+            }
+            formula {
+              formula_expression = "connector"
+              alias              = "Connector (MCP)"
+            }
+            formula {
+              formula_expression = "api_token"
+              alias              = "API Token"
+            }
+            formula {
+              formula_expression = "crawlers"
+              alias              = "Crawlers"
+            }
+            formula {
+              formula_expression = "other + app_other"
+              alias              = "Other"
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "ios"
+                query       = "sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:app, client_os:ios, !auth:api_token}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "android"
+                query       = "sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:app, client_os:android, !auth:api_token}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "web"
+                query       = "sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:web, !auth:api_token}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "connector"
+                query       = "default_zero(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:connector, !auth:api_token}.as_count())"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "api_token"
+                query       = "default_zero(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, auth:api_token}.as_count())"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "crawlers"
+                query       = "default_zero(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:bot, !auth:api_token}.as_count())"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "other"
+                query       = "default_zero(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:other, !auth:api_token}.as_count())"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "app_other"
+                query       = "default_zero(sum:platform.request{$env, $staff, $authenticated, $user_agent, $client, $client_os, client:app, client_os:other, !auth:api_token}.as_count())"
+              }
+            }
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -64,7 +147,50 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist} by {path,client,client_os}.as_count()"
+            formula {
+              formula_expression = "ios"
+              alias              = "iOS App"
+            }
+            formula {
+              formula_expression = "android"
+              alias              = "Android App"
+            }
+            formula {
+              formula_expression = "web"
+              alias              = "Web"
+            }
+            formula {
+              formula_expression = "other"
+              alias              = "Other"
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "ios"
+                query       = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist, client:app, client_os:ios} by {path}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "android"
+                query       = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist, client:app, client_os:android} by {path}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "web"
+                query       = "sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist, client:web} by {path}.as_count()"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "other"
+                query       = "default_zero(sum:platform.request{$env, $user_agent, $client, $client_os, status_code:200, method:post, path:auth.token*, !path:auth.token.refresh, !path:auth.token.blacklist, !client:app, !client:web} by {path}.as_count())"
+              }
+            }
             display_type = "bars"
             style { palette = "dog_classic" }
           }
@@ -1120,96 +1246,62 @@ resource "datadog_dashboard" "helium_user_behavior" {
           }
           request {
             formula {
-              formula_expression = "ios / (ios + android + web + connector) * 100"
+              formula_expression = "ios / (ios + android + web + connector + api_token) * 100"
               alias              = "iOS App"
             }
             formula {
-              formula_expression = "android / (ios + android + web + connector) * 100"
+              formula_expression = "android / (ios + android + web + connector + api_token) * 100"
               alias              = "Android App"
             }
             formula {
-              formula_expression = "web / (ios + android + web + connector) * 100"
+              formula_expression = "web / (ios + android + web + connector + api_token) * 100"
               alias              = "Web"
             }
             formula {
-              formula_expression = "connector / (ios + android + web + connector) * 100"
+              formula_expression = "connector / (ios + android + web + connector + api_token) * 100"
               alias              = "Connector (MCP)"
+            }
+            formula {
+              formula_expression = "api_token / (ios + android + web + connector + api_token) * 100"
+              alias              = "API Token"
             }
             query {
               metric_query {
                 data_source = "metrics"
                 name        = "ios"
-                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:ios}.as_count()"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:ios, !auth:api_token}.as_count()"
               }
             }
             query {
               metric_query {
                 data_source = "metrics"
                 name        = "android"
-                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:android}.as_count()"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:app, client_os:android, !auth:api_token}.as_count()"
               }
             }
             query {
               metric_query {
                 data_source = "metrics"
                 name        = "web"
-                query       = "sum:platform.request{$env, $staff, authenticated:true, client:web}.as_count()"
+                query       = "sum:platform.request{$env, $staff, authenticated:true, client:web, !auth:api_token}.as_count()"
               }
             }
             query {
               metric_query {
                 data_source = "metrics"
                 name        = "connector"
-                query       = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count())"
+                query       = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector, !auth:api_token}.as_count())"
+              }
+            }
+            query {
+              metric_query {
+                data_source = "metrics"
+                name        = "api_token"
+                query       = "default_zero(sum:platform.request{$env, $staff, authenticated:true, auth:api_token}.as_count())"
               }
             }
             display_type = "area"
             style { palette = "dog_classic" }
-          }
-        }
-      }
-      widget {
-        timeseries_definition {
-          title         = "API Tokens & Connected Apps"
-          title_size    = "16"
-          title_align   = "left"
-          show_legend   = true
-          legend_layout = "auto"
-          yaxis {
-            label        = "Users"
-            include_zero = true
-          }
-          right_yaxis {
-            label        = "Connector requests / day"
-            include_zero = true
-          }
-          request {
-            q            = "avg:platform.users.integrations.api_token{$env, $staff}.fill(last)"
-            display_type = "line"
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.integrations.api_token{$env, $staff}.fill(last)"
-              alias_name = "Users with an API token"
-            }
-          }
-          request {
-            q            = "avg:platform.users.integrations.connected_apps{$env, $staff}.fill(last)"
-            display_type = "line"
-            style { palette = "dog_classic" }
-            metadata {
-              expression = "avg:platform.users.integrations.connected_apps{$env, $staff}.fill(last)"
-              alias_name = "Users with a connected app"
-            }
-          }
-          request {
-            q              = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count().rollup(sum, 86400))"
-            display_type   = "bars"
-            on_right_yaxis = true
-            style { palette = "grey" }
-            metadata {
-              expression = "default_zero(sum:platform.request{$env, $staff, authenticated:true, client:connector}.as_count().rollup(sum, 86400))"
-              alias_name = "Connector (MCP) requests"
-            }
           }
         }
       }
