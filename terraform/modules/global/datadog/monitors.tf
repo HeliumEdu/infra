@@ -46,11 +46,6 @@ resource "datadog_monitor" "auth_low_traffic" {
   tags = ["managed_by:terraform", "alert_type:informational"]
 }
 
-moved {
-  from = datadog_monitor.token_api_low_traffic
-  to   = datadog_monitor.auth_low_traffic
-}
-
 resource "datadog_monitor" "low_push_notification_traffic" {
   name     = "Low Push Notification Traffic"
   type     = "query alert"
@@ -697,7 +692,6 @@ resource "datadog_monitor" "canary_failing" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
-
 # Capacity: one monitor per finite resource, each naming the setting that raises its ceiling. Limits
 # are read from the live prod instances, so they update on the next apply of this stack after a resize.
 
@@ -743,11 +737,6 @@ resource "datadog_monitor" "ecs_cpu" {
   }
 
   tags = ["managed_by:terraform", "alert_type:capacity"]
-}
-
-moved {
-  from = datadog_monitor.worker_undersized
-  to   = datadog_monitor.ecs_cpu
 }
 
 resource "datadog_monitor" "ecs_memory" {
@@ -834,11 +823,6 @@ resource "datadog_monitor" "rds_connections" {
   tags = ["managed_by:terraform", "alert_type:capacity"]
 }
 
-moved {
-  from = datadog_monitor.rds_connection_config
-  to   = datadog_monitor.rds_connections
-}
-
 resource "datadog_monitor" "rds_storage" {
   name     = "Capacity - RDS Storage"
   type     = "query alert"
@@ -894,7 +878,3 @@ resource "datadog_monitor" "redis_memory" {
   tags = ["managed_by:terraform", "alert_type:capacity"]
 }
 
-moved {
-  from = datadog_monitor.redis_needs_upgrade
-  to   = datadog_monitor.redis_memory
-}
