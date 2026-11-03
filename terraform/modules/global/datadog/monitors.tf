@@ -209,6 +209,52 @@ resource "datadog_monitor" "task_failures" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+resource "datadog_monitor" "task_lost" {
+  name     = "Background Task Lost - {{name.name}}"
+  type     = "query alert"
+  query    = "sum(last_1h):sum:platform.task.lost{env:prod} by {name}.as_count() > 0"
+  message  = <<-EOT
+    The background task {{name.name}} died without finishing ({{ value }} in the last hour). The worker process running it was killed, most often for running out of memory, so the task's work (a reminder, an email, a sync) never happened.
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = true
+  on_missing_data     = "default"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 0
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "worker_metrics_missing" {
+  name     = "Worker Metrics Missing"
+  type     = "query alert"
+  query    = "sum(last_30m):sum:platform.task.timing.count{env:prod AND name:metrics.queue-depth}.as_count() < 1"
+  message  = <<-EOT
+    The worker has reported no metrics for 30 minutes, though it reports one every minute. Either the worker is down or its metrics are no longer reaching Datadog, and task failures would go unreported meanwhile.
+
+    Notify: @alerts@heliumedu.com
+  EOT
+  priority = 2
+
+  include_tags        = false
+  on_missing_data     = "show_and_notify_no_data"
+  require_full_window = false
+  renotify_interval   = 1440
+
+  monitor_thresholds {
+    critical = 1
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
 resource "datadog_monitor" "scheduled_task_not_running" {
   name     = "Scheduled Task Not Running"
   type     = "query alert"
