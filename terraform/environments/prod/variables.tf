@@ -1,6 +1,6 @@
 variable "helium_version" {
   description = "The container version. Bumping this will trigger a deploy."
-  default     = "2.7.37"
+  default     = "2.7.38"
 }
 
 variable "minimum_supported_version" {
