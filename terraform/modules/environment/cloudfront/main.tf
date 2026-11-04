@@ -11,7 +11,7 @@ resource "aws_cloudfront_response_headers_policy" "muppets" {
   custom_headers_config {
     items {
       header   = "X-Muppets"
-      value    = "42"
+      value    = "no strings attached"
       override = true
     }
   }
