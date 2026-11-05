@@ -72,7 +72,6 @@ resource "aws_lambda_function" "connector" {
       HELIUM_API_URL       = "https://api.${var.route53_heliumedu_com_zone_name}"
       HELIUM_APP_URL       = "https://app.${var.route53_heliumedu_com_zone_name}"
       HELIUM_CONNECTOR_URL = "https://${local.mcp_host}"
-      HELIUM_ENVIRONMENT   = var.environment
       HELIUM_ORIGIN_SECRET = random_password.connector_origin_secret.result
     }
   }
