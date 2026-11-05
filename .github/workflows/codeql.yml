@@ -1,0 +1,17 @@
+name: "CodeQL"
+
+run-name: CodeQL ${{ github.ref_name }}
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  codeql:
+    uses: alexdlaird/.github/.github/workflows/codeql.yml@main
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
