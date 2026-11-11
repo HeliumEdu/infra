@@ -18,6 +18,7 @@ resource "aws_route53_record" "heliumedu_com_spf" {
   records = [
     "v=spf1 include:spf.privateemail.com ~all",
     "google-site-verification=p6FCLhAIbpVFDJ5LCFy945kkaLOqLhzrVBdn8e4lhwk",
+    "v=MCPv1; k=ed25519; p=D1fGsUwY6K34itfeUE8ErVbE75oZsLHmwm+zYI+h0Qc=",
   ]
 }
 
