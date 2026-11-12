@@ -79,3 +79,41 @@ jobs:
                 --repository-name "$REPOSITORY" \
                 --image-ids "$batch"
             done
+
+  prune-connector:
+    name: Prune S3 (connector)
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Prune old Lambda packages
+        run: |
+          PREFIX="helium/connector/"
+          PINNED=$(sed -n '/variable "connector_version"/,/}/s/.*default *= *"\(.*\)".*/\1/p' terraform/environments/prod/variables.tf)
+          if [ -z "$PINNED" ]; then
+            echo "Couldn't read prod's connector_version; refusing to prune."
+            exit 1
+          fi
+          echo "Prod runs connector $PINNED; its package is always kept."
+
+          KEYS=$(aws s3api list-objects-v2 \
+            --bucket heliumedu \
+            --prefix "$PREFIX" \
+            --query 'sort_by(Contents, &LastModified)[].Key' \
+            --output json | jq -r '.[]' | grep -vx "${PREFIX}connector-${PINNED}.zip")
+
+          TOTAL=$(echo "$KEYS" | grep -c . || true)
+          echo "Packages in s3://heliumedu/${PREFIX} besides prod's: $TOTAL"
+
+          if [ "$TOTAL" -lt "$KEEP_COUNT" ]; then
+            echo "Within retention limit ($KEEP_COUNT), nothing to prune."
+            exit 0
+          fi
+
+          echo "$KEYS" | head -n $((TOTAL - KEEP_COUNT + 1)) | while IFS= read -r key; do
+            echo "  Deleting s3://heliumedu/${key}"
+            aws s3 rm "s3://heliumedu/${key}"
+          done
