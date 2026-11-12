@@ -1953,6 +1953,50 @@ resource "datadog_dashboard" "helium_user_behavior" {
       }
       widget {
         query_value_definition {
+          title       = "GPA"
+          title_size  = "16"
+          title_align = "left"
+          precision   = 0
+          custom_unit = "%"
+          request {
+            q          = "avg:platform.users.adoption.gpa.pct{$env, $staff, $adoption_window}.fill(last)"
+            aggregator = "last"
+            conditional_formats {
+              comparator      = "<="
+              value           = 3
+              palette         = "custom_bg"
+              custom_bg_color = "#d63535"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = "<="
+              value           = 10
+              palette         = "custom_bg"
+              custom_bg_color = "#cc6600"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = "<="
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#3573b3"
+              custom_fg_color = "#ffffff"
+            }
+            conditional_formats {
+              comparator      = ">"
+              value           = 25
+              palette         = "custom_bg"
+              custom_bg_color = "#2e8540"
+              custom_fg_color = "#ffffff"
+            }
+          }
+          timeseries_background {
+            type = "area"
+          }
+        }
+      }
+      widget {
+        query_value_definition {
           title       = "External Calendars"
           title_size  = "16"
           title_align = "left"
