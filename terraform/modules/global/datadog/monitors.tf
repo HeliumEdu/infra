@@ -143,7 +143,7 @@ resource "datadog_monitor" "server_error_spike" {
 resource "datadog_monitor" "calendar_sync_failures" {
   name     = "Calendar Sync Failure Spike"
   type     = "query alert"
-  query    = "sum(last_1h):sum:platform.feed.ical.failed{env:prod}.as_count() > 15"
+  query    = "sum(last_1h):sum:platform.external_calendar.fetch.failed{env:prod}.as_count() > 15"
   message  = <<-EOT
     More than {{ threshold }} calendar sync failures detected in the last hour. iCal feed fetching should be investigated.
 
@@ -258,7 +258,7 @@ resource "datadog_monitor" "worker_metrics_missing" {
 resource "datadog_monitor" "scheduled_task_not_running" {
   name     = "Scheduled Task Not Running"
   type     = "query alert"
-  query    = "sum(last_2d):sum:platform.task.timing.count{env:prod AND name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,feed.reindex)} by {name}.as_count() < 1"
+  query    = "sum(last_2d):sum:platform.task.timing.count{env:prod AND name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,external_calendar.reindex)} by {name}.as_count() < 1"
   message  = <<-EOT
     The scheduled task {{name.name}} has not executed. Every task here runs at least daily, so no execution at all means Beat, the worker, or the task's registration is broken rather than the work merely failing.
 
@@ -397,7 +397,7 @@ resource "datadog_monitor" "auth_hashing_weakened" {
 resource "datadog_monitor" "task_duration_degraded" {
   name     = "Background Task Duration Degraded - {{name.name}}"
   type     = "query alert"
-  query    = "avg(last_1w):median_9(avg:platform.task.timing.avg{env:prod, !name:feed.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name}.rollup(avg, 3600)) > 60000"
+  query    = "avg(last_1w):median_9(avg:platform.task.timing.avg{env:prod, !name:external_calendar.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name}.rollup(avg, 3600)) > 60000"
   message  = <<-EOT
     Task {{name.name}} has held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) of execution time over the last week, outliers excluded.
 

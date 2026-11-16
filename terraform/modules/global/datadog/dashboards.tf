@@ -767,16 +767,16 @@ resource "datadog_dashboard" "helium_heads_up" {
           show_legend   = true
           legend_layout = "auto"
           request {
-            q            = "sum:platform.feed.ical.failed{$env} by {reason}.as_count()"
+            q            = "sum:platform.external_calendar.fetch.failed{$env} by {reason}.as_count()"
             display_type = "bars"
             style { palette = "orange" }
           }
           request {
-            q            = "sum:platform.feed.ical.disabled{$env}.as_count()"
+            q            = "sum:platform.external_calendar.disabled{$env}.as_count()"
             display_type = "line"
             style { palette = "grey" }
             metadata {
-              expression = "sum:platform.feed.ical.disabled{$env}.as_count()"
+              expression = "sum:platform.external_calendar.disabled{$env}.as_count()"
               alias_name = "Calendars Disabled"
             }
           }
