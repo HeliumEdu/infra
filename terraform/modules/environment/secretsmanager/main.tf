@@ -52,5 +52,6 @@ resource "aws_secretsmanager_secret_version" "helium_secret_version" {
     var.jsm_api_token != null ? { PLATFORM_JSM_API_TOKEN = var.jsm_api_token } : {},
     var.ga4_measurement_id != null ? { PLATFORM_GA4_MEASUREMENT_ID = var.ga4_measurement_id } : {},
     var.ga4_api_secret != null ? { PLATFORM_GA4_API_SECRET = var.ga4_api_secret } : {},
+    var.ses_sns_topic_arn != null ? { PLATFORM_SES_SNS_TOPIC_ARN = var.ses_sns_topic_arn } : {},
   ))
 }

@@ -11,3 +11,7 @@ output "smtp_password" {
   sensitive = true
   value     = aws_iam_access_key.smtp_access_key.ses_smtp_password_v4
 }
+
+output "reputation_topic_arn" {
+  value = one(aws_sns_topic.ses_reputation[*].arn)
+}

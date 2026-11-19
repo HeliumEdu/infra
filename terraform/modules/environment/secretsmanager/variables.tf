@@ -110,3 +110,8 @@ variable "ci_app_host" {
   type        = string
   default     = null
 }
+
+variable "ses_sns_topic_arn" {
+  type    = string
+  default = null
+}

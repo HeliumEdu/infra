@@ -164,6 +164,7 @@ module "secretsmanager" {
   s3_user_secret_access_key     = module.s3.s3_access_key_secret
   smtp_email_user               = module.ses.smtp_username
   smtp_email_password           = module.ses.smtp_password
+  ses_sns_topic_arn             = module.ses.reputation_topic_arn
   ci_app_host                   = module.cloudfront.ci_frontend_app_cloudfront_domain_name
   firebase_project_id           = var.FIREBASE_PROJECT_ID
   firebase_private_key_id       = var.FIREBASE_PRIVATE_KEY_ID
