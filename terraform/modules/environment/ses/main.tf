@@ -221,6 +221,10 @@ resource "aws_sesv2_configuration_set" "helium" {
   suppression_options {
     suppressed_reasons = ["BOUNCE"]
   }
+
+  lifecycle {
+    ignore_changes = [delivery_options]
+  }
 }
 
 resource "aws_ses_receipt_rule_set" "helium_rule_set" {
