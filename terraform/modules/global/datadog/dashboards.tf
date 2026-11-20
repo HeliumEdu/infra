@@ -1212,7 +1212,10 @@ resource "datadog_dashboard" "helium_user_behavior" {
             q              = "avg:platform.users.cumulative{$env, milestone:total}.fill(last)"
             display_type   = "line"
             on_right_yaxis = true
-            style { palette = "cool" }
+            style {
+              palette   = "cool"
+              line_type = "dashed"
+            }
             metadata {
               expression = "avg:platform.users.cumulative{$env, milestone:total}.fill(last)"
               alias_name = "Total users"
