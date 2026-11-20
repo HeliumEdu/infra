@@ -1190,6 +1190,15 @@ resource "datadog_dashboard" "helium_user_behavior" {
               alias_name = "6 months"
             }
           }
+          request {
+            q            = "avg:platform.users.active{$env, $staff, window:365d}.fill(last)"
+            display_type = "line"
+            style { palette = "purple" }
+            metadata {
+              expression = "avg:platform.users.active{$env, $staff, window:365d}.fill(last)"
+              alias_name = "12 months"
+            }
+          }
         }
       }
       widget {
