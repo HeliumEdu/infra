@@ -120,6 +120,8 @@ locals {
   # Added to every 5xx-rate denominator so a handful of requests in a quiet window cannot spike the
   # rate; at real traffic volumes it is negligible and the result converges to the true error rate.
   error_rate_smoothing_requests = 25
+  # The same allowance spread across a 5-minute window, for rates evaluated one minute at a time.
+  error_rate_smoothing_requests_per_minute = 5
 }
 
 resource "datadog_monitor" "server_error_spike" {
@@ -455,12 +457,13 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
 resource "datadog_monitor" "api_5xx_alb_child" {
   name     = "API 5xx Error Spike - ALB (child)"
   type     = "query alert"
-  query    = "sum(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod-api}.as_count()) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod-api}.as_count())) / (sum:aws.applicationelb.request_count{name:helium-prod-api}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "min(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod-api}.rollup(sum, 60)) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod-api}.rollup(sum, 60))) / (default_zero(sum:aws.applicationelb.request_count{name:helium-prod-api}.rollup(sum, 60)) + ${local.error_rate_smoothing_requests_per_minute}) * 100 > 5"
   message  = "ALB 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
   include_tags        = false
   on_missing_data     = "default"
+  evaluation_delay    = 900
   require_full_window = false
   renotify_interval   = 1440
 
@@ -474,12 +477,13 @@ resource "datadog_monitor" "api_5xx_alb_child" {
 resource "datadog_monitor" "api_5xx_cloudfront_child" {
   name     = "API 5xx Error Spike - CloudFront (child)"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:api}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "min(last_5m):default_zero(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:api}.rollup(avg, 60) / 100) / (default_zero(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60)) + ${local.error_rate_smoothing_requests_per_minute}) * 100 > 5"
   message  = "CloudFront 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
   priority = 3
 
   include_tags        = false
   on_missing_data     = "default"
+  evaluation_delay    = 900
   require_full_window = false
   renotify_interval   = 1440
 
