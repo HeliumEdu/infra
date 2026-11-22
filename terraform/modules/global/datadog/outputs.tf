@@ -34,9 +34,10 @@ output "monitor_ids" {
     firebase_failures      = datadog_monitor.firebase_oauth_failures.id
     task_failures          = datadog_monitor.task_failures.id
     scheduled_task_stalled = datadog_monitor.scheduled_task_not_running.id
-    api_5xx_spike          = datadog_monitor.api_5xx_spike.id
     api_5xx_alb_child      = datadog_monitor.api_5xx_alb_child.id
+    api_5xx_alb_down       = datadog_monitor.api_5xx_alb_down.id
     frontend_5xx_spike     = datadog_monitor.frontend_5xx_spike.id
+    frontend_5xx_down      = datadog_monitor.frontend_5xx_down.id
     client_4xx_anomaly     = datadog_monitor.client_4xx_anomaly.id
     ses_bounce_rate        = datadog_monitor.ses_bounce_rate.id
     ses_complaint_rate     = datadog_monitor.ses_complaint_rate.id

@@ -20,7 +20,7 @@ resource "datadog_synthetics_global_variable" "github_pat" {
 resource "datadog_synthetics_test" "workflow_dispatch" {
   for_each = local.hourly_workflows
 
-  name      = "Hourly Dispatch - ${each.value.repo}/${each.value.workflow}"
+  name      = "${local.notify.degraded.label} Hourly Dispatch - ${each.value.repo}/${each.value.workflow}"
   type      = "api"
   subtype   = "http"
   status    = "live"
@@ -31,7 +31,7 @@ resource "datadog_synthetics_test" "workflow_dispatch" {
     - The workflow file may have been renamed, or its dispatch ref no longer exists
     - GitHub's API may be degraded
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
 
   request_definition {
@@ -61,7 +61,7 @@ resource "datadog_synthetics_test" "workflow_dispatch" {
 
   options_list {
     tick_every       = 3600
-    monitor_priority = 3
+    monitor_priority = local.notify.degraded.priority
 
     retry {
       count    = 2
@@ -69,7 +69,9 @@ resource "datadog_synthetics_test" "workflow_dispatch" {
     }
 
     monitor_options {
-      renotify_interval = 1440
+      renotify_interval    = local.notify.degraded.renotify_interval
+      renotify_occurrences = local.notify.degraded.renotify_occurrences
+      escalation_message   = local.notify.degraded.escalation_message
     }
   }
 

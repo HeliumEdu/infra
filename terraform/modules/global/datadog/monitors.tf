@@ -1,18 +1,21 @@
 resource "datadog_monitor" "low_email_traffic" {
-  name     = "Low Email Traffic"
+  name     = "${local.notify.info.label} Low Email Traffic"
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.action.email.sent{env:prod}.as_count() < 5"
   message  = <<-EOT
     Emails sent are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. The Helium platform or AWS SES service may need investigation.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.info.message}
   EOT
-  priority = 5
+  priority = local.notify.info.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.info.renotify_interval
+  renotify_occurrences = local.notify.info.renotify_occurrences
+  renotify_statuses    = local.notify.info.renotify_statuses
+  escalation_message   = local.notify.info.escalation_message
 
   monitor_thresholds {
     warning  = 10
@@ -23,20 +26,23 @@ resource "datadog_monitor" "low_email_traffic" {
 }
 
 resource "datadog_monitor" "auth_low_traffic" {
-  name     = "Low Auth Traffic - {{path.name}}"
+  name     = "${local.notify.info.label} Low Auth Traffic - {{path.name}}"
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.request{env:prod AND status_code:200 AND method:post AND path IN (auth.token,auth.token.refresh)} by {path}.as_count() < 5"
   message  = <<-EOT
     Successful requests on {{path.name}} are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. No data means none succeeded at all.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.info.message}
   EOT
-  priority = 5
+  priority = local.notify.info.priority
 
-  include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "show_and_notify_no_data"
+  require_full_window  = false
+  renotify_interval    = local.notify.info.renotify_interval
+  renotify_occurrences = local.notify.info.renotify_occurrences
+  renotify_statuses    = local.notify.info.renotify_statuses
+  escalation_message   = local.notify.info.escalation_message
 
   monitor_thresholds {
     warning  = 10
@@ -47,20 +53,23 @@ resource "datadog_monitor" "auth_low_traffic" {
 }
 
 resource "datadog_monitor" "low_push_notification_traffic" {
-  name     = "Low Push Notification Traffic"
+  name     = "${local.notify.info.label} Low Push Notification Traffic"
   type     = "query alert"
   query    = "sum(last_24h):sum:platform.action.push.sent{env:prod}.as_count() < 1"
   message  = <<-EOT
     Push notifications sent are below {{ warn_threshold }} (warning) / {{ threshold }} (critical) in the last 24 hours. The Helium platform or Firebase service may need investigation.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.info.message}
   EOT
-  priority = 5
+  priority = local.notify.info.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.info.renotify_interval
+  renotify_occurrences = local.notify.info.renotify_occurrences
+  renotify_statuses    = local.notify.info.renotify_statuses
+  escalation_message   = local.notify.info.escalation_message
 
   monitor_thresholds {
     warning  = 5
@@ -71,20 +80,23 @@ resource "datadog_monitor" "low_push_notification_traffic" {
 }
 
 resource "datadog_monitor" "email_delivery_failures" {
-  name     = "Email Delivery Failure Spike"
+  name     = "${local.notify.degraded.label} Email Delivery Failure Spike"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.action.email.failed{env:prod}.as_count() > 5"
   message  = <<-EOT
     More than {{ threshold }} email delivery failures detected in the last hour. AWS SES or the email sending service should be investigated.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -94,20 +106,23 @@ resource "datadog_monitor" "email_delivery_failures" {
 }
 
 resource "datadog_monitor" "push_delivery_failures" {
-  name     = "Push Notification Delivery Failure Spike"
+  name     = "${local.notify.degraded.label} Push Notification Delivery Failure Spike"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.action.push.failed{env:prod,!reason:unregistered}.as_count() > 5"
   message  = <<-EOT
     More than {{ threshold }} push notification delivery failures detected in the last hour, excluding tokens that were simply retired. Firebase Cloud Messaging should be investigated.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -122,18 +137,32 @@ locals {
   error_rate_smoothing_requests = 25
   # The same allowance spread across a 5-minute window, for rates evaluated one minute at a time.
   error_rate_smoothing_requests_per_minute = 5
+  # A smaller allowance for the hard-down threshold, so a total outage still crosses it at overnight traffic.
+  hard_down_smoothing_requests_per_minute = 1
+
+  # Per-minute 5xx percentages, so min(last_Nm) means every minute of the window failed at that rate.
+  alb_5xx_rate_per_minute        = "(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod-api}.rollup(sum, 60)) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod-api}.rollup(sum, 60))) / (default_zero(sum:aws.applicationelb.request_count{name:helium-prod-api}.rollup(sum, 60)) + %d) * 100"
+  cloudfront_5xx_rate_per_minute = "default_zero(sum:aws.cloudfront.requests{%[1]s}%[2]s.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{%[1]s}%[2]s.rollup(avg, 60) / 100) / (default_zero(sum:aws.cloudfront.requests{%[1]s}%[2]s.rollup(sum, 60)) + %[3]d) * 100"
 }
 
 resource "datadog_monitor" "server_error_spike" {
-  name     = "API 5xx Error Spike - App (child)"
+  name     = "${local.notify.down.label} API 5xx - App"
   type     = "query alert"
   query    = "sum(last_5m):default_zero(sum:platform.request{env:prod, status_code:5*}.as_count()) / (sum:platform.request{env:prod}.as_count() + ${local.error_rate_smoothing_requests}) * 100 > 5"
-  message  = "App-level 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
-  priority = 3
+  message  = <<-EOT
+    The API itself returned 5xx on more than {{ threshold }}% of requests over the last 5 minutes. These come from our code, not AWS: check Sentry, and whether a release just went out.
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
+    ${local.notify.down.message}
+  EOT
+  priority = local.notify.down.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -143,20 +172,23 @@ resource "datadog_monitor" "server_error_spike" {
 }
 
 resource "datadog_monitor" "calendar_sync_failures" {
-  name     = "Calendar Sync Failure Spike"
+  name     = "${local.notify.degraded.label} Calendar Sync Failure Spike"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.external_calendar.fetch.failed{env:prod}.as_count() > 15"
   message  = <<-EOT
     More than {{ threshold }} calendar sync failures detected in the last hour. iCal feed fetching should be investigated.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 15
@@ -166,20 +198,23 @@ resource "datadog_monitor" "calendar_sync_failures" {
 }
 
 resource "datadog_monitor" "firebase_oauth_failures" {
-  name     = "Firebase/OAuth Failure Spike"
+  name     = "${local.notify.degraded.label} Firebase/OAuth Failure Spike"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.external.firebase.failed{env:prod}.as_count() > 5"
   message  = <<-EOT
     More than {{ threshold }} Firebase/OAuth failures detected in the last hour. OAuth integration should be investigated.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -189,20 +224,23 @@ resource "datadog_monitor" "firebase_oauth_failures" {
 }
 
 resource "datadog_monitor" "task_failures" {
-  name     = "Background Task Failure Spike"
+  name     = "${local.notify.degraded.label} Background Task Failure Spike"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.task.failed{env:prod} by {name}.as_count() > 5"
   message  = <<-EOT
     More than {{ threshold }} failures of the background task {{name.name}} in the last hour. Celery workers and task processing should be investigated.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = true
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = true
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -212,20 +250,23 @@ resource "datadog_monitor" "task_failures" {
 }
 
 resource "datadog_monitor" "task_lost" {
-  name     = "Background Task Lost - {{name.name}}"
+  name     = "${local.notify.degraded.label} Background Task Lost - {{name.name}}"
   type     = "query alert"
   query    = "sum(last_1h):sum:platform.task.lost{env:prod} by {name}.as_count() > 0"
   message  = <<-EOT
     The background task {{name.name}} died without finishing ({{ value }} in the last hour). The worker process running it was killed, most often for running out of memory, so the task's work (a reminder, an email, a sync) never happened.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = true
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = true
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 0
@@ -235,20 +276,23 @@ resource "datadog_monitor" "task_lost" {
 }
 
 resource "datadog_monitor" "worker_metrics_missing" {
-  name     = "Worker Metrics Missing"
+  name     = "${local.notify.down.label} Worker Metrics Missing"
   type     = "query alert"
   query    = "sum(last_30m):sum:platform.task.timing.count{env:prod AND name:metrics.queue-depth}.as_count() < 1"
   message  = <<-EOT
     The worker has reported no metrics for 30 minutes, though it reports one every minute. Either the worker is down or its metrics are no longer reaching Datadog, and task failures would go unreported meanwhile.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.down.message}
   EOT
-  priority = 2
+  priority = local.notify.down.priority
 
-  include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "show_and_notify_no_data"
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
 
   monitor_thresholds {
     critical = 1
@@ -258,20 +302,23 @@ resource "datadog_monitor" "worker_metrics_missing" {
 }
 
 resource "datadog_monitor" "scheduled_task_not_running" {
-  name     = "Scheduled Task Not Running"
+  name     = "${local.notify.down.label} Scheduled Task Not Running"
   type     = "query alert"
   query    = "sum(last_2d):sum:platform.task.timing.count{env:prod AND name IN (token.refresh.purge,push.token.purge,metrics.queue-depth,user.dangling.purge,metrics.nightly,user.client-activity.rollup,user.review-prompt.evaluate,user.dormant.process,reminder.email.process,reminder.push.process,reminder.watchdog,external_calendar.reindex)} by {name}.as_count() < 1"
   message  = <<-EOT
     The scheduled task {{name.name}} has not executed. Every task here runs at least daily, so no execution at all means Beat, the worker, or the task's registration is broken rather than the work merely failing.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.down.message}
   EOT
-  priority = 2
+  priority = local.notify.down.priority
 
-  include_tags        = true
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = true
+  on_missing_data      = "show_and_notify_no_data"
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
 
   monitor_thresholds {
     critical = 1
@@ -281,7 +328,7 @@ resource "datadog_monitor" "scheduled_task_not_running" {
 }
 
 resource "datadog_monitor" "api_slow_responses" {
-  name     = "API Response Times Degraded - {{path.name}}"
+  name     = "${local.notify.degraded.label} API Response Times Degraded - {{path.name}}"
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path}.rollup(avg, 3600)) > 500"
   message  = <<-EOT
@@ -292,14 +339,17 @@ resource "datadog_monitor" "api_slow_responses" {
     - API tasks may be undersized
     - Missing database indexes
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 250
@@ -310,7 +360,7 @@ resource "datadog_monitor" "api_slow_responses" {
 }
 
 resource "datadog_monitor" "importexport_slow_responses" {
-  name     = "Import/Export Response Times Degraded - {{path.name}}"
+  name     = "${local.notify.degraded.label} Import/Export Response Times Degraded - {{path.name}}"
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:importexport.*} by {path}.rollup(avg, 3600)) > 10000"
   message  = <<-EOT
@@ -321,14 +371,17 @@ resource "datadog_monitor" "importexport_slow_responses" {
     - Confirm example schedule seeding has not grown (resources/example_schedule.json)
     - Large user datasets may need the work moved to a background task
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 6000
@@ -339,7 +392,7 @@ resource "datadog_monitor" "importexport_slow_responses" {
 }
 
 resource "datadog_monitor" "auth_slow_responses" {
-  name     = "Auth Response Times Degraded - {{path.name}}"
+  name     = "${local.notify.degraded.label} Auth Response Times Degraded - {{path.name}}"
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod AND path IN (auth.token,auth.user.register,auth.user.forgot.confirm)} by {path}.rollup(avg, 3600)) > 1500"
   message  = <<-EOT
@@ -350,14 +403,17 @@ resource "datadog_monitor" "auth_slow_responses" {
     - N+1 growth in the user or settings serializers
     - API tasks may be undersized
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 800
@@ -368,7 +424,7 @@ resource "datadog_monitor" "auth_slow_responses" {
 }
 
 resource "datadog_monitor" "auth_hashing_weakened" {
-  name     = "Auth Password Hashing Unexpectedly Fast"
+  name     = "${local.notify.degraded.label} Auth Password Hashing Unexpectedly Fast"
   type     = "query alert"
   query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, path:auth.token}.rollup(avg, 3600)) < 200"
   message  = <<-EOT
@@ -379,14 +435,17 @@ resource "datadog_monitor" "auth_hashing_weakened" {
     - Authentication short-circuiting before check_password
     - Faster underlying hardware, which needs the iteration count raised to compensate
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "resolve"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "resolve"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 300
@@ -397,7 +456,7 @@ resource "datadog_monitor" "auth_hashing_weakened" {
 }
 
 resource "datadog_monitor" "task_duration_degraded" {
-  name     = "Background Task Duration Degraded - {{name.name}}"
+  name     = "${local.notify.degraded.label} Background Task Duration Degraded - {{name.name}}"
   type     = "query alert"
   query    = "avg(last_1w):median_9(avg:platform.task.timing.avg{env:prod, !name:external_calendar.reindex, !name:reminder.email.process, !name:reminder.push.process, !name:user.dangling.purge, !name:user.dormant.process, !name:metrics.nightly} by {name}.rollup(avg, 3600)) > 60000"
   message  = <<-EOT
@@ -408,14 +467,17 @@ resource "datadog_monitor" "task_duration_degraded" {
     - Per-user tasks scale with user count, per-row tasks with data volume
     - Sustained growth may mean the task needs batching or a schedule change
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 20000
@@ -426,7 +488,7 @@ resource "datadog_monitor" "task_duration_degraded" {
 }
 
 resource "datadog_monitor" "reminder_dispatch_saturation" {
-  name     = "Reminder Dispatch Approaching Its Interval - {{name.name}}"
+  name     = "${local.notify.degraded.label} Reminder Dispatch Approaching Its Interval - {{name.name}}"
   type     = "query alert"
   query    = "avg(last_1h):avg:platform.task.timing.avg{env:prod AND name IN (reminder.email.process,reminder.push.process)} by {name} > 45000"
   message  = <<-EOT
@@ -437,14 +499,17 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
     - Broker latency may be elevated (cross-check high priority queue wait time)
     - Dispatch may need batching rather than an apply_async per reminder
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 30000
@@ -455,37 +520,78 @@ resource "datadog_monitor" "reminder_dispatch_saturation" {
 }
 
 resource "datadog_monitor" "api_5xx_alb_child" {
-  name     = "API 5xx Error Spike - ALB (child)"
+  name     = "${local.notify.degraded.label} API 5xx - ALB"
   type     = "query alert"
-  query    = "min(last_5m):(default_zero(sum:aws.applicationelb.httpcode_elb_5xx{name:helium-prod-api}.rollup(sum, 60)) + default_zero(sum:aws.applicationelb.httpcode_target_5xx{name:helium-prod-api}.rollup(sum, 60))) / (default_zero(sum:aws.applicationelb.request_count{name:helium-prod-api}.rollup(sum, 60)) + ${local.error_rate_smoothing_requests_per_minute}) * 100 > 5"
-  message  = "ALB 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
-  priority = 3
+  query    = "min(last_15m):${format(local.alb_5xx_rate_per_minute, local.error_rate_smoothing_requests_per_minute)} > 5"
+  message  = <<-EOT
+    At least {{ threshold }}% of API requests failed at the load balancer every minute for 15 minutes, as ALB-generated 502/503/504 or 5xx from the targets. Brief AWS blips never last this long; sustained errors mean ECS targets are unhealthy or unreachable. AWS reports these about 15 minutes late.
 
-  include_tags        = false
-  on_missing_data     = "default"
-  evaluation_delay    = 900
-  require_full_window = false
-  renotify_interval   = 1440
+    ${local.notify.degraded.message}
+  EOT
+  priority = local.notify.degraded.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "api_5xx_alb_down" {
+  name     = "${local.notify.down.label} API 5xx - ALB"
+  type     = "query alert"
+  query    = "min(last_3m):${format(local.alb_5xx_rate_per_minute, local.hard_down_smoothing_requests_per_minute)} > 50"
+  message  = <<-EOT
+    At least {{ threshold }}% of API requests failed at the load balancer every minute for 3 minutes, so the API is effectively down, whether the cause is our tasks or AWS. AWS reports these about 15 minutes late.
+
+    ${local.notify.down.message}
+  EOT
+  priority = local.notify.down.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
+
+  monitor_thresholds {
+    critical = 50
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
 resource "datadog_monitor" "api_5xx_cloudfront_child" {
-  name     = "API 5xx Error Spike - CloudFront (child)"
+  name     = "${local.notify.degraded.label} API 5xx - CloudFront"
   type     = "query alert"
-  query    = "min(last_5m):default_zero(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:api}.rollup(avg, 60) / 100) / (default_zero(sum:aws.cloudfront.requests{environment:prod,role:api}.rollup(sum, 60)) + ${local.error_rate_smoothing_requests_per_minute}) * 100 > 5"
-  message  = "CloudFront 5xx rate child monitor - see 'API 5xx Error Spike' composite monitor for alerts."
-  priority = 3
+  query    = "min(last_15m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,role:api", "", local.error_rate_smoothing_requests_per_minute)} > 5"
+  message  = <<-EOT
+    At least {{ threshold }}% of API requests failed at CloudFront every minute for 15 minutes, including CloudFront unable to reach the internal ALB. Brief AWS blips never last this long. AWS reports these about 15 minutes late.
 
-  include_tags        = false
-  on_missing_data     = "default"
-  evaluation_delay    = 900
-  require_full_window = false
-  renotify_interval   = 1440
+    ${local.notify.degraded.message}
+  EOT
+  priority = local.notify.degraded.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -494,65 +600,106 @@ resource "datadog_monitor" "api_5xx_cloudfront_child" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
-resource "datadog_monitor" "api_5xx_spike" {
-  name              = "API 5xx Error Spike"
-  type              = "composite"
-  query             = "${datadog_monitor.server_error_spike.id} || ${datadog_monitor.api_5xx_alb_child.id} || ${datadog_monitor.api_5xx_cloudfront_child.id}"
-  renotify_interval = 1440
-  message           = <<-EOT
-    API 5xx error spike detected. Investigate:
-    - App-level 500s: the platform may be experiencing errors (check Sentry)
-    - ALB ELB 5xx: ALB-generated errors (502/503/504); ECS targets may be unhealthy or unreachable
-    - ALB Target 5xx: backend returning 5xx as seen by the ALB
-    - CloudFront 5xx: edge errors, including CloudFront unable to reach the internal ALB
+resource "datadog_monitor" "api_5xx_cloudfront_down" {
+  name     = "${local.notify.down.label} API 5xx - CloudFront"
+  type     = "query alert"
+  query    = "min(last_3m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,role:api", "", local.hard_down_smoothing_requests_per_minute)} > 50"
+  message  = <<-EOT
+    At least {{ threshold }}% of API requests failed at CloudFront every minute for 3 minutes, so the API is effectively down for users, whether the cause is ours or AWS. AWS reports these about 15 minutes late.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.down.message}
   EOT
-  priority          = 2
+  priority = local.notify.down.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
+
+  monitor_thresholds {
+    critical = 50
+  }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
 resource "datadog_monitor" "connector_5xx_spike" {
-  name     = "Connector 5xx Error Rate Elevated"
+  name     = "${local.notify.degraded.label} Connector 5xx"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,role:connector}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,role:connector}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,role:connector}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "min(last_15m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,role:connector", "", local.error_rate_smoothing_requests_per_minute)} > 5"
   message  = <<-EOT
-    The connector (mcp.heliumedu.com) 5xx error rate has exceeded {{ threshold }}% over the last 15 minutes. Investigate:
-    - Lambda errors or timeouts: check the helium-prod-connector logs in CloudWatch
-    - Helium's API unreachable: the connector answers 500 when it can't verify a token (see API 5xx Error Spike)
+    At least {{ threshold }}% of connector (mcp.heliumedu.com) requests failed every minute for 15 minutes. Check the helium-prod-connector Lambda logs in CloudWatch, and the API 5xx monitors, since the connector answers 500 when it can't verify a token. AWS reports these about 15 minutes late.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
+resource "datadog_monitor" "connector_5xx_down" {
+  name     = "${local.notify.down.label} Connector 5xx"
+  type     = "query alert"
+  query    = "min(last_3m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,role:connector", "", local.hard_down_smoothing_requests_per_minute)} > 50"
+  message  = <<-EOT
+    At least {{ threshold }}% of connector (mcp.heliumedu.com) requests failed every minute for 3 minutes, so the connector is effectively down. Check the helium-prod-connector Lambda logs in CloudWatch, and the API 5xx monitors. AWS reports these about 15 minutes late.
+
+    ${local.notify.down.message}
+  EOT
+  priority = local.notify.down.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
+
+  monitor_thresholds {
+    critical = 50
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
 resource "datadog_monitor" "frontend_5xx_spike" {
-  name     = "Frontend 5xx Error Rate Elevated"
+  name     = "${local.notify.degraded.label} Frontend 5xx - {{distributionid.name}}"
   type     = "query alert"
-  query    = "avg(last_15m):(sum:aws.cloudfront.requests{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(sum, 60) * avg:aws.cloudfront.5xx_error_rate{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(avg, 60) / 100) / (sum:aws.cloudfront.requests{environment:prod,!role:api,!role:connector} by {distributionid}.rollup(sum, 60) + ${local.error_rate_smoothing_requests}) * 100 > 5"
+  query    = "min(last_15m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,!role:api,!role:connector", " by {distributionid}", local.error_rate_smoothing_requests_per_minute)} > 5"
   message  = <<-EOT
-    CloudFront 5xx error rate for distribution {{distributionid.name}} has exceeded {{ threshold }}% over the last 15 minutes. The frontend S3 origin may be unavailable or misconfigured.
+    At least {{ threshold }}% of requests to CloudFront distribution {{distributionid.name}} failed every minute for 15 minutes. The frontend S3 origin may be unavailable or misconfigured. AWS reports these about 15 minutes late.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 5
@@ -561,8 +708,35 @@ resource "datadog_monitor" "frontend_5xx_spike" {
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
 }
 
+resource "datadog_monitor" "frontend_5xx_down" {
+  name     = "${local.notify.down.label} Frontend 5xx - {{distributionid.name}}"
+  type     = "query alert"
+  query    = "min(last_3m):${format(local.cloudfront_5xx_rate_per_minute, "environment:prod,!role:api,!role:connector", " by {distributionid}", local.hard_down_smoothing_requests_per_minute)} > 50"
+  message  = <<-EOT
+    At least {{ threshold }}% of requests to CloudFront distribution {{distributionid.name}} failed every minute for 3 minutes, so the site is effectively down. The frontend S3 origin may be unavailable or misconfigured. AWS reports these about 15 minutes late.
+
+    ${local.notify.down.message}
+  EOT
+  priority = local.notify.down.priority
+
+  include_tags         = false
+  on_missing_data      = "default"
+  evaluation_delay     = 900
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
+
+  monitor_thresholds {
+    critical = 50
+  }
+
+  tags = ["managed_by:terraform", "alert_type:diagnostic"]
+}
+
 resource "datadog_monitor" "ses_bounce_rate" {
-  name     = "SES Bounce Rate Elevated"
+  name     = "${local.notify.degraded.label} SES Bounce Rate Elevated"
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.ses.reputation_bounce_rate{*} > 0.05"
   message  = <<-EOT
@@ -570,14 +744,17 @@ resource "datadog_monitor" "ses_bounce_rate" {
 
     Investigate recent email sends for invalid addresses or unexpected bounce patterns.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 0.03
@@ -588,7 +765,7 @@ resource "datadog_monitor" "ses_bounce_rate" {
 }
 
 resource "datadog_monitor" "ses_complaint_rate" {
-  name     = "SES Complaint Rate Elevated"
+  name     = "${local.notify.degraded.label} SES Complaint Rate Elevated"
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.ses.reputation_complaint_rate{*} > 0.003"
   message  = <<-EOT
@@ -596,14 +773,17 @@ resource "datadog_monitor" "ses_complaint_rate" {
 
     Investigate recent email sends for unexpected complaint patterns. Do not suppress users based on complaints; investigate for bugs or unexpected send volume instead.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 0.003
@@ -613,20 +793,23 @@ resource "datadog_monitor" "ses_complaint_rate" {
 }
 
 resource "datadog_monitor" "support_contact_abuse" {
-  name     = "Support Contact Abuse Escalation"
+  name     = "${local.notify.info.label} Support Contact Abuse Escalation"
   type     = "query alert"
   query    = "sum(last_1d):default_zero(sum:platform.action.support_contact.honeypot{env:prod}.as_count()) + default_zero(sum:platform.action.support_contact.throttled{env:prod}.as_count()) > 25"
   message  = <<-EOT
     Support contact honeypot and throttle signals have exceeded {{ warn_threshold }} (warning) / {{ threshold }} (critical) combined over the last 24 hours. Review submission sources and tighten controls if needed.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.info.message}
   EOT
-  priority = 3
+  priority = local.notify.info.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.info.renotify_interval
+  renotify_occurrences = local.notify.info.renotify_occurrences
+  renotify_statuses    = local.notify.info.renotify_statuses
+  escalation_message   = local.notify.info.escalation_message
 
   monitor_thresholds {
     warning  = 10
@@ -637,20 +820,23 @@ resource "datadog_monitor" "support_contact_abuse" {
 }
 
 resource "datadog_monitor" "client_4xx_anomaly" {
-  name     = "Client 4xx Error Anomaly"
+  name     = "${local.notify.info.label} Client 4xx Error Anomaly"
   type     = "query alert"
   query    = "avg(last_4h):anomalies(sum:platform.request{env:prod AND (status_code:400 OR status_code:404 OR status_code:422)}.as_count(), 'agile', 3) >= 1"
   message  = <<-EOT
     Client 4xx errors (400/404/422) are anomalously high versus the normal baseline. Slice platform.request by path, client, and client_os to find the offending endpoint or client, then check platform.client_version for a recent release.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.info.message}
   EOT
-  priority = 3
+  priority = local.notify.info.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.info.renotify_interval
+  renotify_occurrences = local.notify.info.renotify_occurrences
+  renotify_statuses    = local.notify.info.renotify_statuses
+  escalation_message   = local.notify.info.escalation_message
 
   monitor_thresholds {
     critical = 1
@@ -665,7 +851,7 @@ resource "datadog_monitor" "client_4xx_anomaly" {
 }
 
 resource "datadog_monitor" "certificate_renewal_failed" {
-  name     = "SSL Certificate Renewal Failed"
+  name     = "${local.notify.degraded.label} SSL Certificate Renewal Failed"
   type     = "query alert"
   query    = "min(last_1d):min:aws.certificatemanager.days_to_expiry{*} < 30"
   message  = <<-EOT
@@ -673,14 +859,17 @@ resource "datadog_monitor" "certificate_renewal_failed" {
 
     Run `terraform plan` in the affected workspace to surface the drifted validation record and apply it. ACM retries renewal on its own once the record is restored.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = true
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = true
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     critical = 30
@@ -690,7 +879,7 @@ resource "datadog_monitor" "certificate_renewal_failed" {
 }
 
 resource "datadog_monitor" "high_priority_queue_wait" {
-  name    = "High Priority Task Queue Wait Time Elevated"
+  name    = "${local.notify.degraded.label} High Priority Task Queue Wait Time Elevated"
   type    = "query alert"
   message = <<-EOT
     High priority tasks are waiting in the queue for extended periods (p95 above {{ warn_threshold }} ms for warning, {{ threshold }} ms for critical, over the last hour).
@@ -700,7 +889,7 @@ resource "datadog_monitor" "high_priority_queue_wait" {
 
     Current p95 queue wait time: {{ value }} ms
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
 
   query = "avg(last_1h):avg:platform.task.queue_time.95percentile{env:prod, priority:high} > 60000"
@@ -710,33 +899,39 @@ resource "datadog_monitor" "high_priority_queue_wait" {
     warning  = 45000
   }
 
-  priority            = 4
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 120
+  priority             = local.notify.degraded.priority
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   tags = ["managed_by:terraform", "alert_type:config"]
 }
 
 resource "datadog_monitor" "canary_failing" {
-  name     = "Canary Tests Failing"
+  name     = "${local.notify.down.label} Canary Tests Failing"
   type     = "query alert"
-  query    = "sum(last_150m):sum:helium.canary.failed{env:prod} >= 2"
+  query    = "min(last_2h):min:helium.canary.failed{env:prod} >= 1"
   message  = <<-EOT
-    The canary tests have failed on consecutive runs. Check the failed Canary Tests runs in the frontend repo; screenshots of each failure are attached as artifacts. No data means the canary itself stopped running.
+    Every canary run in the last two hours failed, each after a retry. Check the failed Canary Tests runs in the frontend repo; screenshots of each failure are attached as artifacts. No data means the canary itself stopped running.
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.down.message}
   EOT
-  priority = 2
+  priority = local.notify.down.priority
 
-  include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "show_and_notify_no_data"
+  require_full_window  = false
+  renotify_interval    = local.notify.down.renotify_interval
+  renotify_occurrences = local.notify.down.renotify_occurrences
+  renotify_statuses    = local.notify.down.renotify_statuses
+  escalation_message   = local.notify.down.escalation_message
 
   monitor_thresholds {
-    critical = 2
+    critical = 1
   }
 
   tags = ["managed_by:terraform", "alert_type:diagnostic"]
@@ -761,7 +956,7 @@ locals {
 }
 
 resource "datadog_monitor" "ecs_cpu" {
-  name     = "Capacity - ECS CPU - {{servicename.name}}"
+  name     = "${local.notify.degraded.label} Capacity - ECS CPU - {{servicename.name}}"
   type     = "query alert"
   query    = "avg(last_1h):avg:aws.ecs.cpuutilization{clustername:helium_prod} by {servicename} > 90"
   message  = <<-EOT
@@ -772,14 +967,17 @@ resource "datadog_monitor" "ecs_cpu" {
     - Increase task CPU in the ECS task definition
     - For the worker, check for a runaway or newly expensive task
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 80
@@ -790,7 +988,7 @@ resource "datadog_monitor" "ecs_cpu" {
 }
 
 resource "datadog_monitor" "ecs_memory" {
-  name     = "Capacity - ECS Memory - {{servicename.name}}"
+  name     = "${local.notify.degraded.label} Capacity - ECS Memory - {{servicename.name}}"
   type     = "query alert"
   query    = "avg(last_1h):avg:aws.ecs.memory_utilization{clustername:helium_prod} by {servicename} > 95"
   message  = <<-EOT
@@ -800,14 +998,17 @@ resource "datadog_monitor" "ecs_memory" {
     - Lower GUNICORN_WORKERS / GUNICORN_THREADS (API) or CELERY_CONCURRENCY (worker)
     - Check for a leak: memory that keeps climbing with task uptime rather than with traffic
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 85
@@ -818,7 +1019,7 @@ resource "datadog_monitor" "ecs_memory" {
 }
 
 resource "datadog_monitor" "rds_cpu" {
-  name     = "Capacity - RDS CPU"
+  name     = "${local.notify.degraded.label} Capacity - RDS CPU"
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.rds.cpuutilization{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} > 60"
   message  = <<-EOT
@@ -827,14 +1028,17 @@ resource "datadog_monitor" "rds_cpu" {
     - Check Sentry and Performance Insights for slow or N+1 queries
     - Raise db_instance_size in the prod environment
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 40
@@ -845,7 +1049,7 @@ resource "datadog_monitor" "rds_cpu" {
 }
 
 resource "datadog_monitor" "rds_connections" {
-  name     = "Capacity - RDS Connections"
+  name     = "${local.notify.degraded.label} Capacity - RDS Connections"
   type     = "query alert"
   query    = "max(last_1h):max:aws.rds.database_connections{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} > ${floor(local.rds_max_connections_estimate * 0.75)}"
   message  = <<-EOT
@@ -856,14 +1060,17 @@ resource "datadog_monitor" "rds_connections" {
     - Check for connection leaks in application code
     - Raise db_instance_size in the prod environment
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 3
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = floor(local.rds_max_connections_estimate * 0.6)
@@ -874,7 +1081,7 @@ resource "datadog_monitor" "rds_connections" {
 }
 
 resource "datadog_monitor" "rds_storage" {
-  name     = "Capacity - RDS Storage"
+  name     = "${local.notify.degraded.label} Capacity - RDS Storage"
   type     = "query alert"
   query    = "min(last_1h):min:aws.rds.free_storage_space{dbinstanceidentifier:${data.aws_db_instance.prod.db_instance_identifier}} < ${floor(local.rds_allocated_storage_bytes * 0.1)}"
   message  = <<-EOT
@@ -883,14 +1090,17 @@ resource "datadog_monitor" "rds_storage" {
     - Raise the RDS allocated storage
     - Check for runaway table growth
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 2
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "show_and_notify_no_data"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "show_and_notify_no_data"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = floor(local.rds_allocated_storage_bytes * 0.2)
@@ -901,7 +1111,7 @@ resource "datadog_monitor" "rds_storage" {
 }
 
 resource "datadog_monitor" "redis_memory" {
-  name     = "Capacity - Redis Memory"
+  name     = "${local.notify.degraded.label} Capacity - Redis Memory"
   type     = "query alert"
   query    = "avg(last_1d):avg:aws.elasticache.database_memory_usage_percentage{replication_group:helium-prod} > 70"
   message  = <<-EOT
@@ -911,14 +1121,17 @@ resource "datadog_monitor" "redis_memory" {
     - Check for Celery queue backlog
     - Raise cache_instance_size in the prod environment
 
-    Notify: @alerts@heliumedu.com
+    ${local.notify.degraded.message}
   EOT
-  priority = 4
+  priority = local.notify.degraded.priority
 
-  include_tags        = false
-  on_missing_data     = "default"
-  require_full_window = false
-  renotify_interval   = 1440
+  include_tags         = false
+  on_missing_data      = "default"
+  require_full_window  = false
+  renotify_interval    = local.notify.degraded.renotify_interval
+  renotify_occurrences = local.notify.degraded.renotify_occurrences
+  renotify_statuses    = local.notify.degraded.renotify_statuses
+  escalation_message   = local.notify.degraded.escalation_message
 
   monitor_thresholds {
     warning  = 60
