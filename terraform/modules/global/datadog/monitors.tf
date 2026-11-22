@@ -330,7 +330,7 @@ resource "datadog_monitor" "scheduled_task_not_running" {
 resource "datadog_monitor" "api_slow_responses" {
   name     = "${local.notify.degraded.label} API Response Times Degraded - {{path.name}}"
   type     = "query alert"
-  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path}.rollup(avg, 3600)) > 500"
+  query    = "avg(last_1d):median_9(avg:platform.request.timing.avg{env:prod, !path:importexport.*, !path:api.common.support.contact, !path:auth.user.delete, !path:auth.user.delete.*, !path:auth.user.oauthproviders, !path:auth.user.oauthproviders.*, !path:planner.events.delete.all, !path:auth.token, !path:auth.user.register, !path:auth.user.forgot.confirm} by {path}.rollup(avg, 3600)) > 500"
   message  = <<-EOT
     Response times for {{path.name}} have held above {{ warn_threshold }}ms (warning) / {{ threshold }}ms (critical) over the last 24 hours, outliers excluded.
 
