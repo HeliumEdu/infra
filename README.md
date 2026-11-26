@@ -59,8 +59,8 @@ cd helium
 make
 ```
 
-Done! The [`frontend`](https://github.com/HeliumEdu/frontend) and [`platform`](https://github.com/HeliumEdu/platform)
-are now setup for you.
+Done! The [`platform`](https://github.com/HeliumEdu/platform), [`frontend`](https://github.com/HeliumEdu/frontend),
+[`www`](https://github.com/HeliumEdu/www) and [`connector`](https://github.com/HeliumEdu/connector) are now set up for you.
 
 If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` in [`platforms'`s `.env` file](https://github.com/HeliumEdu/platform/blob/main/.env.docker.example).
 Helium is now accessible at http://localhost:8080, and you should be able to register for an account. Or have a look at

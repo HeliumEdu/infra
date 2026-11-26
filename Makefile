@@ -3,8 +3,6 @@
 SHELL := /usr/bin/env bash
 PYTHON_BIN := python
 PROJECTS ?= platform frontend www connector
-SKIP_UPDATE ?= 'false'
-DEV_LOCAL_AWS_REGION ?= 'us-east-2'
 PLATFORM ?= arm64
 
 all: install start
@@ -13,8 +11,6 @@ install-reqs:
 	$(PYTHON_BIN) -m pip install -r requirements.txt
 
 install: install-reqs
-	$(PYTHON_BIN) -m pip install -r requirements.txt
-
 	@PROJECTS="$(PROJECTS)" ./bin/update-projects.sh
 
 build: install
