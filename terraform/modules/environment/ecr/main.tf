@@ -1,6 +1,6 @@
 locals {
   about_text          = "Helium is an online student planner that lets you organize and color-coordinate your schedule and schoolwork, capture details about every assignment, and plan your study time efficiently. Check it out at https://www.heliumedu.com."
-  platform_usage_text = "Helium is open source, and usage details for this image be found at https://github.com/heliumedu/platform."
+  platform_usage_text = "Helium is open source, and usage details for this image be found at https://github.com/inertlabs/platform."
 }
 
 resource "aws_ecrpublic_repository" "repository_helium_frontend_web" {
@@ -12,7 +12,7 @@ resource "aws_ecrpublic_repository" "repository_helium_frontend_web" {
     logo_image_blob   = filebase64("${path.module}/../../../resources/logo.png")
     description       = "Images for the frontend web containers."
     about_text        = local.about_text
-    usage_text        = "HeliumEdu is open source, and usage details for this image be found at https://github.com/heliumedu/frontend."
+    usage_text        = "HeliumEdu is open source, and usage details for this image be found at https://github.com/inertlabs/frontend."
   }
 
   tags = {

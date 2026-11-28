@@ -10,7 +10,7 @@ locals {
 
 resource "datadog_synthetics_global_variable" "github_pat" {
   name             = "GITHUB_PAT"
-  description      = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
+  description      = "Fine-grained GitHub personal access token with Actions write access to inertlabs repositories"
   value_wo         = var.github_pat
   value_wo_version = sha256(var.github_pat)
   secure           = true
@@ -26,7 +26,7 @@ resource "datadog_synthetics_test" "workflow_dispatch" {
   status    = "live"
   locations = ["gcp:us-east4"]
   message   = <<-EOT
-    Datadog could not dispatch ${each.value.workflow} in HeliumEdu/${each.value.repo}, so its hourly run did not start:
+    Datadog could not dispatch ${each.value.workflow} in inertlabs/${each.value.repo}, so its hourly run did not start:
     - GITHUB_PAT may have expired or lost Actions write access to the repository
     - The workflow file may have been renamed, or its dispatch ref no longer exists
     - GitHub's API may be degraded
@@ -36,7 +36,7 @@ resource "datadog_synthetics_test" "workflow_dispatch" {
 
   request_definition {
     method    = "POST"
-    url       = "https://api.github.com/repos/HeliumEdu/${each.value.repo}/actions/workflows/${each.value.workflow}/dispatches"
+    url       = "https://api.github.com/repos/inertlabs/${each.value.repo}/actions/workflows/${each.value.workflow}/dispatches"
     body      = each.value.body
     body_type = "application/json"
   }

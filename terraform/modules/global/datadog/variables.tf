@@ -4,7 +4,7 @@ variable "aws_account_id" {
 }
 
 variable "github_pat" {
-  description = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
+  description = "Fine-grained GitHub personal access token with Actions write access to inertlabs repositories"
   type        = string
   sensitive   = true
 }

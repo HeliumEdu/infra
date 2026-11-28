@@ -17,7 +17,7 @@ for project in $PROJECTS; do
 
     if [ ! -d "$project_path/.git" ]; then
         echo "Cloning $project ..."
-        git clone "git@github.com:HeliumEdu/$project.git" "$project_path"
+        git clone "git@github.com:inertlabs/$project.git" "$project_path"
     else
         (cd "$project_path" && git fetch --tags --prune --force && git pull)
     fi

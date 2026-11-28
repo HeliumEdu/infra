@@ -23,8 +23,8 @@
 # Helium Infrastructure
 
 ![Python Versions](https://img.shields.io/badge/python-%203.12%20-blue)
-[![Build](https://img.shields.io/github/actions/workflow/status/HeliumEdu/infra/build.yml)](https://github.com/HeliumEdu/infra/actions/workflows/build.yml)
-![GitHub License](https://img.shields.io/github/license/heliumedu/infra)
+[![Build](https://img.shields.io/github/actions/workflow/status/inertlabs/infra/build.yml)](https://github.com/inertlabs/infra/actions/workflows/build.yml)
+![GitHub License](https://img.shields.io/github/license/inertlabs/infra)
 
 The deployment infrastructure for Helium - Student Planner, including Terraform, Docker orchestration for local development, and the build pipeline that publishes container images to [Helium's AWS ECR](https://gallery.ecr.aws/heliumedu/).
 
@@ -45,7 +45,7 @@ provision environments.
 ### Initialize `dev-local` Environment in Terraform
 
 For more information on setting up a minimal (but fully functional) `dev-local` environment, see
-[the `dev-local` Terraform Workspace](https://github.com/HeliumEdu/infra/tree/main/terraform/environments/dev-local#readme).
+[the `dev-local` Terraform Workspace](https://github.com/inertlabs/infra/tree/main/terraform/environments/dev-local#readme).
 This is not necessary to develop locally with Docker, but certain features (like emails and text messages)
 will not be available without this.
 
@@ -54,17 +54,17 @@ will not be available without this.
 Here is a minimal set of commands that will get a Docker environment setup locally.
 
 ```sh
-git clone https://github.com/HeliumEdu/infra.git helium
+git clone https://github.com/inertlabs/infra.git helium
 cd helium
 make
 ```
 
-Done! The [`platform`](https://github.com/HeliumEdu/platform), [`frontend`](https://github.com/HeliumEdu/frontend),
-[`www`](https://github.com/HeliumEdu/www) and [`connector`](https://github.com/HeliumEdu/connector) are now set up for you.
+Done! The [`platform`](https://github.com/inertlabs/platform), [`frontend`](https://github.com/inertlabs/frontend),
+[`www`](https://github.com/inertlabs/www) and [`connector`](https://github.com/inertlabs/connector) are now set up for you.
 
-If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` in [`platforms'`s `.env` file](https://github.com/HeliumEdu/platform/blob/main/.env.docker.example).
+If `dev-local` was not provisioned, you'll want to set `PROJECT_DISABLE_EMAILS=True` in [`platforms'`s `.env` file](https://github.com/inertlabs/platform/blob/main/.env.docker.example).
 Helium is now accessible at http://localhost:8080, and you should be able to register for an account. Or have a look at
-[the `platform`'s README](https://github.com/HeliumEdu/platform?tab=readme-ov-file#docker-setup)
+[the `platform`'s README](https://github.com/inertlabs/platform?tab=readme-ov-file#docker-setup)
 for steps to create a superuser with access to [the admin site](http://localhost:8000/admin).
 
 In the future, this local Docker environment can quickly be brought up again simply by running:
@@ -81,4 +81,4 @@ instead, set `PLATFORM=amd64`.
 ### Initialize `prod`-like Environment in Terraform
 
 For more information on deploying a hosted, fully functional `prod`-like environment, see
-[the `prod` Terraform Workspace](https://github.com/HeliumEdu/infra/tree/main/terraform/environments/prod#readme).
+[the `prod` Terraform Workspace](https://github.com/inertlabs/infra/tree/main/terraform/environments/prod#readme).

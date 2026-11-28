@@ -43,7 +43,7 @@ variable "DD_APP_KEY" {
 }
 
 variable "GITHUB_PAT" {
-  description = "Fine-grained GitHub personal access token with Actions write access to HeliumEdu repositories"
+  description = "Fine-grained GitHub personal access token with Actions write access to inertlabs repositories"
   type        = string
   sensitive   = true
 }
